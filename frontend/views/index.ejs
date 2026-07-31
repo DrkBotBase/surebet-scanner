@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surebet Scanner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="logo">
+                        <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                            <path d="M2 17l10 5 10-5"/>
+                            <path d="M2 12l10 5 10-5"/>
+                        </svg>
+                        <span class="logo-text">Surebet<span class="logo-highlight">Scanner</span></span>
+                    </div>
+                    <span class="version-badge">v2.0</span>
+                </div>
+                <div class="header-right">
+                    <button id="themeToggle" class="theme-toggle" aria-label="Cambiar tema">
+                        <svg class="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"/>
+                            <line x1="12" y1="1" x2="12" y2="3"/>
+                            <line x1="12" y1="21" x2="12" y2="23"/>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                            <line x1="1" y1="12" x2="3" y2="12"/>
+                            <line x1="21" y1="12" x2="23" y2="12"/>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                        </svg>
+                    </button>
+                    <button id="clearCache" class="header-action" aria-label="Limpiar caché">
+                        <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        <span class="action-label">Cache</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <section class="scanner-section">
+                <div class="scanner-card">
+                    <div class="scanner-header">
+                        <h2 class="scanner-title">Nuevo Escaneo</h2>
+                        <p class="scanner-subtitle">Ingresa los IDs del evento y estadísticas para buscar surebets y valuebets</p>
+                    </div>
+                    <form id="scanForm" class="scanner-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <span class="label-text">ID 1xBet</span>
+                                    <span class="label-badge">Requerido</span>
+                                </label>
+                                <div class="input-wrapper">
+                                    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                                        <line x1="8" y1="21" x2="16" y2="21"/>
+                                        <line x1="12" y1="17" x2="12" y2="21"/>
+                                    </svg>
+                                    <input type="text" id="idXbet" placeholder="Ej: 353374336" class="form-input" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <span class="label-text">ID BetPlay</span>
+                                    <span class="label-badge">Requerido</span>
+                                </label>
+                                <div class="input-wrapper">
+                                    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <path d="M12 8v8M8 12h8"/>
+                                    </svg>
+                                    <input type="text" id="idKambi" placeholder="Ej: 1028465451" class="form-input" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stats-section">
+                            <div class="stats-header" onclick="toggleStats()">
+                                <span class="stats-toggle">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="6 9 12 15 18 9"/>
+                                    </svg>
+                                </span>
+                                <span class="stats-title">📊 Estadísticas para Valuebets (Opcional)</span>
+                            </div>
+                            <div id="statsContent" class="stats-content hidden">
+                                <div class="stats-grid">
+                                    <div class="stats-team">
+                                        <h4 class="stats-team-title">🏠 Local</h4>
+                                        <div class="stats-input-group">
+                                            <label>PJ</label>
+                                            <input type="number" id="homePJ" placeholder="10" min="1" step="1" class="stats-input">
+                                        </div>
+                                        <div class="stats-input-group">
+                                            <label>GF</label>
+                                            <input type="number" id="homeGF" placeholder="15" min="0" step="0.1" class="stats-input">
+                                        </div>
+                                        <div class="stats-input-group">
+                                            <label>GC</label>
+                                            <input type="number" id="homeGC" placeholder="12" min="0" step="0.1" class="stats-input">
+                                        </div>
+                                    </div>
+                                    <div class="stats-team">
+                                        <h4 class="stats-team-title">✈️ Visitante</h4>
+                                        <div class="stats-input-group">
+                                            <label>PJ</label>
+                                            <input type="number" id="awayPJ" placeholder="10" min="1" step="1" class="stats-input">
+                                        </div>
+                                        <div class="stats-input-group">
+                                            <label>GF</label>
+                                            <input type="number" id="awayGF" placeholder="18" min="0" step="0.1" class="stats-input">
+                                        </div>
+                                        <div class="stats-input-group">
+                                            <label>GC</label>
+                                            <input type="number" id="awayGC" placeholder="10" min="0" step="0.1" class="stats-input">
+                                        </div>
+                                    </div>
+                                    <div class="stats-extra">
+                                        <div class="stats-input-group">
+                                            <label>Promedio Liga</label>
+                                            <input type="number" id="leagueAvg" placeholder="1.10" min="0.5" max="2.0" step="0.01" value="1.10" class="stats-input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="scan-button">
+                            <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                            </svg>
+                            Escanear
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <section class="results-section">
+                <div class="results-header">
+                    <h2 class="results-title">Resultados</h2>
+                    <span id="resultsCount" class="results-count">0 partidos</span>
+                </div>
+                <div id="results" class="results-grid"></div>
+
+                <div id="loading" class="loading-state hidden">
+                    <div class="loading-spinner">
+                        <svg class="spinner" viewBox="0 0 50 50">
+                            <circle class="spinner-circle" cx="25" cy="25" r="20" fill="none" stroke-width="4"/>
+                        </svg>
+                    </div>
+                    <p class="loading-text">Escaneando partido...</p>
+                </div>
+
+                <div id="emptyState" class="empty-state">
+                    <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        <line x1="11" y1="8" x2="11" y2="14"/>
+                        <line x1="8" y1="11" x2="14" y2="11"/>
+                    </svg>
+                    <h3 class="empty-title">No hay partidos escaneados</h3>
+                    <p class="empty-description">Ingresa los IDs y presiona "Escanear" para comenzar</p>
+                </div>
+            </section>
+        </main>
+
+        <div id="detailModal" class="modal-overlay hidden">
+            <div class="modal-container">
+                <div class="modal-header">
+                    <div class="modal-title-group">
+                        <h3 id="modalTitle" class="modal-title">Detalles del Partido</h3>
+                        <span id="modalSubtitle" class="modal-subtitle">ID: -</span>
+                    </div>
+                    <button id="closeModal" class="modal-close">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="modal-tabs" id="modalTabs">
+                    <button class="modal-tab active" data-tab="surebets">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                        </svg>
+                        Surebets <span id="tabSurebetsCount" class="tab-count">0</span>
+                    </button>
+                    <button class="modal-tab" data-tab="valuebets">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        Valuebets <span id="tabValuebetsCount" class="tab-count">0</span>
+                    </button>
+                    <button class="modal-tab" data-tab="stats">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="20" x2="18" y2="10"/>
+                            <line x1="12" y1="20" x2="12" y2="4"/>
+                            <line x1="6" y1="20" x2="6" y2="14"/>
+                        </svg>
+                        Estadísticas
+                    </button>
+                </div>
+
+                <div id="modalBody" class="modal-body">
+                </div>
+
+                <div class="modal-footer">
+                    <button id="modalRefresh" class="modal-btn modal-btn-primary">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="23 4 23 10 17 10"/>
+                            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                        </svg>
+                        Actualizar
+                    </button>
+                    <button id="modalDelete" class="modal-btn modal-btn-danger">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        </svg>
+                        Eliminar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

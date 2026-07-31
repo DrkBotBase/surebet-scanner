@@ -1,0 +1,19 @@
+{
+  "name": "surebet-scanner",
+  "version": "1.0.0",
+  "description": "Scanner de surebets entre 1xBet y BetPlay",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "nodemon backend/server.js"
+  },
+  "dependencies": {
+    "axios": "^1.13.2",
+    "ejs": "^5.0.1",
+    "express": "^5.2.1",
+    "node-cache": "^5.1.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
