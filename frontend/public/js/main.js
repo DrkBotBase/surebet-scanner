@@ -608,7 +608,35 @@ function getStatsFromForm() {
     return null;
 }
 
+let scanAttempts = 0;
+let lastScanTime = 0;
+let isRateLimited = false;
+let rateLimitResetTime = null;
+
 async function scanMatch(idXbet, idKambi, stats = null) {
+    if (isRateLimited && rateLimitResetTime) {
+        const now = Date.now();
+        if (now < rateLimitResetTime) {
+            const remainingSeconds = Math.ceil((rateLimitResetTime - now) / 1000);
+            const status = document.getElementById('status');
+            status.textContent = `⏳ API bloqueada. Espera ${remainingSeconds}s...`;
+            status.className = 'text-sm text-yellow-400';
+            
+            await new Promise(resolve => setTimeout(resolve, remainingSeconds * 1000 + 1000));
+            isRateLimited = false;
+            rateLimitResetTime = null;
+        } else {
+            isRateLimited = false;
+            rateLimitResetTime = null;
+        }
+    }
+
+    const now = Date.now();
+    const timeSinceLastScan = now - lastScanTime;
+    if (timeSinceLastScan < 2000) {
+        await new Promise(resolve => setTimeout(resolve, 2000 - timeSinceLastScan));
+    }
+    
     state.loading = true;
     renderResults();
 
@@ -618,11 +646,39 @@ async function scanMatch(idXbet, idKambi, stats = null) {
             payload.stats = stats;
         }
 
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 45000);
+
         const response = await fetch('/api/scan', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            body: JSON.stringify(payload),
+            signal: controller.signal
         });
+
+        clearTimeout(timeoutId);
+
+        if (response.status === 429) {
+            const errorData = await response.json();
+            const retryAfter = parseInt(response.headers.get('Retry-After')) || 60;
+            
+            isRateLimited = true;
+            rateLimitResetTime = Date.now() + (retryAfter * 1000);
+            
+            const status = document.getElementById('status');
+            status.textContent = `⏳ ${errorData.error || 'Demasiadas peticiones'}. Espera ${retryAfter}s...`;
+            status.className = 'text-sm text-yellow-400';
+            
+            showNotification(
+                '⏳ Límite de peticiones alcanzado',
+                `Las APIs externas tienen un límite. Espera ${retryAfter} segundos antes de intentar de nuevo.`,
+                'warning'
+            );
+            
+            state.loading = false;
+            renderResults();
+            return;
+        }
 
         if (!response.ok) {
             const error = await response.json();
@@ -639,6 +695,10 @@ async function scanMatch(idXbet, idKambi, stats = null) {
             state.results[existingIndex] = result;
         } else {
             state.results.unshift(result);
+            
+            if (state.results.length > 20) {
+                state.results = state.results.slice(0, 20);
+            }
         }
         
         saveToStorage();
@@ -647,6 +707,16 @@ async function scanMatch(idXbet, idKambi, stats = null) {
         const status = document.getElementById('status');
         status.textContent = existingIndex !== -1 ? '🔄 Partido actualizado' : '✅ Partido escaneado';
         status.className = 'text-sm text-green-400';
+        scanAttempts = 0;
+        isRateLimited = false;
+        rateLimitResetTime = null;
+
+        if (result.totalSurebets > 0 || result.totalValuebets > 0) {
+            let msg = '🎯 ';
+            if (result.totalSurebets > 0) msg += `${result.totalSurebets} surebets `;
+            if (result.totalValuebets > 0) msg += `📈 ${result.totalValuebets} valuebets`;
+            showNotification('¡Oportunidades encontradas!', msg, 'success');
+        }
 
         if (existingIndex === -1) {
             document.querySelectorAll('.stats-input').forEach(input => input.value = '');
@@ -654,15 +724,126 @@ async function scanMatch(idXbet, idKambi, stats = null) {
 
     } catch (error) {
         console.error('Error:', error);
+        
+        let mensaje = error.message;
+        let tipo = 'error';
+        
+        if (error.name === 'AbortError') {
+            mensaje = '⏱️ Tiempo de espera agotado. El servidor tardó demasiado.';
+            tipo = 'timeout';
+        } else if (error.message.includes('429') || error.message.includes('Too Many')) {
+            mensaje = '⏳ Demasiadas peticiones. Espera un momento.';
+            tipo = 'rate-limit';
+        } else if (error.message.includes('NetworkError') || error.message.includes('Failed to fetch')) {
+            mensaje = '🔌 Error de conexión. Verifica tu internet.';
+            tipo = 'network';
+        } else if (error.message.includes('504') || error.message.includes('Gateway')) {
+            mensaje = '⏱️ Tiempo de espera agotado. Intenta nuevamente.';
+            tipo = 'timeout';
+        }
+        
         const status = document.getElementById('status');
-        status.textContent = '❌ ' + error.message;
-        status.className = 'text-sm text-red-400';
-        alert('Error: ' + error.message);
+        status.textContent = '❌ ' + mensaje;
+        status.className = `text-sm text-red-400`;
+        
+        if (tipo === 'timeout' || tipo === 'network') {
+            scanAttempts++;
+            if (scanAttempts < 3) {
+                const waitTime = scanAttempts * 3000;
+                status.textContent = `🔄 Reintentando en ${waitTime/1000}s... (${scanAttempts}/3)`;
+                status.className = 'text-sm text-yellow-400';
+                await new Promise(resolve => setTimeout(resolve, waitTime));
+                return scanMatch(idXbet, idKambi, stats);
+            }
+        }
+        
+        showNotification('❌ Error', mensaje, 'error');
+        
     } finally {
         state.loading = false;
+        lastScanTime = Date.now();
         renderResults();
     }
 }
+
+function showNotification(title, message, type = 'info') {
+    const existing = document.querySelector('.notification-container');
+    if (existing) existing.remove();
+    
+    const container = document.createElement('div');
+    container.className = 'notification-container';
+    container.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        max-width: 380px;
+        z-index: 9999;
+        animation: slideIn 0.3s ease;
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        padding: 16px 20px;
+        box-shadow: var(--shadow-modal);
+        transition: var(--transition);
+    `;
+    
+    const colors = {
+        success: { border: 'var(--accent-green)', icon: '✅' },
+        warning: { border: 'var(--accent-yellow)', icon: '⚠️' },
+        error: { border: 'var(--accent-red)', icon: '❌' },
+        info: { border: 'var(--accent-blue)', icon: 'ℹ️' }
+    };
+    
+    const color = colors[type] || colors.info;
+    container.style.borderLeft = `4px solid ${color.border}`;
+    
+    container.innerHTML = `
+        <div style="display: flex; align-items: flex-start; gap: 12px;">
+            <span style="font-size: 20px;">${color.icon}</span>
+            <div style="flex: 1;">
+                <div style="font-weight: 600; font-size: 14px; color: var(--text-primary);">${title}</div>
+                <div style="font-size: 13px; color: var(--text-secondary); margin-top: 2px;">${message}</div>
+            </div>
+            <button onclick="this.parentElement.parentElement.remove()" style="
+                background: none;
+                border: none;
+                color: var(--text-tertiary);
+                cursor: pointer;
+                font-size: 18px;
+                padding: 0 4px;
+            ">✕</button>
+        </div>
+    `;
+    
+    document.body.appendChild(container);
+    
+    setTimeout(() => {
+        if (container.parentElement) {
+            container.style.opacity = '0';
+            container.style.transform = 'translateX(100px)';
+            setTimeout(() => container.remove(), 300);
+        }
+    }, 6000);
+}
+
+const notificationStyles = document.createElement('style');
+notificationStyles.textContent = `
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateX(100px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    .notification-container {
+        backdrop-filter: blur(8px);
+    }
+`;
+document.head.appendChild(notificationStyles);
 
 async function clearCache() {
     try {
