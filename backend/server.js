@@ -28,12 +28,61 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '../frontend/views'));
 
 app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.static(path.join(__dirname, '../frontend/public')));
 
 app.use('/api', apiRoutes);
 
 app.get('/', (req, res) => {
-    res.render('index');
+    res.render('landing');
+});
+app.get('/arbs', (req, res) => {
+    res.render('arbs');
+});
+app.get('/analyze', (req, res) => {
+    res.render('calc', { data: null, error: null, lastUrl: '', oddsOver: '', oddsBtts: '' });
+});
+const { parsearFlashscoreMobi } = require('./services/scraper');
+const { calcularProbabilidades } = require('./services/quantEngineV2');
+app.post('/analyze', async (req, res) => {
+    const { url, leagueAvg, oddsOver, oddsBtts } = req.body;
+
+    if (!url || !url.includes('flashscore')) {
+        return res.render('calc', { 
+            data: null, 
+            error: 'Por favor ingresa una URL válida de Flashscore Mobi', 
+            lastUrl: url, oddsOver, oddsBtts 
+        });
+    }
+
+    const scrapedData = await parsearFlashscoreMobi(url);
+
+    if (!scrapedData) {
+        return res.render('calc', { 
+            data: null, 
+            error: 'No se pudieron extraer los datos del enlace enviado', 
+            lastUrl: url, oddsOver, oddsBtts 
+        });
+    }
+
+    const quantResults = calcularProbabilidades({
+        ...scrapedData,
+        leagueAvg: parseFloat(leagueAvg) || 1.10,
+        oddsOver: parseFloat(oddsOver) || null,
+        oddsBtts: parseFloat(oddsBtts) || null
+    });
+
+    res.render('calc', {
+        data: {
+            ...scrapedData,
+            ...quantResults,
+            leagueAvg: parseFloat(leagueAvg) || 1.10,
+            manualOddsOver: oddsOver,
+            manualOddsBtts: oddsBtts
+        },
+        error: null,
+        lastUrl: url
+    });
 });
 
 app.get('/ping', (req, res) => {

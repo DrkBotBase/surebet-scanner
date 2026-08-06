@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { background-color: #0a1e33; color: #f8fafc; font-family: system-ui, sans-serif; }
+        .neo-card {
+            background: #0a1e33;
+            box-shadow: 8px 8px 16px #050f1a, -8px -8px 16px #0f2d4c;
+            border-radius: 1rem;
+        }
+        .neo-input {
+            background: #071524;
+            box-shadow: inset 3px 3px 6px #030a12, inset -3px -3px 6px #0b2036;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-6 min-h-screen">
+    <div class="max-w-md mx-auto space-y-5">
+        <header class="flex items-center justify-between pb-3 border-b border-slate-800">
+            <div class="flex items-center gap-2">
+                <i data-lucide="cpu" class="text-blue-500 w-5 h-5"></i>
+                <h1 class="text-lg font-bold text-white">Calc<span class="text-blue-500">Odds</span></h1>
+            </div>
+            <a href="/analyze" class="text-[10px] px-2 py-0.5 rounded-full bg-blue-950 text-blue-400 border border-blue-800">
+                <i data-lucide="refresh-ccw" class="text-white-500 w-5 h-5"></i>
+            </a>
+        </header>
+
+        <div class="neo-card p-4 space-y-4">
+            <form action="/analyze" method="POST" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">URL de Flashscore Mobi (H2H)</label>
+                    <input type="url" name="url" value="<%= lastUrl %>" placeholder="https://www.flashscore.mobi/match/rgl8UA3k/?t=h2h" required class="neo-input w-full p-2.5 text-xs text-white rounded-lg focus:outline-none">
+                </div>
+
+                <div class="space-y-1 pt-1">
+                    <label class="block text-[11px] font-semibold text-emerald-400 uppercase">Cuotas Adicionales EV+ (Opcional)</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <span class="text-[10px] text-slate-400 block mb-0.5">Cuota Over 2.5</span>
+                            <input type="number" step="0.01" name="oddsOver" value="<%= data ? data.manualOddsOver : '' %>" placeholder="Ej: 3.34" class="neo-input w-full p-2 text-center text-xs text-emerald-400 rounded-lg focus:outline-none">
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-400 block mb-0.5">Cuota BTTS Sí</span>
+                            <input type="number" step="0.01" name="oddsBtts" value="<%= data ? data.manualOddsBtts : '' %>" placeholder="Ej: 3.76" class="neo-input w-full p-2 text-center text-xs text-emerald-400 rounded-lg focus:outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between pt-1">
+                    <label class="text-xs text-slate-400">Promedio Liga (xG por equipo):</label>
+                    <input type="number" step="0.01" name="leagueAvg" value="<%= data ? data.leagueAvg : '1.10' %>" class="neo-input w-20 p-1.5 text-center text-xs text-white rounded">
+                </div>
+
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold p-2.5 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5">
+                    <i data-lucide="zap" class="w-4 h-4"></i>
+                    Analizar Partido & EV+
+                </button>
+            </form>
+        </div>
+
+        <% if (error) { %>
+            <div class="p-3 bg-rose-950/40 border border-rose-800/60 rounded-xl text-rose-400 text-xs flex items-center gap-2">
+                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                <span><%= error %></span>
+            </div>
+        <% } %>
+
+        <% if (data) { %>
+            <div class="space-y-4">
+                <div class="neo-card p-4 space-y-3">
+                    <div class="flex justify-between items-center text-sm font-bold text-white px-1 gap-2">
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                            <span class="text-blue-400"><%= data.homeTeam %></span>
+                            <span class="text-[10px] bg-slate-800 border border-slate-700 px-1.5 py-0.5 rounded text-slate-300 font-mono">
+                                <%= data.homeGF %>:<%= data.homeGC %>
+                            </span>
+                        </div>
+
+                        <span class="text-[10px] text-slate-500 shrink-0">VS</span>
+
+                        <div class="flex items-center gap-1.5 flex-wrap justify-end">
+                            <span class="text-[10px] bg-slate-800 border border-slate-700 px-1.5 py-0.5 rounded text-slate-300 font-mono">
+                                <%= data.awayGF %>:<%= data.awayGC %>
+                            </span>
+                            <span class="text-blue-400"><%= data.awayTeam %></span>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center bg-slate-900/80 p-2.5 rounded-xl border border-slate-800 text-center">
+                        <div>
+                            <p class="text-[10px] text-slate-400">xG Local</p>
+                            <p class="text-base font-bold text-blue-400"><%= data.xgHome %></p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-slate-400">xG Combinado</p>
+                            <p class="text-xs font-semibold text-slate-300"><%= data.xgTotal %></p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-slate-400">xG Visitante</p>
+                            <p class="text-base font-bold text-blue-400"><%= data.xgAway %></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="neo-card p-4 space-y-2">
+                    <h3 class="text-xs font-semibold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+                        <i data-lucide="target" class="w-3.5 h-3.5"></i> Top 5 Marcadores Exactos
+                    </h3>
+                    <div class="grid grid-cols-5 gap-1.5">
+                        <% data.topScores.forEach((s, index) => { %>
+                            <div class="p-2 rounded-xl text-center space-y-0.5 <%= index === 0 ? 'border border-amber-500/80 bg-amber-950/30 text-amber-300' : 'neo-input text-slate-300' %>">
+                                <p class="text-xs font-extrabold"><%= s.score %></p>
+                                <p class="text-[10px] opacity-80"><%= s.prob %></p>
+                            </div>
+                        <% }) %>
+                    </div>
+                </div>
+
+                <div class="neo-card p-4 space-y-2">
+                    <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Mercados Principales & EV+</h3>
+                    <div class="space-y-2">
+                        <% data.mercados.forEach(item => { %>
+                            <% 
+                                let evBadge = '';
+                                let borderStyle = 'border-slate-800 bg-slate-900/40';
+                                if (item.ev !== null) {
+                                    if (parseFloat(item.ev) > 0) {
+                                        evBadge = `<span class="text-[10px] bg-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded border border-emerald-500/30">EV+ ${item.ev}%</span>`;
+                                        borderStyle = 'border-emerald-500/50 bg-emerald-950/20';
+                                    } else {
+                                        evBadge = `<span class="text-[10px] bg-rose-500/20 text-rose-400 font-medium px-2 py-0.5 rounded border border-rose-500/30">Sin Valor (${item.ev}%)</span>`;
+                                    }
+                                }
+                            %>
+                            <div class="flex items-center justify-between p-3 border <%= borderStyle %> rounded-xl text-xs">
+                                <span class="text-slate-300 font-medium"><%= item.label %></span>
+                                <div class="flex items-center gap-2">
+                                    <%- evBadge %>
+                                    <span class="font-bold text-white text-sm"><%= item.prob %>%</span>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+    </div>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
