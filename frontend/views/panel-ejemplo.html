@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Panel Deportivo · Admin</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome 6 (gratis) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* pequeños ajustes para mejor legibilidad en móvil */
+    .modal-overlay { backdrop-filter: blur(2px); }
+    .tab-active { border-bottom-width: 3px; }
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    input, select, textarea { font-size: 16px !important; } /* evitar zoom en iOS */
+    .card { transition: all 0.1s ease; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased">
+
+  <!-- ========== HEADER ========== -->
+  <header class="bg-white shadow-sm sticky top-0 z-20 border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-3 py-2 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <i class="fas fa-futbol text-indigo-600 text-xl"></i>
+        <h1 class="text-lg font-bold text-gray-700">Admin Deportivo</h1>
+      </div>
+      <div class="flex items-center gap-3 text-sm">
+        <span class="hidden sm:inline text-gray-500"><i class="far fa-calendar-alt mr-1"></i>06.08.2026</span>
+        <button class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-medium"><i class="fas fa-user-circle mr-1"></i>Admin</button>
+      </div>
+    </div>
+    <!-- menú pestañas -->
+    <nav class="max-w-7xl mx-auto px-3 flex gap-1 overflow-x-auto scrollbar-hide border-t border-gray-100">
+      <button data-tab="noticias" class="tab-btn py-2 px-3 text-xs font-medium text-gray-600 border-b-2 border-transparent hover:text-indigo-600 whitespace-nowrap active"><i class="fas fa-newspaper mr-1"></i>Noticias</button>
+      <button data-tab="surebets" class="tab-btn py-2 px-3 text-xs font-medium text-gray-600 border-b-2 border-transparent hover:text-indigo-600 whitespace-nowrap"><i class="fas fa-percent mr-1"></i>Surebets</button>
+      <button data-tab="pronosticos" class="tab-btn py-2 px-3 text-xs font-medium text-gray-600 border-b-2 border-transparent hover:text-indigo-600 whitespace-nowrap"><i class="fas fa-chart-line mr-1"></i>Pronósticos</button>
+      <button data-tab="tablagoles" class="tab-btn py-2 px-3 text-xs font-medium text-gray-600 border-b-2 border-transparent hover:text-indigo-600 whitespace-nowrap"><i class="fas fa-futbol mr-1"></i>Tabla Goles</button>
+    </nav>
+  </header>
+
+  <!-- ========== CONTENIDO PRINCIPAL ========== -->
+  <main class="max-w-7xl mx-auto px-3 py-4 pb-20">
+
+    <!-- ===== SECCIÓN NOTICIAS ===== -->
+    <section id="section-noticias" class="tab-content">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-lg font-semibold flex items-center gap-2"><i class="fas fa-newspaper text-indigo-500"></i>Noticias</h2>
+        <button id="btnCrearNoticia" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm px-4 py-1.5 rounded-lg shadow flex items-center gap-1"><i class="fas fa-plus-circle"></i> Crear</button>
+      </div>
+      <!-- contenedor lista / tabla -->
+      <div id="noticias-list"></div>
+    </section>
+
+    <!-- ===== SECCIÓN SUREBETS ===== -->
+    <section id="section-surebets" class="tab-content hidden">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-lg font-semibold flex items-center gap-2"><i class="fas fa-percent text-green-500"></i>Surebets</h2>
+        <button id="btnCrearSurebet" class="bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-1.5 rounded-lg shadow flex items-center gap-1"><i class="fas fa-plus-circle"></i> Crear</button>
+      </div>
+      <div id="surebets-list"></div>
+    </section>
+
+    <!-- ===== SECCIÓN PRONÓSTICOS ===== -->
+    <section id="section-pronosticos" class="tab-content hidden">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-lg font-semibold flex items-center gap-2"><i class="fas fa-chart-line text-blue-500"></i>Pronósticos</h2>
+        <button id="btnCrearPronostico" class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-1.5 rounded-lg shadow flex items-center gap-1"><i class="fas fa-plus-circle"></i> Crear</button>
+      </div>
+      <div id="pronosticos-list"></div>
+    </section>
+
+    <!-- ===== SECCIÓN TABLA DE GOLES ===== -->
+    <section id="section-tablagoles" class="tab-content hidden">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-lg font-semibold flex items-center gap-2"><i class="fas fa-futbol text-red-500"></i>Tabla de Goles</h2>
+        <button id="btnCrearTablaGoles" class="bg-red-600 hover:bg-red-700 text-white text-sm px-4 py-1.5 rounded-lg shadow flex items-center gap-1"><i class="fas fa-plus-circle"></i> Crear</button>
+      </div>
+      <div id="tablagoles-list"></div>
+    </section>
+
+  </main>
+
+  <!-- ========== MODAL REUTILIZABLE ========== -->
+  <div id="modalOverlay" class="fixed inset-0 bg-black/40 modal-overlay flex items-center justify-center z-50 hidden p-3">
+    <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl max-h-[95vh] overflow-y-auto">
+      <div class="sticky top-0 bg-white z-10 px-5 py-3 border-b border-gray-200 flex items-center justify-between rounded-t-2xl">
+        <h3 id="modalTitle" class="text-base font-semibold text-gray-800">Crear</h3>
+        <button id="modalClose" class="text-gray-400 hover:text-gray-600 text-xl">&times;</button>
+      </div>
+      <div class="p-5">
+        <form id="modalForm" class="space-y-4">
+          <!-- campos dinámicos se inyectan aquí -->
+          <div id="modalFields"></div>
+          <!-- botones -->
+          <div class="flex justify-end gap-2 pt-2">
+            <button type="button" id="modalCancel" class="px-4 py-2 text-sm border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50">Cancelar</button>
+            <button type="submit" id="modalSubmit" class="px-5 py-2 text-sm bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow flex items-center gap-1"><i class="fas fa-save"></i> Guardar</button>
+          </div>
+        </form>
+        <!-- para surebets: mostrar cálculo en tiempo real -->
+        <div id="surebetCalculo" class="mt-3 text-sm bg-gray-50 p-3 rounded-lg hidden"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SCRIPTS ========== -->
+  <script>
+    // ============================================================
+    // 1. MOCK API (simula backend con fetch y almacenamiento en memoria)
+    // ============================================================
+    const DB = {
+      noticias: [],
+      surebets: [],
+      pronosticos: [],
+      tablagoles: [],
+    };
+
+    // IDs autoincrementales
+    let idCounter = 1;
+
+    function generarId() { return idCounter++; }
+
+    // Funciones mock que devuelven promesas como si fueran fetch
+    const api = {
+      // Noticias
+      getNoticias: () => Promise.resolve([...DB.noticias]),
+      crearNoticia: (data) => {
+        const nueva = { id: generarId(), ...data, fecha: new Date().toISOString() };
+        DB.noticias.push(nueva);
+        return Promise.resolve(nueva);
+      },
+      editarNoticia: (id, data) => {
+        const idx = DB.noticias.findIndex(n => n.id === id);
+        if (idx === -1) return Promise.reject('No encontrado');
+        DB.noticias[idx] = { ...DB.noticias[idx], ...data };
+        return Promise.resolve(DB.noticias[idx]);
+      },
+      eliminarNoticia: (id) => {
+        DB.noticias = DB.noticias.filter(n => n.id !== id);
+        return Promise.resolve({ success: true });
+      },
+
+      // Surebets
+      getSurebets: () => Promise.resolve([...DB.surebets]),
+      crearSurebet: (data) => {
+        const nueva = { id: generarId(), ...data, fecha: new Date().toISOString() };
+        DB.surebets.push(nueva);
+        return Promise.resolve(nueva);
+      },
+      editarSurebet: (id, data) => {
+        const idx = DB.surebets.findIndex(s => s.id === id);
+        if (idx === -1) return Promise.reject('No encontrado');
+        DB.surebets[idx] = { ...DB.surebets[idx], ...data };
+        return Promise.resolve(DB.surebets[idx]);
+      },
+      eliminarSurebet: (id) => {
+        DB.surebets = DB.surebets.filter(s => s.id !== id);
+        return Promise.resolve({ success: true });
+      },
+
+      // Pronósticos
+      getPronosticos: () => Promise.resolve([...DB.pronosticos]),
+      crearPronostico: (data) => {
+        const nueva = { id: generarId(), ...data, estado: 'pendiente', fecha: new Date().toISOString() };
+        DB.pronosticos.push(nueva);
+        return Promise.resolve(nueva);
+      },
+      editarPronostico: (id, data) => {
+        const idx = DB.pronosticos.findIndex(p => p.id === id);
+        if (idx === -1) return Promise.reject('No encontrado');
+        DB.pronosticos[idx] = { ...DB.pronosticos[idx], ...data };
+        return Promise.resolve(DB.pronosticos[idx]);
+      },
+      eliminarPronostico: (id) => {
+        DB.pronosticos = DB.pronosticos.filter(p => p.id !== id);
+        return Promise.resolve({ success: true });
+      },
+      togglePronosticoEstado: (id, estado) => {
+        const idx = DB.pronosticos.findIndex(p => p.id === id);
+        if (idx === -1) return Promise.reject('No encontrado');
+        DB.pronosticos[idx].estado = estado;
+        return Promise.resolve(DB.pronosticos[idx]);
+      },
+
+      // Tabla Goles
+      getTablaGoles: () => Promise.resolve([...DB.tablagoles]),
+      crearTablaGoles: (data) => {
+        const nueva = { id: generarId(), ...data, estado: 'pendiente', fecha: new Date().toISOString() };
+        DB.tablagoles.push(nueva);
+        return Promise.resolve(nueva);
+      },
+      editarTablaGoles: (id, data) => {
+        const idx = DB.tablagoles.findIndex(t => t.id === id);
+        if (idx === -1) return Promise.reject('No encontrado');
+        DB.tablagoles[idx] = { ...DB.tablagoles[idx], ...data };
+        return Promise.resolve(DB.tablagoles[idx]);
+      },
+      eliminarTablaGoles: (id) => {
+        DB.tablagoles = DB.tablagoles.filter(t => t.id !== id);
+        return Promise.resolve({ success: true });
+      },
+      toggleTablaGolesEstado: (id, estado) => {
+        const idx = DB.tablagoles.findIndex(t => t.id === id);
+        if (idx === -1) return Promise.reject('No encontrado');
+        DB.tablagoles[idx].estado = estado;
+        return Promise.resolve(DB.tablagoles[idx]);
+      }
+    };
+
+    // ============================================================
+    // 2. UTILIDADES DE RENDERIZADO
+    // ============================================================
+    function renderEmptyState(container, mensaje, btnId) {
+      container.innerHTML = `
+        <div class="bg-white rounded-xl shadow p-6 text-center border border-dashed border-gray-300">
+          <p class="text-gray-500 text-sm mb-3">${mensaje}</p>
+          <button id="${btnId}" class="bg-indigo-100 text-indigo-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-200 transition"><i class="fas fa-plus mr-1"></i>Crear</button>
+        </div>
+      `;
+    }
+
+    function renderTablaNoticias(lista, container) {
+      if (!lista.length) {
+        renderEmptyState(container, 'No hay noticias creadas.', 'btnEmptyCrearNoticia');
+        document.getElementById('btnEmptyCrearNoticia')?.addEventListener('click', () => abrirModal('noticias', 'crear'));
+        return;
+      }
+      let html = `
+        <div class="bg-white rounded-xl shadow overflow-hidden">
+          <div class="table-wrap">
+            <table class="w-full text-sm">
+              <thead class="bg-gray-50 border-b">
+                <tr><th class="px-3 py-2 text-left">Título</th><th class="px-3 py-2 text-left hidden sm:table-cell">Descripción</th><th class="px-3 py-2 text-center">Imagen</th><th class="px-3 py-2 text-right">Acciones</th></tr>
+              </thead>
+              <tbody>
+      `;
+      lista.forEach(n => {
+        html += `
+          <tr class="border-b last:border-0 hover:bg-gray-50">
+            <td class="px-3 py-2 font-medium">${escapaHTML(n.titulo)}</td>
+            <td class="px-3 py-2 text-gray-600 hidden sm:table-cell max-w-xs truncate">${escapaHTML(n.descripcion)}</td>
+            <td class="px-3 py-2 text-center">
+              ${n.imagen ? `<img src="${n.imagen}" alt="img" class="h-8 w-8 rounded object-cover mx-auto" />` : '<span class="text-gray-300 text-xs">sin imagen</span>'}
+            </td>
+            <td class="px-3 py-2 text-right whitespace-nowrap">
+              <button data-id="${n.id}" data-accion="editar" class="text-indigo-600 hover:text-indigo-800 mx-1"><i class="fas fa-edit"></i></button>
+              <button data-id="${n.id}" data-accion="eliminar" class="text-red-500 hover:text-red-700 mx-1"><i class="fas fa-trash-alt"></i></button>
+            </td>
+          </tr>
+        `;
+      });
+      html += `</tbody></table></div></div>`;
+      container.innerHTML = html;
+      // eventos botones
+      container.querySelectorAll('[data-accion="editar"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = parseInt(btn.dataset.id);
+          const item = DB.noticias.find(n => n.id === id);
+          if (item) abrirModal('noticias', 'editar', item);
+        });
+      });
+      container.querySelectorAll('[data-accion="eliminar"]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = parseInt(btn.dataset.id);
+          if (confirm('¿Eliminar esta noticia?')) {
+            await api.eliminarNoticia(id);
+            cargarNoticias();
+          }
+        });
+      });
+    }
+
+    function renderTablaSurebets(lista, container) {
+      if (!lista.length) {
+        renderEmptyState(container, 'No hay surebets creadas.', 'btnEmptyCrearSurebet');
+        document.getElementById('btnEmptyCrearSurebet')?.addEventListener('click', () => abrirModal('surebets', 'crear'));
+        return;
+      }
+      let html = `
+        <div class="bg-white rounded-xl shadow overflow-hidden">
+          <div class="table-wrap">
+            <table class="w-full text-sm">
+              <thead class="bg-gray-50 border-b">
+                <tr><th class="px-2 py-2 text-left">Encuentro</th><th class="px-2 py-2 text-left hidden sm:table-cell">Mercado</th><th class="px-2 py-2 text-center">%</th><th class="px-2 py-2 text-right">Acciones</th></tr>
+              </thead>
+              <tbody>
+      `;
+      lista.forEach(s => {
+        const pct = s.porcentaje ? s.porcentaje.toFixed(2) : '—';
+        html += `
+          <tr class="border-b last:border-0 hover:bg-gray-50">
+            <td class="px-2 py-2 font-medium">${escapaHTML(s.encuentro)} <span class="text-xs text-gray-400 block">${s.hora || ''}</span></td>
+            <td class="px-2 py-2 text-gray-600 hidden sm:table-cell">${escapaHTML(s.mercado)} - ${escapaHTML(s.linea)}</td>
+            <td class="px-2 py-2 text-center font-mono ${pct < 100 ? 'text-green-600' : 'text-red-500'}">${pct}%</td>
+            <td class="px-2 py-2 text-right whitespace-nowrap">
+              <button data-id="${s.id}" data-accion="editar" class="text-indigo-600 hover:text-indigo-800 mx-1"><i class="fas fa-edit"></i></button>
+              <button data-id="${s.id}" data-accion="eliminar" class="text-red-500 hover:text-red-700 mx-1"><i class="fas fa-trash-alt"></i></button>
+            </td>
+          </tr>
+        `;
+      });
+      html += `</tbody></table></div></div>`;
+      container.innerHTML = html;
+      container.querySelectorAll('[data-accion="editar"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = parseInt(btn.dataset.id);
+          const item = DB.surebets.find(s => s.id === id);
+          if (item) abrirModal('surebets', 'editar', item);
+        });
+      });
+      container.querySelectorAll('[data-accion="eliminar"]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = parseInt(btn.dataset.id);
+          if (confirm('¿Eliminar esta surebet?')) {
+            await api.eliminarSurebet(id);
+            cargarSurebets();
+          }
+        });
+      });
+    }
+
+    function renderTablaPronosticos(lista, container) {
+      if (!lista.length) {
+        renderEmptyState(container, 'No hay pronósticos.', 'btnEmptyCrearPronostico');
+        document.getElementById('btnEmptyCrearPronostico')?.addEventListener('click', () => abrirModal('pronosticos', 'crear'));
+        return;
+      }
+      let html = `
+        <div class="bg-white rounded-xl shadow overflow-hidden">
+          <div class="table-wrap">
+            <table class="w-full text-sm">
+              <thead class="bg-gray-50 border-b">
+                <tr><th class="px-2 py-2 text-left">Encuentro</th><th class="px-2 py-2 text-left hidden sm:table-cell">Pronóstico</th><th class="px-2 py-2 text-center">Estado</th><th class="px-2 py-2 text-right">Acciones</th></tr>
+              </thead>
+              <tbody>
+      `;
+      lista.forEach(p => {
+        const estado = p.estado || 'pendiente';
+        let badge = '';
+        if (estado === 'ganado') badge = '<span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs">Ganado</span>';
+        else if (estado === 'perdido') badge = '<span class="bg-red-100 text-red-700 px-2 py-0.5 rounded-full text-xs">Perdido</span>';
+        else badge = '<span class="bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full text-xs">Pendiente</span>';
+        html += `
+          <tr class="border-b last:border-0 hover:bg-gray-50">
+            <td class="px-2 py-2 font-medium">${escapaHTML(p.encuentro)} <span class="text-xs text-gray-400 block">${p.hora || ''}</span></td>
+            <td class="px-2 py-2 text-gray-600 hidden sm:table-cell">${escapaHTML(p.pronostico)} <span class="text-xs text-gray-400">${p.casa} ${p.cuota}</span></td>
+            <td class="px-2 py-2 text-center">${badge}</td>
+            <td class="px-2 py-2 text-right whitespace-nowrap">
+              <button data-id="${p.id}" data-accion="check" class="text-green-600 hover:text-green-800 mx-1"><i class="fas fa-check-circle"></i></button>
+              <button data-id="${p.id}" data-accion="cross" class="text-red-500 hover:text-red-700 mx-1"><i class="fas fa-times-circle"></i></button>
+              <button data-id="${p.id}" data-accion="editar" class="text-indigo-600 hover:text-indigo-800 mx-1"><i class="fas fa-edit"></i></button>
+              <button data-id="${p.id}" data-accion="eliminar" class="text-red-500 hover:text-red-700 mx-1"><i class="fas fa-trash-alt"></i></button>
+            </td>
+          </tr>
+        `;
+      });
+      html += `</tbody></table></div></div>`;
+      container.innerHTML = html;
+      container.querySelectorAll('[data-accion="check"]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = parseInt(btn.dataset.id);
+          await api.togglePronosticoEstado(id, 'ganado');
+          cargarPronosticos();
+        });
+      });
+      container.querySelectorAll('[data-accion="cross"]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = parseInt(btn.dataset.id);
+          await api.togglePronosticoEstado(id, 'perdido');
+          cargarPronosticos();
+        });
+      });
+      container.querySelectorAll('[data-accion="editar"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = parseInt(btn.dataset.id);
+          const item = DB.pronosticos.find(p => p.id === id);
+          if (item) abrirModal('pronosticos', 'editar', item);
+        });
+      });
+      container.querySelectorAll('[data-accion="eliminar"]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = parseInt(btn.dataset.id);
+          if (confirm('¿Eliminar este pronóstico?')) {
+            await api.eliminarPronostico(id);
+            cargarPronosticos();
+          }
+        });
+      });
+    }
+
+    function renderTablaTablaGoles(lista, container) {
+      if (!lista.length) {
+        renderEmptyState(container, 'No hay predicciones de goles.', 'btnEmptyCrearTablaGoles');
+        document.getElementById('btnEmptyCrearTablaGoles')?.addEventListener('click', () => abrirModal('tablagoles', 'crear'));
+        return;
+      }
+      let html = `
+        <div class="bg-white rounded-xl shadow overflow-hidden">
+          <div class="table-wrap">
+            <table class="w-full text-sm">
+              <thead class="bg-gray-50 border-b">
+                <tr><th class="px-2 py-2 text-left">Liga / Encuentro</th><th class="px-2 py-2 text-left hidden sm:table-cell">Pronóstico</th><th class="px-2 py-2 text-center">Estado</th><th class="px-2 py-2 text-right">Acciones</th></tr>
+              </thead>
+              <tbody>
+      `;
+      lista.forEach(t => {
+        const estado = t.estado || 'pendiente';
+        let badge = '';
+        if (estado === 'ganado') badge = '<span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs">Ganado</span>';
+        else if (estado === 'perdido') badge = '<span class="bg-red-100 text-red-700 px-2 py-0.5 rounded-full text-xs">Perdido</span>';
+        else badge = '<span class="bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full text-xs">Pendiente</span>';
+        html += `
+          <tr class="border-b last:border-0 hover:bg-gray-50">
+            <td class="px-2 py-2 font-medium">
+              <span class="text-xs text-gray-400 block">${escapaHTML(t.liga)}</span>
+              ${escapaHTML(t.encuentro)} <span class="text-xs text-gray-400">${t.hora || ''}</span>
+            </td>
+            <td class="px-2 py-2 text-gray-600 hidden sm:table-cell">${escapaHTML(t.pronostico)} <span class="text-xs text-gray-400">${t.casa} ${t.cuota}</span></td>
+            <td class="px-2 py-2 text-center">${badge}</td>
+            <td class="px-2 py-2 text-right whitespace-nowrap">
+              <button data-id="${t.id}" data-accion="check" class="text-green-600 hover:text-green-800 mx-1"><i class="fas fa-check-circle"></i></button>
+              <button data-id="${t.id}" data-accion="cross" class="text-red-500 hover:text-red-700 mx-1"><i class="fas fa-times-circle"></i></button>
+              <button data-id="${t.id}" data-accion="editar" class="text-indigo-600 hover:text-indigo-800 mx-1"><i class="fas fa-edit"></i></button>
+              <button data-id="${t.id}" data-accion="eliminar" class="text-red-500 hover:text-red-700 mx-1"><i class="fas fa-trash-alt"></i></button>
+            </td>
+          </tr>
+        `;
+      });
+      html += `</tbody></table></div></div>`;
+      container.innerHTML = html;
+      container.querySelectorAll('[data-accion="check"]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = parseInt(btn.dataset.id);
+          await api.toggleTablaGolesEstado(id, 'ganado');
+          cargarTablaGoles();
+        });
+      });
+      container.querySelectorAll('[data-accion="cross"]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = parseInt(btn.dataset.id);
+          await api.toggleTablaGolesEstado(id, 'perdido');
+          cargarTablaGoles();
+        });
+      });
+      container.querySelectorAll('[data-accion="editar"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = parseInt(btn.dataset.id);
+          const item = DB.tablagoles.find(t => t.id === id);
+          if (item) abrirModal('tablagoles', 'editar', item);
+        });
+      });
+      container.querySelectorAll('[data-accion="eliminar"]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = parseInt(btn.dataset.id);
+          if (confirm('¿Eliminar esta predicción?')) {
+            await api.eliminarTablaGoles(id);
+            cargarTablaGoles();
+          }
+        });
+      });
+    }
+
+    // ============================================================
+    // 3. MODAL DINÁMICO
+    // ============================================================
+    let currentSection = '';
+    let currentAction = '';
+    let editId = null;
+
+    function escapaHTML(str) {
+      if (!str) return '';
+      return str.replace(/[&<>"]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        if (m === '"') return '&quot;';
+        return m;
+      });
+    }
+
+    function abrirModal(section, action, data = null) {
+      currentSection = section;
+      currentAction = action;
+      editId = data ? data.id : null;
+
+      const overlay = document.getElementById('modalOverlay');
+      const title = document.getElementById('modalTitle');
+      const fields = document.getElementById('modalFields');
+      const submitBtn = document.getElementById('modalSubmit');
+      const calculoDiv = document.getElementById('surebetCalculo');
+
+      // Reset
+      fields.innerHTML = '';
+      calculoDiv.classList.add('hidden');
+      calculoDiv.innerHTML = '';
+
+      if (section === 'noticias') {
+        title.textContent = action === 'crear' ? 'Nueva Noticia' : 'Editar Noticia';
+        fields.innerHTML = `
+          <div><label class="block text-xs font-medium text-gray-600">Título</label><input id="f_titulo" type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" value="${data ? escapaHTML(data.titulo) : ''}" required /></div>
+          <div><label class="block text-xs font-medium text-gray-600">Descripción</label><textarea id="f_descripcion" rows="3" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">${data ? escapaHTML(data.descripcion) : ''}</textarea></div>
+          <div><label class="block text-xs font-medium text-gray-600">Imagen (URL o subida)</label>
+            <div class="flex gap-2 items-center">
+              <input id="f_imagen" type="text" class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="http://..." value="${data ? escapaHTML(data.imagen) : ''}" />
+              <label class="bg-gray-200 px-3 py-2 rounded-lg text-sm cursor-pointer hover:bg-gray-300"><i class="fas fa-upload"></i> Subir</label>
+              <input type="file" id="f_imagen_file" accept="image/*" class="hidden" />
+            </div>
+          </div>
+          <div><label class="block text-xs font-medium text-gray-600">Tag</label><input id="f_tag" type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="ej. fútbol" value="${data ? escapaHTML(data.tag) : ''}" /></div>
+        `;
+        // Lógica de subida de imagen (simulada con FileReader)
+        const fileInput = document.getElementById('f_imagen_file');
+        const urlInput = document.getElementById('f_imagen');
+        fileInput.addEventListener('change', function(e) {
+          const file = this.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+              urlInput.value = ev.target.result; // data URL simulada
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+        submitBtn.textContent = 'Guardar Noticia';
+
+      } else if (section === 'surebets') {
+        title.textContent = action === 'crear' ? 'Nueva Surebet' : 'Editar Surebet';
+        fields.innerHTML = `
+          <div><label class="block text-xs font-medium text-gray-600">Encuentro</label><input id="f_encuentro" type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" value="${data ? escapaHTML(data.encuentro) : ''}" required /></div>
+          <div><label class="block text-xs font-medium text-gray-600">Hora</label><input id="f_hora" type="time" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" value="${data ? data.hora || '' : ''}" /></div>
+          <div><label class="block text-xs font-medium text-gray-600">Mercado</label><input id="f_mercado" type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="ej. Corners" value="${data ? escapaHTML(data.mercado) : ''}" /></div>
+          <div><label class="block text-xs font-medium text-gray-600">Línea</label><input id="f_linea" type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="ej. +2.5" value="${data ? escapaHTML(data.linea) : ''}" /></div>
+          <div class="grid grid-cols-2 gap-3">
+            <div><label class="block text-xs font-medium text-gray-600">Casa 1</label><input id="f_casa1" type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" value="${data ? escapaHTML(data.casa1) : ''}" /></div>
+            <div><label class="block text-xs font-medium text-gray-600">Cuota 1</label><input id="f_cuota1" type="number" step="0.01" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" value="${data ? data.cuota1 : ''}" /></div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div><label class="block text-xs font-medium text-gray-600">Casa 2</label><input id="f_casa2" type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" value="${data ? escapaHTML(data.casa2) : ''}" /></div>
+            <div><label class="block text-xs font-medium text-gray-600">Cuota 2</label><input id="f_cuota2" type="number" step="0.01" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" value="${data ? data.cuota2 : ''}" /></div>
+          </div>
+        `;
+        // Cálculo en tiempo real
+        const c1 = document.getElementById('f_cuota1');
+        const c2 = document.getElementById('f_cuota2');
+        const calcDiv = document.getElementById('surebetCalculo');
+        function calcSurebet() {
+          const v1 = parseFloat(c1.value);
+          const v2 = parseFloat(c2.value);
+          if (v1 > 0 && v2 > 0) {
+            const pct = (1/v1 + 1/v2) * 100;
+            const stake1 = ((1/v1) / (1/v1 + 1/v2) * 100).toFixed(2);
+            const stake2 = ((1/v2) / (1/v1 + 1/v2) * 100).toFixed(2);
+            calcDiv.classList.remove('hidden');
+            calcDiv.innerHTML = `
+              <div class="flex justify-between items-center">
+                <span><strong>% Surebet:</strong> <span class="${pct < 100 ? 'text-green-600' : 'text-red-500'}">${pct.toFixed(2)}%</span></span>
+                <span><strong>Stake:</strong> ${stake1}% / ${stake2}%</span>
+              </div>
+              <p class="text-xs text-gray-500 mt-1">${pct < 100 ? '✅ Surebet encontrada' : '❌ No hay surebet (supera 100%)'}</p>
+            `;
+          } else {
+            calcDiv.classList.add('hidden');
+          }
+        }
+        c1.addEventListener('input', calcSurebet);
+        c2.addEventListener('input', calcSurebet);
+        // Si hay datos iniciales, forzar cálculo
+        if (data && data.cuota1 && data.cuota2) {
+          setTimeout(calcSurebet, 100);
+        }
+        submitBtn.textContent = 'Guardar Surebet';
+
+      } else if (section === 'pronosticos') {
+        title.textContent = action === 'crear' ? 'Nuevo Pronóstico' : 'Editar Pronóstico';
+        fields.innerHTML = `
+          <div><label class="block text-xs font-medium text-gray-600">Encuentro</label><input id="f_encuentro" type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" value="${data ? escapaHTML(data.encuentro) : ''}" required /></div>
+          <div><label class="block text-xs font-medium text-gray-600">Hora</label><input id="f_hora" type="time" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" value="${data ? data.hora || '' : ''}" /></div>
+          <div><label class="block text-xs font-medium text-gray-600">Pronóstico</label><input id="f_pronostico" type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="ej. Over 2.5" value="${data ? escapaHTML(data.pronostico) : ''}" /></div>
+          <div><label class="block text-xs font-medium text-gray-600">Casa</label><input id="f_casa" type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" value="${data ? escapaHTML(data.casa) : ''}" /></div>
+          <div><label class="block text-xs font-medium text-gray-600">Cuota</label><input id="f_cuota" type="number" step="0.01" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" value="${data ? data.cuota : ''}" /></div>
+        `;
+        submitBtn.textContent = 'Guardar Pronóstico';
+
+      } else if (section === 'tablagoles') {
+        title.textContent = action === 'crear' ? 'Nueva Predicción Goles' : 'Editar Predicción Goles';
+        fields.innerHTML = `
+          <div><label class="block text-xs font-medium text-gray-600">Liga</label><input id="f_liga" type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="ej. LaLiga" value="${data ? escapaHTML(data.liga) : ''}" required /></div>
+          <div><label class="block text-xs font-medium text-gray-600">Encuentro</label><input id="f_encuentro" type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" value="${data ? escapaHTML(data.encuentro) : ''}" required /></div>
+          <div><label class="block text-xs font-medium text-gray-600">Hora</label><input id="f_hora" type="time" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" value="${data ? data.hora || '' : ''}" /></div>
+          <div><label class="block text-xs font-medium text-gray-600">Pronóstico</label><input id="f_pronostico" type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="ej. Over 2.5" value="${data ? escapaHTML(data.pronostico) : ''}" /></div>
+          <div><label class="block text-xs font-medium text-gray-600">Casa</label><input id="f_casa" type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" value="${data ? escapaHTML(data.casa) : ''}" /></div>
+          <div><label class="block text-xs font-medium text-gray-600">Cuota</label><input id="f_cuota" type="number" step="0.01" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" value="${data ? data.cuota : ''}" /></div>
+        `;
+        submitBtn.textContent = 'Guardar Predicción';
+      }
+
+      // Mostrar modal
+      overlay.classList.remove('hidden');
+      // Evento submit
+      const form = document.getElementById('modalForm');
+      form.onsubmit = async (e) => {
+        e.preventDefault();
+        await guardarModal();
+      };
+    }
+
+    async function guardarModal() {
+      const section = currentSection;
+      const action = currentAction;
+      const id = editId;
+
+      let data = {};
+      if (section === 'noticias') {
+        data.titulo = document.getElementById('f_titulo').value.trim();
+        data.descripcion = document.getElementById('f_descripcion').value.trim();
+        data.imagen = document.getElementById('f_imagen').value.trim();
+        data.tag = document.getElementById('f_tag').value.trim();
+        if (!data.titulo) return alert('El título es obligatorio');
+        try {
+          if (action === 'crear') await api.crearNoticia(data);
+          else await api.editarNoticia(id, data);
+          cerrarModal();
+          cargarNoticias();
+        } catch (err) { alert('Error: '+err); }
+      } else if (section === 'surebets') {
+        data.encuentro = document.getElementById('f_encuentro').value.trim();
+        data.hora = document.getElementById('f_hora').value;
+        data.mercado = document.getElementById('f_mercado').value.trim();
+        data.linea = document.getElementById('f_linea').value.trim();
+        data.casa1 = document.getElementById('f_casa1').value.trim();
+        data.cuota1 = parseFloat(document.getElementById('f_cuota1').value);
+        data.casa2 = document.getElementById('f_casa2').value.trim();
+        data.cuota2 = parseFloat(document.getElementById('f_cuota2').value);
+        if (!data.encuentro) return alert('Encuentro obligatorio');
+        if (!data.cuota1 || !data.cuota2 || data.cuota1 <= 0 || data.cuota2 <= 0) return alert('Cuotas válidas requeridas');
+        // calcular porcentaje y stake
+        const pct = (1/data.cuota1 + 1/data.cuota2) * 100;
+        data.porcentaje = pct;
+        data.stake1 = ((1/data.cuota1) / (1/data.cuota1 + 1/data.cuota2) * 100);
+        data.stake2 = ((1/data.cuota2) / (1/data.cuota1 + 1/data.cuota2) * 100);
+        try {
+          if (action === 'crear') await api.crearSurebet(data);
+          else await api.editarSurebet(id, data);
+          cerrarModal();
+          cargarSurebets();
+        } catch (err) { alert('Error: '+err); }
+      } else if (section === 'pronosticos') {
+        data.encuentro = document.getElementById('f_encuentro').value.trim();
+        data.hora = document.getElementById('f_hora').value;
+        data.pronostico = document.getElementById('f_pronostico').value.trim();
+        data.casa = document.getElementById('f_casa').value.trim();
+        data.cuota = parseFloat(document.getElementById('f_cuota').value);
+        if (!data.encuentro) return alert('Encuentro obligatorio');
+        try {
+          if (action === 'crear') await api.crearPronostico(data);
+          else await api.editarPronostico(id, data);
+          cerrarModal();
+          cargarPronosticos();
+        } catch (err) { alert('Error: '+err); }
+      } else if (section === 'tablagoles') {
+        data.liga = document.getElementById('f_liga').value.trim();
+        data.encuentro = document.getElementById('f_encuentro').value.trim();
+        data.hora = document.getElementById('f_hora').value;
+        data.pronostico = document.getElementById('f_pronostico').value.trim();
+        data.casa = document.getElementById('f_casa').value.trim();
+        data.cuota = parseFloat(document.getElementById('f_cuota').value);
+        if (!data.liga || !data.encuentro) return alert('Liga y Encuentro obligatorios');
+        try {
+          if (action === 'crear') await api.crearTablaGoles(data);
+          else await api.editarTablaGoles(id, data);
+          cerrarModal();
+          cargarTablaGoles();
+        } catch (err) { alert('Error: '+err); }
+      }
+    }
+
+    function cerrarModal() {
+      document.getElementById('modalOverlay').classList.add('hidden');
+      document.getElementById('modalForm').onsubmit = null;
+    }
+
+    // Eventos para cerrar modal
+    document.getElementById('modalClose').addEventListener('click', cerrarModal);
+    document.getElementById('modalCancel').addEventListener('click', cerrarModal);
+    document.getElementById('modalOverlay').addEventListener('click', function(e) {
+      if (e.target === this) cerrarModal();
+    });
+
+    // ============================================================
+    // 4. CARGA DE DATOS Y NAVEGACIÓN
+    // ============================================================
+    async function cargarNoticias() {
+      const lista = await api.getNoticias();
+      const container = document.getElementById('noticias-list');
+      renderTablaNoticias(lista, container);
+    }
+    async function cargarSurebets() {
+      const lista = await api.getSurebets();
+      const container = document.getElementById('surebets-list');
+      renderTablaSurebets(lista, container);
+    }
+    async function cargarPronosticos() {
+      const lista = await api.getPronosticos();
+      const container = document.getElementById('pronosticos-list');
+      renderTablaPronosticos(lista, container);
+    }
+    async function cargarTablaGoles() {
+      const lista = await api.getTablaGoles();
+      const container = document.getElementById('tablagoles-list');
+      renderTablaTablaGoles(lista, container);
+    }
+
+    // Navegación tabs
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('tab-active', 'border-indigo-500', 'text-indigo-600'));
+        this.classList.add('tab-active', 'border-indigo-500', 'text-indigo-600');
+        const tab = this.dataset.tab;
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+        document.getElementById('section-' + tab).classList.remove('hidden');
+        // Cargar datos según tab
+        if (tab === 'noticias') cargarNoticias();
+        else if (tab === 'surebets') cargarSurebets();
+        else if (tab === 'pronosticos') cargarPronosticos();
+        else if (tab === 'tablagoles') cargarTablaGoles();
+      });
+    });
+
+    // Activar primera pestaña por defecto
+    document.querySelector('.tab-btn').click();
+
+    // Botones de crear (fuera de empty state)
+    document.getElementById('btnCrearNoticia').addEventListener('click', () => abrirModal('noticias', 'crear'));
+    document.getElementById('btnCrearSurebet').addEventListener('click', () => abrirModal('surebets', 'crear'));
+    document.getElementById('btnCrearPronostico').addEventListener('click', () => abrirModal('pronosticos', 'crear'));
+    document.getElementById('btnCrearTablaGoles').addEventListener('click', () => abrirModal('tablagoles', 'crear'));
+
+    // ============================================================
+    // 5. DATOS DE EJEMPLO PARA DEMOSTRAR (comentar si se quiere empezar vacío)
+    // ============================================================
+    (function seedData() {
+      // Noticias
+      if (!DB.noticias.length) {
+        DB.noticias.push({
+          id: generarId(),
+          titulo: 'Mohamed Salah ficha por Trabzonspor',
+          descripcion: 'El delantero egipcio de 34 años firma por dos temporadas con el club turco.',
+          imagen: 'https://placehold.co/100x100/indigo/white?text=Salah',
+          tag: 'fichajes',
+          fecha: new Date().toISOString()
+        });
+      }
+      // Surebet
+      if (!DB.surebets.length) {
+        DB.surebets.push({
+          id: generarId(),
+          encuentro: 'Real Madrid vs Barcelona',
+          hora: '21:00',
+          mercado: 'Corners',
+          linea: 'Total +9.5',
+          casa1: 'Bet365',
+          cuota1: 1.85,
+          casa2: 'William Hill',
+          cuota2: 2.10,
+          porcentaje: (1/1.85 + 1/2.10)*100,
+          stake1: ((1/1.85)/(1/1.85+1/2.10)*100),
+          stake2: ((1/2.10)/(1/1.85+1/2.10)*100),
+          fecha: new Date().toISOString()
+        });
+      }
+      // Pronóstico
+      if (!DB.pronosticos.length) {
+        DB.pronosticos.push({
+          id: generarId(),
+          encuentro: 'Liverpool vs Arsenal',
+          hora: '18:30',
+          pronostico: 'Over 2.5',
+          casa: 'Betfair',
+          cuota: 1.75,
+          estado: 'pendiente',
+          fecha: new Date().toISOString()
+        });
+      }
+      // Tabla Goles
+      if (!DB.tablagoles.length) {
+        DB.tablagoles.push({
+          id: generarId(),
+          liga: 'Premier League',
+          encuentro: 'Chelsea vs Tottenham',
+          hora: '16:00',
+          pronostico: 'Ambos marcan',
+          casa: 'Pinnacle',
+          cuota: 1.90,
+          estado: 'ganado',
+          fecha: new Date().toISOString()
+        });
+      }
+    })();
+
+    // Recargar todas al inicio
+    setTimeout(() => {
+      cargarNoticias();
+      cargarSurebets();
+      cargarPronosticos();
+      cargarTablaGoles();
+    }, 100);
+
+    console.log('Panel administración deportivo cargado. Datos en memoria (mock).');
+    console.log('Para usar backend real, reemplazar funciones api por fetch a endpoints reales.');
+  </script>
+
+</body>
+</html>

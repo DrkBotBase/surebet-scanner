@@ -412,7 +412,7 @@ function renderStatsTab(body, result) {
                     </div>
                 </div>
             </div>
-
+            
             <!-- Over/Under Múltiples Líneas -->
 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px;">
     <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 12px 16px;">

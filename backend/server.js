@@ -1,10 +1,22 @@
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const http = require('http');
+const session = require('express-session');
 const apiRoutes = require('./routes/api');
+const adminRoutes = require('./routes/admin');
+const connectDB = require('./db');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+connectDB();
+
+app.use(session({
+    secret: 'secret-key-super-segura',
+    resave: false,
+    saveUninitialized: false
+}));
 
 const server = http.createServer(app);
 const MAX_CONNECTIONS = 100;
@@ -32,9 +44,30 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.static(path.join(__dirname, '../frontend/public')));
 
 app.use('/api', apiRoutes);
+app.use('/admin', adminRoutes);
 
-app.get('/', (req, res) => {
-    res.render('landing');
+const News = require('./models/News');
+const Prediction = require('./models/Prediction');
+const Surebet = require('./models/Surebet');
+const GoalTable = require('./models/GoalTable');
+
+const moment = require('moment-timezone');
+// ...
+app.get('/', async (req, res) => {
+    try {
+        const yesterday = moment().tz("America/Bogota").subtract(1, 'days').startOf('day').toDate();
+
+        const [news, surebets, predictions, goalTables] = await Promise.all([
+            News.find().sort({ createdAt: -1 }).limit(3),
+            Surebet.find({ eventDate: { $gte: yesterday } }).sort({ eventDate: 1 }).limit(6),
+            Prediction.find({ eventDate: { $gte: yesterday } }).sort({ eventDate: 1 }).limit(6),
+            GoalTable.find({ eventDate: { $gte: yesterday } }).sort({ eventDate: 1 }).limit(10)
+        ]);
+        res.render('landing', { news, surebets, predictions, goalTables });
+    } catch (error) {
+        console.error('Error al cargar datos:', error);
+        res.render('landing', { news: [], surebets: [], predictions: [], goalTables: [] });
+    }
 });
 app.get('/arbs', (req, res) => {
     res.render('arbs');

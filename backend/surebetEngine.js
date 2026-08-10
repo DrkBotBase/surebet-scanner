@@ -10,6 +10,7 @@ function extraerDatos1xBet(json1xBet) {
         cornersLocalTotal: {},
         cornersVisitanteTotal: {},
         doCorners: {},
+        shotsOnGoalTotal: {},
         shotsOnGoalHome: {},
         shotsOnGoalAway: {}
     };
@@ -227,6 +228,27 @@ function extraerDatos1xBet(json1xBet) {
                 subGame.eventGroups.forEach(group => {
                     const groupId = group.groupId;
 
+                    // --- SHOTS ON GOAL TOTAL ---
+                    if (groupId === 17) {
+                        const eventosOver = group.events[0] || [];
+                        const eventosUnder = group.events[1] || [];
+
+                        eventosOver.forEach(e => {
+                            if (e.type === 9 && e.parameter !== undefined) {
+                                const linea = e.parameter.toString();
+                                if (!dataNormalizada.shotsOnGoalTotal[linea]) dataNormalizada.shotsOnGoalTotal[linea] = {};
+                                dataNormalizada.shotsOnGoalTotal[linea].mas = e.cf;
+                            }
+                        });
+                        eventosUnder.forEach(e => {
+                            if (e.type === 10 && e.parameter !== undefined) {
+                                const linea = e.parameter.toString();
+                                if (!dataNormalizada.shotsOnGoalTotal[linea]) dataNormalizada.shotsOnGoalTotal[linea] = {};
+                                dataNormalizada.shotsOnGoalTotal[linea].menos = e.cf;
+                            }
+                        });
+                    }
+                    
                     // --- SHOTS ON GOAL LOCAL ---
                     if (groupId === 15) {
                         const eventosOver = group.events[0] || [];
@@ -292,6 +314,7 @@ function extraerDatosKambi(jsonKambi) {
         cornersLocalTotal: {},
         cornersVisitanteTotal: {},
         doCorners: {},
+        shotsOnGoalTotal: {},
         shotsOnGoalHome: {},
         shotsOnGoalAway: {}
     };
@@ -485,6 +508,35 @@ function extraerDatosKambi(jsonKambi) {
                     if (o.type === "OT_ONE_OR_CROSS") dataNormalizada.doCorners["1X"] = o.odds / 1000;
                     if (o.type === "OT_ONE_OR_TWO") dataNormalizada.doCorners["12"] = o.odds / 1000;
                     if (o.type === "OT_CROSS_OR_TWO") dataNormalizada.doCorners["X2"] = o.odds / 1000;
+                }
+            });
+        }
+
+        // --- TIROS A PUERTA TOTAL ---
+        if (mercado === "Total de tiros a puerta (Resuelta usando Opta Data)" || 
+            mercado === "Total de tiros a puerta" ||
+            mercado === "Total Shots on Target") {
+            
+            if (!dataNormalizada.shotsOnGoalTotal) {
+                dataNormalizada.shotsOnGoalTotal = {};
+            }
+            
+            offer.outcomes.forEach(o => {
+                if (!o.odds) return;
+                
+                let linea = (o.line / 1000).toString();
+                if (linea.endsWith('.0')) {
+                    linea = linea.replace('.0', '');
+                }
+                
+                if (!dataNormalizada.shotsOnGoalTotal[linea]) {
+                    dataNormalizada.shotsOnGoalTotal[linea] = {};
+                }
+                
+                if (o.type === "OT_OVER") {
+                    dataNormalizada.shotsOnGoalTotal[linea].mas = o.odds / 1000;
+                } else if (o.type === "OT_UNDER") {
+                    dataNormalizada.shotsOnGoalTotal[linea].menos = o.odds / 1000;
                 }
             });
         }
@@ -1165,6 +1217,67 @@ function detectarSurebets(datos1xBet, datosKambi) {
                     surebets.push(formatearSurebet(
                         "Under vs Over",
                         "Tiros a Puerta Local",
+                        linea,
+                        "1xBet",
+                        under1,
+                        "BetPlay",
+                        overK,
+                        result.beneficio,
+                        result.apuesta1,
+                        result.apuesta2,
+                        `-${linea} (${redondear(under1)})`,
+                        `+${linea} (${redondear(overK)})`
+                    ));
+                }
+            }
+        });
+    }
+    
+    // ============================================================
+    // TIROS A PUERTA TOTAL (SHOTS ON GOAL TOTAL)
+    // ============================================================
+    const shotsOnGoalTotal1xBet = datos1xBet.shotsOnGoalTotal || {};
+    const shotsOnGoalTotalKambi = datosKambi.shotsOnGoalTotal || {};
+    
+    if (Object.keys(shotsOnGoalTotal1xBet).length > 0 && Object.keys(shotsOnGoalTotalKambi).length > 0) {
+        const lineas1xBet = Object.keys(shotsOnGoalTotal1xBet);
+        const lineasKambi = Object.keys(shotsOnGoalTotalKambi);
+        const lineasComunes = lineas1xBet.filter(linea => lineasKambi.includes(linea));
+        
+        lineasComunes.forEach(linea => {
+            const over1 = shotsOnGoalTotal1xBet[linea]?.mas;
+            const under1 = shotsOnGoalTotal1xBet[linea]?.menos;
+            const overK = shotsOnGoalTotalKambi[linea]?.mas;
+            const underK = shotsOnGoalTotalKambi[linea]?.menos;
+            
+            // Over en 1xBet vs Under en Kambi
+            if (over1 && underK) {
+                const result = calcularSurebet(over1, underK);
+                if (result && result.beneficio > 0) {
+                    surebets.push(formatearSurebet(
+                        "Over vs Under",
+                        "Tiros a Puerta Total",
+                        linea,
+                        "1xBet",
+                        over1,
+                        "BetPlay",
+                        underK,
+                        result.beneficio,
+                        result.apuesta1,
+                        result.apuesta2,
+                        `+${linea} (${redondear(over1)})`,
+                        `-${linea} (${redondear(underK)})`
+                    ));
+                }
+            }
+            
+            // Under en 1xBet vs Over en Kambi
+            if (under1 && overK) {
+                const result = calcularSurebet(under1, overK);
+                if (result && result.beneficio > 0) {
+                    surebets.push(formatearSurebet(
+                        "Under vs Over",
+                        "Tiros a Puerta Total",
                         linea,
                         "1xBet",
                         under1,

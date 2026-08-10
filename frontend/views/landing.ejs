@@ -286,100 +286,40 @@
             </div>
 
             <!-- Grid de Noticias -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Noticia -->
-                <article class="bg-mejv-card-dark rounded-2xl overflow-hidden border border-slate-800 hover:border-mejv-blue transition-all duration-300 hover:-translate-y-1 flex flex-col group shadow-lg">
-                    <div class="relative h-48 overflow-hidden">
-                        <img src="https://livesport-ott-images.ssl.cdn.cra.cz/r1200xfq60/59269a8b-3df0-4411-ab22-14b19d386809.avif" alt="Lo Último" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                        <span class="absolute top-3 left-3 bg-mejv-black/90 backdrop-blur-md text-mejv-lime text-xs px-2.5 py-1 rounded-md font-bold font-display">Lo Último</span>
-                    </div>
-                    <div class="p-5 flex-1 flex flex-col justify-between">
-                        <div>
-                            <span class="text-slate-400 text-xs flex items-center gap-1 mb-2">
-                                <i class="fa-regular fa-clock"></i> 06.08.2026
-                            </span>
-                            <h3 class="font-display text-lg font-bold text-mejv-white group-hover:text-mejv-lime transition-colors leading-snug mb-2">
-                                Mohamed Salah firma por dos temporadas con el Trabzonspor turco
-                            </h3>
-                            <p class="text-slate-400 text-sm line-clamp-3">
-                                El contrastado delantero egipcio Mohamed Salah (34) firmó este jueves por dos temporadas con el Trabzonspor turco, después de haber completado nueve exitosas temporadas en el Liverpool.
-                            </p>
+            <% if (news.length === 0) { %>
+                <div class="bg-mejv-card-dark border border-slate-800 rounded-2xl p-8 text-center">
+                    <i class="fa-solid fa-newspaper text-slate-600 text-4xl mb-4"></i>
+                    <h3 class="text-mejv-white font-display font-bold text-lg mb-2">No hay noticias disponibles</h3>
+                    <p class="text-slate-400 text-sm">Pronto tendremos nuevas actualizaciones.</p>
+                </div>
+            <% } else { %>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <% news.forEach(item => { %>
+                    <article class="bg-mejv-card-dark rounded-2xl overflow-hidden border border-slate-800 hover:border-mejv-blue transition-all duration-300 hover:-translate-y-1 flex flex-col group shadow-lg">
+                        <div class="relative h-48 overflow-hidden">
+                            <img src="<%= item.imageUrl %>" alt="<%= item.title %>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <span class="absolute top-3 left-3 bg-mejv-black/90 backdrop-blur-md text-mejv-lime text-xs px-2.5 py-1 rounded-md font-bold font-display"><%= item.category %></span>
                         </div>
-                        <button onclick="openNewsModal('Mohamed Salah firma por dos temporadas', 'El contrastado delantero egipcio Mohamed Salah (34) firmó este jueves por dos temporadas con el Trabzonspor turco, después de haber completado nueve exitosas temporadas en el Liverpool.')" class="mt-4 text-mejv-lime font-display font-semibold text-sm flex items-center gap-1 hover:gap-2 transition-all">
-                            Ver más <i class="fa-solid fa-arrow-right text-xs"></i>
-                        </button>
-                    </div>
-                </article>
-                <!-- Noticia -->
-                <article class="bg-mejv-card-dark rounded-2xl overflow-hidden border border-slate-800 hover:border-mejv-blue transition-all duration-300 hover:-translate-y-1 flex flex-col group shadow-lg">
-                    <div class="relative h-48 overflow-hidden">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTv1uSiqHL8v9CbXsqApDzPUPYla3ojSK4cdBVJJwfR1Y70Ilhw-rjjtYiq&s=10" alt="Fútbol Europeo" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                        <span class="absolute top-3 left-3 bg-mejv-black/90 backdrop-blur-md text-mejv-lime text-xs px-2.5 py-1 rounded-md font-bold font-display">Champions League</span>
-                    </div>
-                    <div class="p-5 flex-1 flex flex-col justify-between">
-                        <div>
-                            <span class="text-slate-400 text-xs flex items-center gap-1 mb-2">
-                                <i class="fa-regular fa-clock"></i> 06.08.2026
-                            </span>
-                            <h3 class="font-display text-lg font-bold text-mejv-white group-hover:text-mejv-lime transition-colors leading-snug mb-2">
-                                Rijeka se prepara para el duelo clave de clasificación frente al Ilves
-                            </h3>
-                            <p class="text-slate-400 text-sm line-clamp-3">
-                                El equipo croata llega con ventaja en ataque pero muestra vulnerabilidad en saques de esquina concedidos. Analizamos los datos clave del encuentro.
-                            </p>
+                        <div class="p-5 flex-1 flex flex-col justify-between">
+                            <div>
+                                <span class="text-slate-400 text-xs flex items-center gap-1 mb-2">
+                                    <i class="fa-regular fa-clock"></i> <%= item.createdAt.toLocaleDateString() %>
+                                </span>
+                                <h3 class="font-display text-lg font-bold text-mejv-white group-hover:text-mejv-lime transition-colors leading-snug mb-2">
+                                    <%= item.title %>
+                                </h3>
+                                <p class="text-slate-400 text-sm line-clamp-3">
+                                    <%= item.body %>
+                                </p>
+                            </div>
+                            <button data-title="<%= item.title %>" data-body="<%= item.body %>" onclick="openNewsModal(this)" class="mt-4 text-mejv-lime font-display font-semibold text-sm flex items-center gap-1 hover:gap-2 transition-all">
+                                Ver más <i class="fa-solid fa-arrow-right text-xs"></i>
+                            </button>
                         </div>
-                        <button onclick="openNewsModal('Rijeka se prepara para el duelo clave', 'El conjunto de Rijeka afronta este compromiso de clasificación europea con plantilla completa. En sus últimos 5 encuentros en casa registra un promedio de 6.4 saques de esquina a favor y solo 2.1 en contra. Ilves, por su parte, tiende a replegarse en campo rival, dejando oportunidades claras en líneas Over de tiros de esquina.')" class="mt-4 text-mejv-lime font-display font-semibold text-sm flex items-center gap-1 hover:gap-2 transition-all">
-                            Ver más <i class="fa-solid fa-arrow-right text-xs"></i>
-                        </button>
-                    </div>
-                </article>
-                <!-- Noticia -->
-                <article class="bg-mejv-card-dark rounded-2xl overflow-hidden border border-slate-800 hover:border-mejv-blue transition-all duration-300 hover:-translate-y-1 flex flex-col group shadow-lg">
-                    <div class="relative h-48 overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1551958219-acbc608c6377?auto=format&fit=crop&w=700&q=80" alt="Estrategia apuestas" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                        <span class="absolute top-3 left-3 bg-mejv-black/90 backdrop-blur-md text-mejv-lime text-xs px-2.5 py-1 rounded-md font-bold font-display">Guía Surebet</span>
-                    </div>
-                    <div class="p-5 flex-1 flex flex-col justify-between">
-                        <div>
-                            <span class="text-slate-400 text-xs flex items-center gap-1 mb-2">
-                                <i class="fa-regular fa-clock"></i> 06.08.2026
-                            </span>
-                            <h3 class="font-display text-lg font-bold text-mejv-white group-hover:text-mejv-lime transition-colors leading-snug mb-2">
-                                ¿Cómo identificar desajustes de cuotas entre Casas de Apuestas?
-                            </h3>
-                            <p class="text-slate-400 text-sm line-clamp-3">
-                                Descubre cómo la variación de líneas en mercados secundarios como corners y tarjetas genera oportunidades de arbitraje sin riesgo.
-                            </p>
-                        </div>
-                        <button onclick="openNewsModal('¿Cómo identificar desajustes de cuotas?', 'El arbitraje deportivo o Surebet aprovecha las discrepancias entre casas como 1xBet, BetPlay y Wplay. Cuando una casa sobrevalora una línea de córners mientras otra mantiene la contraria elevada, el margen implícito genera una ganancia matemática asegurada del 5% al 12%.')" class="mt-4 text-mejv-lime font-display font-semibold text-sm flex items-center gap-1 hover:gap-2 transition-all">
-                            Ver más <i class="fa-solid fa-arrow-right text-xs"></i>
-                        </button>
-                    </div>
-                </article>
-                <!-- Noticia -->
-                <article class="bg-mejv-card-dark rounded-2xl overflow-hidden border border-slate-800 hover:border-mejv-blue transition-all duration-300 hover:-translate-y-1 flex flex-col group shadow-lg sm:col-span-2 lg:col-span-1">
-                    <div class="relative h-48 overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1489944440615-453fc2b6a9a9?auto=format&fit=crop&w=700&q=80" alt="Estadísticas de Goles" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                        <span class="absolute top-3 left-3 bg-mejv-black/90 backdrop-blur-md text-mejv-lime text-xs px-2.5 py-1 rounded-md font-bold font-display">Mercado Goles</span>
-                    </div>
-                    <div class="p-5 flex-1 flex flex-col justify-between">
-                        <div>
-                            <span class="text-slate-400 text-xs flex items-center gap-1 mb-2">
-                                <i class="fa-regular fa-clock"></i> 05.08.2026
-                            </span>
-                            <h3 class="font-display text-lg font-bold text-mejv-white group-hover:text-mejv-lime transition-colors leading-snug mb-2">
-                                Tendencia de marcadores abultados en la jornada internacional
-                            </h3>
-                            <p class="text-slate-400 text-sm line-clamp-3">
-                                Los partidos de pretemporada y eliminatorias están registrando un 34% más de goles en los segundos tiempos.
-                            </p>
-                        </div>
-                        <button onclick="openNewsModal('Tendencia de marcadores abultados', 'Durante el mes de agosto de 2026, las estadísticas revelan un incremento significativo en la línea +2.5 y +3.5 goles. Equipos como Benfica y Ajax lideran los índices de efectividad en jugadas de ataque rápido durante el tramo final del partido.')" class="mt-4 text-mejv-lime font-display font-semibold text-sm flex items-center gap-1 hover:gap-2 transition-all">
-                            Ver más <i class="fa-solid fa-arrow-right text-xs"></i>
-                        </button>
-                    </div>
-                </article>
-            </div>
+                    </article>
+                    <% }) %>
+                </div>
+            <% } %>
         </section>
 
         <!-- SECCIÓN SUREBET -->
@@ -407,73 +347,49 @@
 
                 <!-- Lista de Cards Surebets -->
                 <div class="space-y-4">
+                    <% if (surebets.length === 0) { %>
+                        <div class="bg-mejv-dark/80 border border-slate-800 rounded-2xl p-8 text-center">
+                            <i class="fa-solid fa-shield-halved text-slate-600 text-4xl mb-4"></i>
+                            <h3 class="text-mejv-white font-display font-bold text-lg mb-2">No hay surebets disponibles</h3>
+                            <p class="text-slate-400 text-sm">Estamos analizando nuevos eventos para ti.</p>
+                        </div>
+                    <% } else { %>
+                        <% surebets.forEach(surebet => { %>
+                        <!-- Surebet -->
+                        <div class="bg-mejv-dark/80 border border-slate-800 rounded-2xl p-5 hover:border-mejv-lime/50 transition-all duration-300">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-800/80 gap-2">
+                                <div>
+                                    <h3 class="font-display text-xl font-bold text-mejv-white flex items-center gap-2">
+                                        <i class="fa-solid fa-trophy text-mejv-lime text-sm"></i> <%= surebet.event %>
+                                    </h3>
+                                    <p class="text-slate-400 text-xs mt-0.5">
+                                        📅 <%= surebet.time %>
+                                    </p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="px-3 py-1 bg-mejv-card-dark text-slate-300 text-xs rounded-lg font-medium"><%= surebet.market %></span>
+                                    <span class="px-3 py-1 bg-mejv-lime/20 text-mejv-lime border border-mejv-lime/40 font-extrabold text-xs sm:text-sm rounded-lg font-display">
+                                        Línea: <%= surebet.line %> - <%= surebet.percentage %>%
+                                    </span>
+                                </div>
+                            </div>
 
-                    <!-- Surebet -->
-                    <div class="bg-mejv-dark/80 border border-slate-800 rounded-2xl p-5 hover:border-mejv-lime/50 transition-all duration-300">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-800/80 gap-2">
-                            <div>
-                                <h3 class="font-display text-xl font-bold text-mejv-white flex items-center gap-2">
-                                    <i class="fa-solid fa-trophy text-mejv-lime text-sm"></i> Rijeka vs Ilves
-                                </h3>
-                                <p class="text-slate-400 text-xs mt-0.5">
-                                    📅 06.08.2026 - 13:45
-                                </p>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="px-3 py-1 bg-mejv-card-dark text-slate-300 text-xs rounded-lg font-medium">Corners Visitante</span>
-                                <span class="px-3 py-1 bg-mejv-lime/20 text-mejv-lime border border-mejv-lime/40 font-extrabold text-xs sm:text-sm rounded-lg font-display">
-                                    Línea: 3.5 - 9.49%
-                                </span>
+                            <!-- Comparativa en Formato Tabular / Grid -->
+                            <div class="mt-4 grid grid-cols-2 gap-4 text-center">
+                                <div class="bg-mejv-card-dark p-3 rounded-xl border border-slate-800">
+                                    <div class="text-xs font-bold font-display text-mejv-lime mb-1 uppercase tracking-wider"><%= surebet.bookmaker1 %></div>
+                                    <div class="text-lg font-black text-mejv-white font-display"><%= surebet.line.includes('+') ? '+' : '-' %><%= surebet.line.replace(/[+-]/g, '') %> <span class="text-mejv-lime text-sm font-semibold">(<%= surebet.odds1 %>)</span></div>
+                                    <div class="text-xs text-slate-400 mt-1">Stake: <span class="text-mejv-white font-bold">...</span></div>
+                                </div>
+                                <div class="bg-mejv-card-dark p-3 rounded-xl border border-slate-800">
+                                    <div class="text-xs font-bold font-display text-mejv-lime mb-1 uppercase tracking-wider"><%= surebet.bookmaker2 %></div>
+                                    <div class="text-lg font-black text-mejv-white font-display"><%= surebet.line.includes('+') ? '-' : '+' %><%= surebet.line.replace(/[+-]/g, '') %> <span class="text-mejv-lime text-sm font-semibold">(<%= surebet.odds2 %>)</span></div>
+                                    <div class="text-xs text-slate-400 mt-1">Stake: <span class="text-mejv-white font-bold">...</span></div>
+                                </div>
                             </div>
                         </div>
-
-                        <!-- Comparativa en Formato Tabular / Grid -->
-                        <div class="mt-4 grid grid-cols-2 gap-4 text-center">
-                            <div class="bg-mejv-card-dark p-3 rounded-xl border border-slate-800">
-                                <div class="text-xs font-bold font-display text-mejv-lime mb-1 uppercase tracking-wider">1win</div>
-                                <div class="text-lg font-black text-mejv-white font-display">-3.5 <span class="text-mejv-lime text-sm font-semibold">(2.35)</span></div>
-                                <div class="text-xs text-slate-400 mt-1">Stake: <span class="text-mejv-white font-bold">0.47</span></div>
-                            </div>
-                            <div class="bg-mejv-card-dark p-3 rounded-xl border border-slate-800">
-                                <div class="text-xs font-bold font-display text-mejv-lime mb-1 uppercase tracking-wider">BetPlay</div>
-                                <div class="text-lg font-black text-mejv-white font-display">+3.5 <span class="text-mejv-lime text-sm font-semibold">(2.05)</span></div>
-                                <div class="text-xs text-slate-400 mt-1">Stake: <span class="text-mejv-white font-bold">0.53</span></div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Surebet -->
-                    <div class="bg-mejv-dark/80 border border-slate-800 rounded-2xl p-5 hover:border-mejv-lime/50 transition-all duration-300">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-800/80 gap-2">
-                            <div>
-                                <h3 class="font-display text-xl font-bold text-mejv-white flex items-center gap-2">
-                                    <i class="fa-solid fa-trophy text-mejv-lime text-sm"></i> PAOK Thessaloniki vs Anderlecht
-                                </h3>
-                                <p class="text-slate-400 text-xs mt-0.5">
-                                    📅 06.08.2026 - 12:45
-                                </p>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="px-3 py-1 bg-mejv-card-dark text-slate-300 text-xs rounded-lg font-medium">Corners Visitante</span>
-                                <span class="px-3 py-1 bg-mejv-lime/20 text-mejv-lime border border-mejv-lime/40 font-extrabold text-xs sm:text-sm rounded-lg font-display">
-                                    Línea: 3.5 - 3.23%
-                                </span>
-                            </div>
-                        </div>
-
-                        <!-- Comparativa en Formato Tabular / Grid -->
-                        <div class="mt-4 grid grid-cols-2 gap-4 text-center">
-                            <div class="bg-mejv-card-dark p-3 rounded-xl border border-slate-800">
-                                <div class="text-xs font-bold font-display text-mejv-lime mb-1 uppercase tracking-wider">1xBet</div>
-                                <div class="text-lg font-black text-mejv-white font-display">-3.5 <span class="text-mejv-lime text-sm font-semibold">(2.09)</span></div>
-                                <div class="text-xs text-slate-400 mt-1">Stake: <span class="text-mejv-white font-bold">0.49</span></div>
-                            </div>
-                            <div class="bg-mejv-card-dark p-3 rounded-xl border border-slate-800">
-                                <div class="text-xs font-bold font-display text-mejv-lime mb-1 uppercase tracking-wider">BetPlay</div>
-                                <div class="text-lg font-black text-mejv-white font-display">+3.5 <span class="text-mejv-lime text-sm font-semibold">(2.04)</span></div>
-                                <div class="text-xs text-slate-400 mt-1">Stake: <span class="text-mejv-white font-bold">0.51</span></div>
-                            </div>
-                        </div>
-                    </div>
+                        <% }) %>
+                    <% } %>
                 </div>
             </div>
         </section>
@@ -496,54 +412,46 @@
             </div>
 
             <!-- Tabla de Pronósticos Responsive -->
-            <div class="bg-mejv-card-dark rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
-                <div class="overflow-x-auto custom-scrollbar">
-                    <table class="w-full text-left text-sm text-slate-300 min-w-[700px]">
-                        <thead class="bg-mejv-black text-xs uppercase text-slate-400 border-b border-slate-800 font-display font-bold">
-                            <tr>
-                                <th scope="col" class="py-4 px-4"><i class="fa-regular fa-clock mr-1"></i> Hora</th>
-                                <th scope="col" class="py-4 px-4"><i class="fa-solid fa-futbol mr-1"></i> Encuentro</th>
-                                <th scope="col" class="py-4 px-4"><i class="fa-solid fa-bullseye mr-1"></i> Pronóstico</th>
-                                <th scope="col" class="py-4 px-4"><i class="fa-solid fa-tag mr-1"></i> Cuota</th>
-                                <th scope="col" class="py-4 px-4"><i class="fa-solid fa-building-columns mr-1"></i> Casa</th>
-                                <th scope="col" class="py-4 px-4 text-center"><i class="fa-regular fa-hourglass-half mr-1"></i> Pendiente</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-800/80 font-medium">
-                            <tr class="hover:bg-mejv-dark/60 transition-colors" data-id="rijeka-ilves" data-pendiente="true">
-                                <td class="py-3.5 px-4 text-xs font-mono text-slate-400">06.08.2026 - 13:45</td>
-                                <td class="py-3.5 px-4 font-bold text-mejv-white font-display">Rijeka vs Ilves</td>
-                                <td class="py-3.5 px-4"><span class="px-2.5 py-1 bg-mejv-lime/10 text-mejv-lime border border-mejv-lime/20 rounded-md font-semibold text-xs">BTTS: NO</span></td>
-                                <td class="py-3.5 px-4 font-bold text-mejv-lime font-display">1.53</td>
-                                <td class="py-3.5 px-4"><span class="px-2 py-0.5 bg-mejv-dark text-slate-200 rounded text-xs border border-slate-700">Wplay</span></td>
-                                <td class="py-3.5 px-4 text-center">
-                                    <span class="estado-pendiente text-xl" data-estado="pendiente">⏳</span>
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-mejv-dark/60 transition-colors" data-id="benfica-hearts" data-pendiente="false">
-                                <td class="py-3.5 px-4 text-xs font-mono text-slate-400">06.08.2026 - 14:00</td>
-                                <td class="py-3.5 px-4 font-bold text-mejv-white font-display">Benfica vs Hearts</td>
-                                <td class="py-3.5 px-4"><span class="px-2.5 py-1 bg-mejv-lime/10 text-mejv-lime border border-mejv-lime/20 rounded-md font-semibold text-xs">+3.5 Goles</span></td>
-                                <td class="py-3.5 px-4 font-bold text-mejv-lime font-display">1.71</td>
-                                <td class="py-3.5 px-4"><span class="px-2 py-0.5 bg-mejv-dark text-slate-200 rounded text-xs border border-slate-700">BetPlay</span></td>
-                                <td class="py-3.5 px-4 text-center">
-                                    <span class="estado-pendiente text-xl" data-estado="pendiente">⏳</span>
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-mejv-dark/60 transition-colors" data-id="ajax-shelbourne" data-pendiente="true">
-                                <td class="py-3.5 px-4 text-xs font-mono text-slate-400">06.08.2026 - 15:30</td>
-                                <td class="py-3.5 px-4 font-bold text-mejv-white font-display">Ajax vs Shelbourne</td>
-                                <td class="py-3.5 px-4"><span class="px-2.5 py-1 bg-mejv-lime/10 text-mejv-lime border border-mejv-lime/20 rounded-md font-semibold text-xs">+3.5 Goles</span></td>
-                                <td class="py-3.5 px-4 font-bold text-mejv-lime font-display">1.70</td>
-                                <td class="py-3.5 px-4"><span class="px-2 py-0.5 bg-mejv-dark text-slate-200 rounded text-xs border border-slate-700">Wplay</span></td>
-                                <td class="py-3.5 px-4 text-center">
-                                    <span class="estado-pendiente text-xl" data-estado="pendiente">⏳</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <% if (predictions.length === 0) { %>
+                <div class="bg-mejv-card-dark rounded-2xl border border-slate-800 p-8 text-center">
+                    <i class="fa-solid fa-chart-line text-slate-600 text-4xl mb-4"></i>
+                    <h3 class="text-mejv-white font-display font-bold text-lg mb-2">No hay pronósticos disponibles</h3>
+                    <p class="text-slate-400 text-sm">Estamos analizando los próximos eventos.</p>
                 </div>
-            </div>
+            <% } else { %>
+                <div class="bg-mejv-card-dark rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
+                    <div class="overflow-x-auto custom-scrollbar">
+                        <table class="w-full text-left text-sm text-slate-300 min-w-[700px]">
+                            <thead class="bg-mejv-black text-xs uppercase text-slate-400 border-b border-slate-800 font-display font-bold">
+                                <tr>
+                                    <th scope="col" class="py-4 px-4"><i class="fa-regular fa-clock mr-1"></i> Hora</th>
+                                    <th scope="col" class="py-4 px-4"><i class="fa-solid fa-futbol mr-1"></i> Encuentro</th>
+                                    <th scope="col" class="py-4 px-4"><i class="fa-solid fa-bullseye mr-1"></i> Pronóstico</th>
+                                    <th scope="col" class="py-4 px-4"><i class="fa-solid fa-tag mr-1"></i> Cuota</th>
+                                    <th scope="col" class="py-4 px-4"><i class="fa-solid fa-building-columns mr-1"></i> Casa</th>
+                                    <th scope="col" class="py-4 px-4 text-center"><i class="fa-regular fa-hourglass-half mr-1"></i> Pendiente</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-800/80 font-medium">
+                                <% predictions.forEach(pred => { %>
+                                <tr class="hover:bg-mejv-dark/60 transition-colors" data-id="<%= pred._id %>" data-pendiente="true">
+                                    <td class="py-3.5 px-4 text-xs font-mono text-slate-400"><%= pred.time %></td>
+                                    <td class="py-3.5 px-4 font-bold text-mejv-white font-display"><%= pred.event %></td>
+                                    <td class="py-3.5 px-4"><span class="px-2.5 py-1 bg-mejv-lime/10 text-mejv-lime border border-mejv-lime/20 rounded-md font-semibold text-xs"><%= pred.prediction %></span></td>
+                                    <td class="py-3.5 px-4 font-bold text-mejv-lime font-display"><%= pred.odds %></td>
+                                    <td class="py-3.5 px-4"><span class="px-2 py-0.5 bg-mejv-dark text-slate-200 rounded text-xs border border-slate-700"><%= pred.bookmaker %></span></td>
+                                    <td class="py-3.5 px-4 text-center">
+                                        <span class="estado-pendiente text-xl" data-estado="<%= pred.status %>">
+                                            <% if(pred.status === 'pendiente') { %>⏳<% } else if(pred.status === 'verificado') { %>✅<% } else { %>❌<% } %>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            <% } %>
         </section>
 
         <!-- SECCIÓN CALCULADORA DE GOLES -->
@@ -576,54 +484,44 @@
                     <h3 class="font-display text-lg font-bold text-mejv-white mb-3 flex items-center gap-2">
                         <i class="fa-solid fa-list-ol text-mejv-lime"></i> Ranking Top 10 Ligas Goles
                     </h3>
-                    <div class="bg-mejv-card-dark rounded-2xl border border-slate-800 overflow-hidden">
-                        <div class="overflow-x-auto custom-scrollbar">
-                            <table class="w-full text-left text-sm text-slate-300 min-w-[700px]">
-                                <thead class="bg-mejv-black text-xs uppercase text-slate-400 border-b border-slate-800 font-display font-bold">
-                                    <tr>
-                                        <th scope="col" class="py-3.5 px-4">Hora</th>
-                                        <th scope="col" class="py-3.5 px-4">Encuentro</th>
-                                        <th scope="col" class="py-3.5 px-4">Pronóstico</th>
-                                        <th scope="col" class="py-3.5 px-4">Cuota</th>
-                                        <th scope="col" class="py-3.5 px-4">Casa</th>
-                                        <th scope="col" class="py-3.5 px-4 text-center">Pendiente</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-slate-800/80 font-medium">
-                                    <tr class="hover:bg-mejv-dark/40" data-id="ajax-shelbourne-goles" data-pendiente="true">
-                                        <td class="py-3 px-4 text-xs font-mono text-slate-400">06.08.2026 - 13:00</td>
-                                        <td class="py-3 px-4 font-bold text-mejv-white font-display">Ajax vs Shelbourne</td>
-                                        <td class="py-3 px-4"><span class="px-2.5 py-0.5 bg-mejv-blue/20 text-mejv-white rounded font-semibold text-xs">+3.5</span></td>
-                                        <td class="py-3 px-4 font-bold text-mejv-lime font-display">1.70</td>
-                                        <td class="py-3 px-4 text-xs text-slate-300">Wplay</td>
-                                        <td class="py-3 px-4 text-center">
-                                            <span class="estado-pendiente text-xl" data-estado="pendiente">⏳</span>
-                                        </td>
-                                    </tr>
-                                    <tr class="hover:bg-mejv-dark/40" data-id="benfica-hearts-goles" data-pendiente="false">
-                                        <td class="py-3 px-4 text-xs font-mono text-slate-400">06.08.2026 - 14:00</td>
-                                        <td class="py-3 px-4 font-bold text-mejv-white font-display">Benfica vs Hearts</td>
-                                        <td class="py-3 px-4"><span class="px-2.5 py-0.5 bg-mejv-blue/20 text-mejv-white rounded font-semibold text-xs">+3.5</span></td>
-                                        <td class="py-3 px-4 font-bold text-mejv-lime font-display">1.71</td>
-                                        <td class="py-3 px-4 text-xs text-slate-300">BetPlay</td>
-                                        <td class="py-3 px-4 text-center">
-                                            <span class="estado-pendiente text-xl" data-estado="pendiente">⏳</span>
-                                        </td>
-                                    </tr>
-                                    <tr class="hover:bg-mejv-dark/40" data-id="paok-anderlecht-goles" data-pendiente="true">
-                                        <td class="py-3 px-4 text-xs font-mono text-slate-400">06.08.2026 - 12:45</td>
-                                        <td class="py-3 px-4 font-bold text-mejv-white font-display">PAOK vs Anderlecht</td>
-                                        <td class="py-3 px-4"><span class="px-2.5 py-0.5 bg-mejv-blue/20 text-mejv-white rounded font-semibold text-xs">+2.5</span></td>
-                                        <td class="py-3 px-4 font-bold text-mejv-lime font-display">1.65</td>
-                                        <td class="py-3 px-4 text-xs text-slate-300">1xBet</td>
-                                        <td class="py-3 px-4 text-center">
-                                            <span class="estado-pendiente text-xl" data-estado="pendiente">⏳</span>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                    <% if (goalTables.length === 0) { %>
+                        <div class="bg-mejv-card-dark rounded-2xl border border-slate-800 p-8 text-center">
+                            <i class="fa-solid fa-list-ol text-slate-600 text-3xl mb-4"></i>
+                            <h3 class="text-mejv-white font-display font-bold text-lg mb-2">No hay tablas de goles disponibles</h3>
+                            <p class="text-slate-400 text-sm">Pronto tendremos nuevas ligas actualizadas.</p>
                         </div>
-                    </div>
+                    <% } else { %>
+                        <div class="bg-mejv-card-dark rounded-2xl border border-slate-800 overflow-hidden">
+                            <div class="overflow-x-auto custom-scrollbar">
+                                <table class="w-full text-left text-sm text-slate-300 min-w-[700px]">
+                                    <thead class="bg-mejv-black text-xs uppercase text-slate-400 border-b border-slate-800 font-display font-bold">
+                                        <tr>
+                                            <th scope="col" class="py-3.5 px-4">Hora</th>
+                                            <th scope="col" class="py-3.5 px-4">Encuentro</th>
+                                            <th scope="col" class="py-3.5 px-4">Pronóstico</th>
+                                            <th scope="col" class="py-3.5 px-4">Cuota</th>
+                                            <th scope="col" class="py-3.5 px-4">Casa</th>
+                                            <th scope="col" class="py-3.5 px-4 text-center">Pendiente</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-800/80 font-medium">
+                                        <% goalTables.forEach(item => { %>
+                                        <tr class="hover:bg-mejv-dark/40" data-id="<%= item._id %>" data-pendiente="true">
+                                            <td class="py-3 px-4 text-xs font-mono text-slate-400"><%= item.time %></td>
+                                            <td class="py-3 px-4 font-bold text-mejv-white font-display"><%= item.event %></td>
+                                            <td class="py-3 px-4"><span class="px-2.5 py-0.5 bg-mejv-blue/20 text-mejv-white rounded font-semibold text-xs"><%= item.prediction %></span></td>
+                                            <td class="py-3 px-4 font-bold text-mejv-lime font-display"><%= item.odds %></td>
+                                            <td class="py-3 px-4 text-xs text-slate-300"><%= item.bookmaker %></td>
+                                            <td class="py-3 px-4 text-center">
+                                                <span class="estado-pendiente text-xl" data-estado="pendiente">⏳</span>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    <% } %>
                 </div>
             </div>
         </section>
@@ -815,9 +713,11 @@
         revealElements.forEach(el => observer.observe(el));
 
         // 4. Modales y Lógica de Modales
-        function openNewsModal(title, text) {
+        function openNewsModal(button) {
+            const title = button.getAttribute('data-title');
+            const body = button.getAttribute('data-body');
             document.getElementById('modal-news-title').innerText = title;
-            document.getElementById('modal-news-body').innerText = text;
+            document.getElementById('modal-news-body').innerText = body;
             const modal = document.getElementById('news-modal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
