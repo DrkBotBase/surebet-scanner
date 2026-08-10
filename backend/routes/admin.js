@@ -35,107 +35,10 @@ router.get('/', auth, (req, res) => {
     res.render('admin/dashboard');
 });
 
-// CRUD Noticias
-router.get('/news', auth, async (req, res) => {
-    const news = await News.find().sort({ createdAt: -1 });
-    res.render('admin/news', { news });
-});
-
-router.post('/news', auth, upload.single('image'), async (req, res) => {
-    try {
-        const result = await cloudinary.uploader.upload(req.file.path);
-        const news = new News({
-            title: req.body.title,
-            body: req.body.body,
-            imageUrl: result.secure_url,
-            cloudinaryId: result.public_id
-        });
-        await news.save();
-        res.redirect('/admin/news');
-    } catch (error) {
-        res.status(500).send(error.message);
-    }
-});
-
-router.post('/news/delete/:id', auth, async (req, res) => {
-    try {
-        const news = await News.findById(req.params.id);
-        await cloudinary.uploader.destroy(news.cloudinaryId);
-        await news.deleteOne();
-        res.redirect('/admin/news');
-    } catch (error) {
-        res.status(500).send(error.message);
-    }
-});
-
-router.post('/news/edit/:id', auth, async (req, res) => {
-    try {
-        await News.findByIdAndUpdate(req.params.id, {
-            title: req.body.title,
-            body: req.body.body
-        });
-        res.redirect('/admin/news');
-    } catch (error) {
-        res.status(500).send(error.message);
-    }
-});
-
-// CRUD Pronósticos
-router.get('/predictions', auth, async (req, res) => {
-    const data = await Prediction.find().sort({ createdAt: -1 });
-    res.render('admin/predictions', { data });
-});
-router.post('/predictions', auth, async (req, res) => {
-    const { event, time, eventDate, prediction, odds, bookmaker } = req.body;
-    await new Prediction({ event, time, eventDate, prediction, odds, bookmaker }).save();
-    res.redirect('/admin/predictions');
-});
-router.post('/predictions/status/:id', auth, async (req, res) => {
-    await Prediction.findByIdAndUpdate(req.params.id, { status: req.body.status });
-    res.redirect('/admin/predictions');
-});
-router.post('/predictions/delete/:id', auth, async (req, res) => {
-    await Prediction.findByIdAndDelete(req.params.id);
-    res.redirect('/admin/predictions');
-});
-
-// CRUD Surebets
-router.get('/surebets', auth, async (req, res) => {
-    const data = await Surebet.find().sort({ createdAt: -1 });
-    res.render('admin/surebets', { data });
-});
-router.post('/surebets', auth, async (req, res) => {
-    const { event, time, eventDate, market, line, percentage, bookmaker1, odds1, bookmaker2, odds2 } = req.body;
-    await new Surebet({ event, time, eventDate, market, line, percentage, bookmaker1, odds1, bookmaker2, odds2 }).save();
-    res.redirect('/admin/surebets');
-});
-router.post('/surebets/delete/:id', auth, async (req, res) => {
-    await Surebet.findByIdAndDelete(req.params.id);
-    res.redirect('/admin/surebets');
-});
-
-// CRUD Tabla Goles
-router.get('/goal-tables', auth, async (req, res) => {
-    const data = await GoalTable.find().sort({ createdAt: -1 });
-    res.render('admin/goal-tables', { data });
-});
-router.post('/goal-tables', auth, async (req, res) => {
-    const { league, event, time, eventDate, prediction, odds, bookmaker } = req.body;
-    await new GoalTable({ league, event, time, eventDate, prediction, odds, bookmaker }).save();
-    res.redirect('/admin/goal-tables');
-});
-router.post('/goal-tables/status/:id', auth, async (req, res) => {
-    await GoalTable.findByIdAndUpdate(req.params.id, { status: req.body.status });
-    res.redirect('/admin/goal-tables');
-});
-router.post('/goal-tables/delete/:id', auth, async (req, res) => {
-    await GoalTable.findByIdAndDelete(req.params.id);
-    res.redirect('/admin/goal-tables');
-});
-
 // ==========================================
 // SECURE AJAX API ENDPOINTS FOR SINGLE PAGE ADMIN
 // ==========================================
+// ... (rest of the file)
 
 // JSON News CRUD
 router.get('/api/news', auth, async (req, res) => {
@@ -228,8 +131,8 @@ router.get('/api/predictions', auth, async (req, res) => {
 
 router.post('/api/predictions', auth, async (req, res) => {
     try {
-        const { event, time, eventDate, prediction, odds, bookmaker, status } = req.body;
-        const newPred = new Prediction({ event, time, eventDate, prediction, odds, bookmaker, status });
+        const { event, time, eventDate, prediction, odds, bookmaker, status, score } = req.body;
+        const newPred = new Prediction({ event, time, eventDate, prediction, odds, bookmaker, status, score: score || '0:0' });
         await newPred.save();
         res.status(201).json(newPred);
     } catch (error) {
@@ -239,9 +142,9 @@ router.post('/api/predictions', auth, async (req, res) => {
 
 router.post('/api/predictions/edit/:id', auth, async (req, res) => {
     try {
-        const { event, time, eventDate, prediction, odds, bookmaker, status } = req.body;
+        const { event, time, eventDate, prediction, odds, bookmaker, status, score } = req.body;
         const updated = await Prediction.findByIdAndUpdate(req.params.id, {
-            event, time, eventDate, prediction, odds, bookmaker, status
+            event, time, eventDate, prediction, odds, bookmaker, status, score
         }, { returnDocument: 'after' });
         res.json(updated);
     } catch (error) {
@@ -322,8 +225,8 @@ router.get('/api/goal-tables', auth, async (req, res) => {
 
 router.post('/api/goal-tables', auth, async (req, res) => {
     try {
-        const { league, event, time, eventDate, prediction, odds, bookmaker, status } = req.body;
-        const newGoal = new GoalTable({ league, event, time, eventDate, prediction, odds, bookmaker, status });
+        const { league, event, time, eventDate, prediction, odds, bookmaker, status, score } = req.body;
+        const newGoal = new GoalTable({ league, event, time, eventDate, prediction, odds, bookmaker, status, score: score || '0:0' });
         await newGoal.save();
         res.status(201).json(newGoal);
     } catch (error) {
@@ -333,9 +236,9 @@ router.post('/api/goal-tables', auth, async (req, res) => {
 
 router.post('/api/goal-tables/edit/:id', auth, async (req, res) => {
     try {
-        const { league, event, time, eventDate, prediction, odds, bookmaker, status } = req.body;
+        const { league, event, time, eventDate, prediction, odds, bookmaker, status, score } = req.body;
         const updated = await GoalTable.findByIdAndUpdate(req.params.id, {
-            league, event, time, eventDate, prediction, odds, bookmaker, status
+            league, event, time, eventDate, prediction, odds, bookmaker, status, score
         }, { returnDocument: 'after' });
         res.json(updated);
     } catch (error) {

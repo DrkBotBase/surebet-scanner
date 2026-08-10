@@ -8,6 +8,7 @@ const goalTableSchema = new mongoose.Schema({
     prediction: { type: String, required: true },
     odds: { type: String, required: true },
     bookmaker: { type: String, required: true },
+    score: { type: String, default: '0:0' },
     status: { type: String, enum: ['pendiente', 'verificado', 'fallido'], default: 'pendiente' },
     createdAt: { type: Date, default: Date.now }
 });

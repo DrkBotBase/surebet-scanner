@@ -411,7 +411,7 @@
                 </div>
             </div>
 
-            <!-- Tabla de Pronósticos Responsive -->
+            <!-- Tarjetas de Pronósticos -->
             <% if (predictions.length === 0) { %>
                 <div class="bg-mejv-card-dark rounded-2xl border border-slate-800 p-8 text-center">
                     <i class="fa-solid fa-chart-line text-slate-600 text-4xl mb-4"></i>
@@ -419,37 +419,40 @@
                     <p class="text-slate-400 text-sm">Estamos analizando los próximos eventos.</p>
                 </div>
             <% } else { %>
-                <div class="bg-mejv-card-dark rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
-                    <div class="overflow-x-auto custom-scrollbar">
-                        <table class="w-full text-left text-sm text-slate-300 min-w-[700px]">
-                            <thead class="bg-mejv-black text-xs uppercase text-slate-400 border-b border-slate-800 font-display font-bold">
-                                <tr>
-                                    <th scope="col" class="py-4 px-4"><i class="fa-regular fa-clock mr-1"></i> Hora</th>
-                                    <th scope="col" class="py-4 px-4"><i class="fa-solid fa-futbol mr-1"></i> Encuentro</th>
-                                    <th scope="col" class="py-4 px-4"><i class="fa-solid fa-bullseye mr-1"></i> Pronóstico</th>
-                                    <th scope="col" class="py-4 px-4"><i class="fa-solid fa-tag mr-1"></i> Cuota</th>
-                                    <th scope="col" class="py-4 px-4"><i class="fa-solid fa-building-columns mr-1"></i> Casa</th>
-                                    <th scope="col" class="py-4 px-4 text-center"><i class="fa-regular fa-hourglass-half mr-1"></i> Pendiente</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-800/80 font-medium">
-                                <% predictions.forEach(pred => { %>
-                                <tr class="hover:bg-mejv-dark/60 transition-colors" data-id="<%= pred._id %>" data-pendiente="true">
-                                    <td class="py-3.5 px-4 text-xs font-mono text-slate-400"><%= pred.time %></td>
-                                    <td class="py-3.5 px-4 font-bold text-mejv-white font-display"><%= pred.event %></td>
-                                    <td class="py-3.5 px-4"><span class="px-2.5 py-1 bg-mejv-lime/10 text-mejv-lime border border-mejv-lime/20 rounded-md font-semibold text-xs"><%= pred.prediction %></span></td>
-                                    <td class="py-3.5 px-4 font-bold text-mejv-lime font-display"><%= pred.odds %></td>
-                                    <td class="py-3.5 px-4"><span class="px-2 py-0.5 bg-mejv-dark text-slate-200 rounded text-xs border border-slate-700"><%= pred.bookmaker %></span></td>
-                                    <td class="py-3.5 px-4 text-center">
-                                        <span class="estado-pendiente text-xl" data-estado="<%= pred.status %>">
-                                            <% if(pred.status === 'pendiente') { %>⏳<% } else if(pred.status === 'verificado') { %>✅<% } else { %>❌<% } %>
-                                        </span>
-                                    </td>
-                                </tr>
-                                <% }) %>
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    <% predictions.forEach(pred => { %>
+                        <div class="bg-mejv-card-dark border border-slate-800 rounded-xl overflow-hidden shadow-lg flex flex-col" data-id="<%= pred._id %>">
+                            <!-- Header de la tarjeta - Compacto -->
+                            <div class="px-3 py-2 flex items-center justify-between border-b border-slate-800/50">
+                                <span class="text-[10px] font-mono text-slate-400"><%= pred.time %></span>
+                                <span class="text-[10px] font-bold text-mejv-white bg-slate-900 px-1.5 py-0.5 rounded border border-slate-700"><%= pred.score || '0:0' %></span>
+                                <% 
+                                    let badgeColor = 'bg-slate-700';
+                                    let badgeText = 'PENDIENTE';
+                                    if (pred.status === 'verificado') { badgeColor = 'bg-emerald-600'; badgeText = 'GANADA'; }
+                                    else if (pred.status === 'fallido') { badgeColor = 'bg-rose-600'; badgeText = 'PERD.'; }
+                                %>
+                                <span class="<%= badgeColor %> text-black text-[9px] font-bold px-1.5 py-0.5 rounded uppercase"><%= badgeText %></span>
+                            </div>
+                            
+                            <!-- Contenido de la tarjeta (Encuentro) - Compacto -->
+                            <div class="px-3 py-3 text-center">
+                                <div class="font-display font-bold text-mejv-white text-sm">
+                                    <%= pred.event %>
+                                </div>
+                            </div>
+                            
+                            <!-- Pie de tarjeta (Predicción y Cuota) - Compacto -->
+                            <div class="bg-mejv-black px-3 py-2 flex items-center justify-between border-t border-slate-800">
+                                <span class="text-[11px] text-slate-300">
+                                    <span class="text-slate-500 font-bold uppercase">Pred:</span> <%= pred.prediction %>
+                                </span>
+                                <span class="bg-mejv-dark border border-mejv-blue/30 text-mejv-white font-bold px-2 py-0.5 rounded text-[11px]">
+                                    <%= pred.odds %>
+                                </span>
+                            </div>
+                        </div>
+                    <% }) %>
                 </div>
             <% } %>
         </section>
@@ -491,35 +494,31 @@
                             <p class="text-slate-400 text-sm">Pronto tendremos nuevas ligas actualizadas.</p>
                         </div>
                     <% } else { %>
-                        <div class="bg-mejv-card-dark rounded-2xl border border-slate-800 overflow-hidden">
-                            <div class="overflow-x-auto custom-scrollbar">
-                                <table class="w-full text-left text-sm text-slate-300 min-w-[700px]">
-                                    <thead class="bg-mejv-black text-xs uppercase text-slate-400 border-b border-slate-800 font-display font-bold">
-                                        <tr>
-                                            <th scope="col" class="py-3.5 px-4">Hora</th>
-                                            <th scope="col" class="py-3.5 px-4">Encuentro</th>
-                                            <th scope="col" class="py-3.5 px-4">Pronóstico</th>
-                                            <th scope="col" class="py-3.5 px-4">Cuota</th>
-                                            <th scope="col" class="py-3.5 px-4">Casa</th>
-                                            <th scope="col" class="py-3.5 px-4 text-center">Pendiente</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-slate-800/80 font-medium">
-                                        <% goalTables.forEach(item => { %>
-                                        <tr class="hover:bg-mejv-dark/40" data-id="<%= item._id %>" data-pendiente="true">
-                                            <td class="py-3 px-4 text-xs font-mono text-slate-400"><%= item.time %></td>
-                                            <td class="py-3 px-4 font-bold text-mejv-white font-display"><%= item.event %></td>
-                                            <td class="py-3 px-4"><span class="px-2.5 py-0.5 bg-mejv-blue/20 text-mejv-white rounded font-semibold text-xs"><%= item.prediction %></span></td>
-                                            <td class="py-3 px-4 font-bold text-mejv-lime font-display"><%= item.odds %></td>
-                                            <td class="py-3 px-4 text-xs text-slate-300"><%= item.bookmaker %></td>
-                                            <td class="py-3 px-4 text-center">
-                                                <span class="estado-pendiente text-xl" data-estado="pendiente">⏳</span>
-                                            </td>
-                                        </tr>
-                                        <% }) %>
-                                    </tbody>
-                                </table>
-                            </div>
+                        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                            <% goalTables.forEach(item => { %>
+                                <div class="bg-mejv-card-dark border border-slate-800 rounded-xl overflow-hidden shadow-lg flex flex-col" data-id="<%= item._id %>">
+                                    <!-- Header -->
+                                    <div class="px-3 py-2 flex items-center justify-between border-b border-slate-800/50">
+                                        <span class="text-[10px] font-mono text-slate-400"><%= item.time %></span>
+                                        <span class="text-[10px] font-bold text-mejv-lime bg-slate-900 px-1.5 py-0.5 rounded border border-slate-700 truncate max-w-[100px]"><%= item.league %></span>
+                                    </div>
+                                    <!-- Cuerpo -->
+                                    <div class="px-3 py-3 text-center">
+                                        <div class="font-display font-bold text-mejv-white text-sm">
+                                            <%= item.event %>
+                                        </div>
+                                    </div>
+                                    <!-- Pie -->
+                                    <div class="bg-mejv-black px-3 py-2 flex items-center justify-between border-t border-slate-800">
+                                        <span class="text-[11px] text-slate-300">
+                                            <span class="text-slate-500 font-bold uppercase">Pred:</span> <%= item.prediction %>
+                                        </span>
+                                        <span class="bg-mejv-dark border border-mejv-blue/30 text-mejv-white font-bold px-2 py-0.5 rounded text-[11px]">
+                                            <%= item.odds %>
+                                        </span>
+                                    </div>
+                                </div>
+                            <% }) %>
                         </div>
                     <% } %>
                 </div>
