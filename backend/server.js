@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path');
 const http = require('http');
 const session = require('express-session');
+const moment = require('moment-timezone');
 const apiRoutes = require('./routes/api');
 const adminRoutes = require('./routes/admin');
 const connectDB = require('./db');
@@ -54,19 +55,63 @@ const Prediction = require('./models/Prediction');
 const Surebet = require('./models/Surebet');
 const GoalTable = require('./models/GoalTable');
 
-const moment = require('moment-timezone');
-// ...
 app.get('/', async (req, res) => {
     try {
-        const yesterday = moment().tz("America/Bogota").subtract(1, 'days').startOf('day').toDate();
+        // Fecha de ayer en hora Colombia
+        const yesterday = moment().tz("America/Bogota")
+            .subtract(1, 'days')
+            .startOf('day')
+            .toDate();
 
         const [news, surebets, predictions, goalTables] = await Promise.all([
             News.find().sort({ createdAt: -1 }).limit(3),
             Surebet.find({ eventDate: { $gte: yesterday } }).sort({ eventDate: 1 }).limit(6),
-            Prediction.find({ eventDate: { $gte: yesterday } }).sort({ eventDate: 1 }).limit(6),
-            GoalTable.find({ eventDate: { $gte: yesterday } }).sort({ eventDate: 1 }).limit(10)
+            Prediction.find({ eventDate: { $gte: yesterday } })
+                .sort({ eventDate: -1 })
+                .limit(6),
+            GoalTable.find({ eventDate: { $gte: yesterday } })
+                .sort({ eventDate: -1 })
+                .limit(10)
         ]);
-        res.render('landing', { news, surebets, predictions, goalTables });
+
+        // Convertir fechas a hora Colombia para el renderizado
+        const formatToColombia = (date) => {
+            return moment(date).tz("America/Bogota").format();
+        };
+
+        // Procesar predicciones y ordenar por fecha+hora en Colombia
+        const processedPredictions = predictions
+            .map(p => ({
+                ...p._doc,
+                eventDateColombia: moment(p.eventDate).tz("America/Bogota").toDate(),
+                timeColombia: moment(p.eventDate).tz("America/Bogota").format('HH:mm')
+            }))
+            .sort((a, b) => {
+                // Ordenar por fecha en Colombia (más reciente primero)
+                if (a.eventDateColombia > b.eventDateColombia) return -1;
+                if (a.eventDateColombia < b.eventDateColombia) return 1;
+                // Si misma fecha, por hora
+                return a.time.localeCompare(b.time);
+            });
+
+        const processedGoalTables = goalTables
+            .map(g => ({
+                ...g._doc,
+                eventDateColombia: moment(g.eventDate).tz("America/Bogota").toDate(),
+                timeColombia: moment(g.eventDate).tz("America/Bogota").format('HH:mm')
+            }))
+            .sort((a, b) => {
+                if (a.eventDateColombia > b.eventDateColombia) return -1;
+                if (a.eventDateColombia < b.eventDateColombia) return 1;
+                return a.time.localeCompare(b.time);
+            });
+
+        res.render('landing', { 
+            news, 
+            surebets, 
+            predictions: processedPredictions, 
+            goalTables: processedGoalTables 
+        });
     } catch (error) {
         console.error('Error al cargar datos:', error);
         res.render('landing', { news: [], surebets: [], predictions: [], goalTables: [] });

@@ -405,9 +405,6 @@
                 </div>
                 <div class="flex items-center gap-3">
                     <span class="text-xs text-slate-400">Actualizado: Agosto 2026</span>
-                    <button onclick="verificarPendientes()" class="px-3 py-1.5 bg-mejv-blue/20 hover:bg-mejv-blue/30 text-mejv-blue border border-mejv-blue/30 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5">
-                        <i class="fa-solid fa-rotate text-[10px]"></i> Verificar
-                    </button>
                 </div>
             </div>
 
@@ -430,7 +427,7 @@
                                     let badgeColor = 'bg-slate-700';
                                     let badgeText = 'PENDIENTE';
                                     if (pred.status === 'verificado') { badgeColor = 'bg-emerald-600'; badgeText = 'GANADA'; }
-                                    else if (pred.status === 'fallido') { badgeColor = 'bg-rose-600'; badgeText = 'PERD.'; }
+                                    else if (pred.status === 'fallido') { badgeColor = 'bg-rose-600'; badgeText = ''; }
                                 %>
                                 <span class="<%= badgeColor %> text-black text-[9px] font-bold px-1.5 py-0.5 rounded uppercase"><%= badgeText %></span>
                             </div>
@@ -445,7 +442,7 @@
                             <!-- Pie de tarjeta (Predicción y Cuota) - Compacto -->
                             <div class="bg-mejv-black px-3 py-2 flex items-center justify-between border-t border-slate-800">
                                 <span class="text-[11px] text-slate-300">
-                                    <span class="text-slate-500 font-bold uppercase">Pred:</span> <%= pred.prediction %>
+                                    <span class="text-slate-500 font-bold uppercase">Pred: </span> <%= pred.prediction %>
                                 </span>
                                 <span class="bg-mejv-dark border border-mejv-blue/30 text-mejv-white font-bold px-2 py-0.5 rounded text-[11px]">
                                     <%= pred.odds %>
@@ -485,7 +482,7 @@
                 <!-- Tabla Top 10 Marcadores Goles -->
                 <div>
                     <h3 class="font-display text-lg font-bold text-mejv-white mb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-list-ol text-mejv-lime"></i> Ranking Top 10 Ligas Goles
+                        <i class="fa-solid fa-list-ol text-mejv-lime"></i> Pronosticos Goles
                     </h3>
                     <% if (goalTables.length === 0) { %>
                         <div class="bg-mejv-card-dark rounded-2xl border border-slate-800 p-8 text-center">
@@ -499,8 +496,15 @@
                                 <div class="bg-mejv-card-dark border border-slate-800 rounded-xl overflow-hidden shadow-lg flex flex-col" data-id="<%= item._id %>">
                                     <!-- Header -->
                                     <div class="px-3 py-2 flex items-center justify-between border-b border-slate-800/50">
-                                        <span class="text-[10px] font-mono text-slate-400"><%= item.time %></span>
-                                        <span class="text-[10px] font-bold text-mejv-lime bg-slate-900 px-1.5 py-0.5 rounded border border-slate-700 truncate max-w-[100px]"><%= item.league %></span>
+                                      <span class="text-[10px] font-mono text-slate-400"><%= item.time %></span>
+                                      <span class="text-[10px] font-bold text-mejv-white bg-slate-900 px-1.5 py-0.5 rounded border border-slate-700"><%= item.score || '0:0' %></span>
+                                      <% 
+                                          let badgeColor = 'bg-slate-700';
+                                          let badgeText = 'PENDIENTE';
+                                          if (item.status === 'verificado') { badgeColor = 'bg-emerald-600'; badgeText = 'GANADA'; }
+                                          else if (item.status === 'fallido') { badgeColor = 'bg-rose-600'; badgeText = 'PERDIDA'; }
+                                      %>
+                                      <span class="<%= badgeColor %> text-black text-[9px] font-bold px-1.5 py-0.5 rounded uppercase"><%= badgeText %></span>
                                     </div>
                                     <!-- Cuerpo -->
                                     <div class="px-3 py-3 text-center">
@@ -511,7 +515,7 @@
                                     <!-- Pie -->
                                     <div class="bg-mejv-black px-3 py-2 flex items-center justify-between border-t border-slate-800">
                                         <span class="text-[11px] text-slate-300">
-                                            <span class="text-slate-500 font-bold uppercase">Pred:</span> <%= item.prediction %>
+                                            <span class="text-slate-500 font-bold uppercase">Pred: </span> <%= item.prediction %>
                                         </span>
                                         <span class="bg-mejv-dark border border-mejv-blue/30 text-mejv-white font-bold px-2 py-0.5 rounded text-[11px]">
                                             <%= item.odds %>

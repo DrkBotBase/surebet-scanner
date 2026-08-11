@@ -35,11 +35,6 @@ router.get('/', auth, (req, res) => {
     res.render('admin/dashboard');
 });
 
-// ==========================================
-// SECURE AJAX API ENDPOINTS FOR SINGLE PAGE ADMIN
-// ==========================================
-// ... (rest of the file)
-
 // JSON News CRUD
 router.get('/api/news', auth, async (req, res) => {
     try {
@@ -132,7 +127,20 @@ router.get('/api/predictions', auth, async (req, res) => {
 router.post('/api/predictions', auth, async (req, res) => {
     try {
         const { event, time, eventDate, prediction, odds, bookmaker, status, score } = req.body;
-        const newPred = new Prediction({ event, time, eventDate, prediction, odds, bookmaker, status, score: score || '0:0' });
+        
+        // Convertir la fecha a hora Colombia antes de guardar
+        const colombiaDate = moment.tz(eventDate, "America/Bogota").toDate();
+        
+        const newPred = new Prediction({ 
+            event, 
+            time, 
+            eventDate: colombiaDate, 
+            prediction, 
+            odds, 
+            bookmaker, 
+            status, 
+            score: score || '0:0' 
+        });
         await newPred.save();
         res.status(201).json(newPred);
     } catch (error) {
@@ -226,7 +234,21 @@ router.get('/api/goal-tables', auth, async (req, res) => {
 router.post('/api/goal-tables', auth, async (req, res) => {
     try {
         const { league, event, time, eventDate, prediction, odds, bookmaker, status, score } = req.body;
-        const newGoal = new GoalTable({ league, event, time, eventDate, prediction, odds, bookmaker, status, score: score || '0:0' });
+        
+        // Convertir la fecha a hora Colombia antes de guardar
+        const colombiaDate = moment.tz(eventDate, "America/Bogota").toDate();
+        
+        const newGoal = new GoalTable({ 
+            league, 
+            event, 
+            time, 
+            eventDate: colombiaDate, 
+            prediction, 
+            odds, 
+            bookmaker, 
+            status, 
+            score: score || '0:0' 
+        });
         await newGoal.save();
         res.status(201).json(newGoal);
     } catch (error) {
