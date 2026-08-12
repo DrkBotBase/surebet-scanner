@@ -426,10 +426,12 @@
                                 <% 
                                     let badgeColor = 'bg-slate-700';
                                     let badgeText = 'PENDIENTE';
-                                    if (pred.status === 'verificado') { badgeColor = 'bg-emerald-600'; badgeText = 'GANADA'; }
-                                    else if (pred.status === 'fallido') { badgeColor = 'bg-rose-600'; badgeText = ''; }
+                                    let textColor = 'text-white';
+                                    if (pred.status === 'verificado') { badgeColor = 'bg-emerald-600'; textColor = 'text-black'; badgeText = 'GANADA'; }
+                                    else if (pred.status === 'fallido') { badgeColor = 'bg-rose-600'; textColor = 'text-black'; badgeText = 'PERDIDA'; }
+                                    else if (pred.status === 'return') { badgeColor = 'bg-amber-600'; textColor = 'text-black'; badgeText = 'RETORNO'; }
                                 %>
-                                <span class="<%= badgeColor %> text-black text-[9px] font-bold px-1.5 py-0.5 rounded uppercase"><%= badgeText %></span>
+                                <span class="<%= badgeColor %> <%= textColor %> text-[9px] font-bold px-1.5 py-0.5 rounded uppercase"><%= badgeText %></span>
                             </div>
                             
                             <!-- Contenido de la tarjeta (Encuentro) - Compacto -->
@@ -501,10 +503,12 @@
                                       <% 
                                           let badgeColor = 'bg-slate-700';
                                           let badgeText = 'PENDIENTE';
-                                          if (item.status === 'verificado') { badgeColor = 'bg-emerald-600'; badgeText = 'GANADA'; }
-                                          else if (item.status === 'fallido') { badgeColor = 'bg-rose-600'; badgeText = 'PERDIDA'; }
+                                          let textColor = 'text-white';
+                                          if (item.status === 'verificado') { badgeColor = 'bg-emerald-600'; textColor = 'text-black'; badgeText = 'GANADA'; }
+                                          else if (item.status === 'fallido') { badgeColor = 'bg-rose-600'; textColor = 'text-black'; badgeText = 'PERDIDA'; }
+                                          else if (item.status === 'return') { badgeColor = 'bg-amber-600'; textColor = 'text-black'; badgeText = 'RETORNO'; }
                                       %>
-                                      <span class="<%= badgeColor %> text-black text-[9px] font-bold px-1.5 py-0.5 rounded uppercase"><%= badgeText %></span>
+                                      <span class="<%= badgeColor %> <%= textColor %> text-[9px] font-bold px-1.5 py-0.5 rounded uppercase"><%= badgeText %></span>
                                     </div>
                                     <!-- Cuerpo -->
                                     <div class="px-3 py-3 text-center">

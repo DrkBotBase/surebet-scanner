@@ -8,7 +8,7 @@ const predictionSchema = new mongoose.Schema({
     odds: { type: String, required: true },
     bookmaker: { type: String, required: true },
     score: { type: String, default: '0:0' },
-    status: { type: String, enum: ['pendiente', 'verificado', 'fallido'], default: 'pendiente' },
+    status: { type: String, enum: ['pendiente', 'verificado', 'fallido', 'return'], default: 'pendiente' },
     createdAt: { type: Date, default: Date.now }
 });
 

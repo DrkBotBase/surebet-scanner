@@ -563,8 +563,10 @@
       badge = '<span class="bg-emerald-950 border border-emerald-500 text-emerald-400 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase shadow-sm shadow-emerald-900/10">Ganado</span>';
     } else if (est === 'fallido') {
       badge = '<span class="bg-rose-950 border border-rose-500 text-rose-400 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase shadow-sm shadow-rose-900/10">Perdido</span>';
+    } else if (est === 'return') {
+      badge = '<span class="bg-amber-950 border border-amber-600 text-amber-400 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase shadow-sm shadow-amber-900/10">Reembolso</span>';
     } else {
-      badge = '<span class="bg-amber-950 border border-amber-600 text-amber-400 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase shadow-sm shadow-amber-900/10">Pendiente</span>';
+      badge = '<span class="bg-slate-900 border border-gray-600 text-gray-400 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase shadow-sm shadow-gray-900/10">Pendiente</span>';
     }
     html += `
       <tr class="hover:bg-mejv-card-hover/40 transition duration-100">
@@ -984,6 +986,7 @@
               <option value="pendiente" ${data && data.status === 'pendiente' ? 'selected' : ''}>Pendiente</option>
               <option value="verificado" ${data && data.status === 'verificado' ? 'selected' : ''}>Ganado (Verificado)</option>
               <option value="fallido" ${data && data.status === 'fallido' ? 'selected' : ''}>Perdido (Fallido)</option>
+              <option value="return" ${data && data.status === 'return' ? 'selected' : ''}>Reembolso</option>
             </select>
           </div>
         `;
@@ -1035,6 +1038,7 @@
               <option value="pendiente" ${data && data.status === 'pendiente' ? 'selected' : ''}>Pendiente</option>
               <option value="verificado" ${data && data.status === 'verificado' ? 'selected' : ''}>Ganado (Verificado)</option>
               <option value="fallido" ${data && data.status === 'fallido' ? 'selected' : ''}>Perdido (Fallido)</option>
+              <option value="return" ${data && data.status === 'return' ? 'selected' : ''}>Reembolso</option>
             </select>
           </div>
         `;
