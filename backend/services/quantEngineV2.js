@@ -29,7 +29,8 @@ function calcularProbabilidades(stats) {
         awayPJ, awayGF, awayGC, 
         leagueAvg = 1.10, 
         oddsHome, oddsDraw, oddsAway, 
-        oddsOver, oddsBtts 
+        oddsOver, oddsBtts,
+        manualScoreOdds = []
     } = stats;
 
     const avgLiga = Math.max(parseFloat(leagueAvg) || 1.10, 1.00);
@@ -71,6 +72,54 @@ function calcularProbabilidades(stats) {
     const totalP = p1 + pX + p2;
     p1 /= totalP; pX /= totalP; p2 /= totalP;
     scoreMatrix.sort((a, b) => b.prob - a.prob);
+    
+    // TOP 3
+    const top3 = scoreMatrix.slice(0, 3).map(s => ({
+        score: s.score,
+        probDecimal: s.prob / totalP,
+        probPct: ((s.prob / totalP) * 100).toFixed(1)
+    }));
+    
+    let usarCuotasReales = manualScoreOdds.length === 3 && manualScoreOdds.every(o => o && o > 1);
+
+    let top3DutchingBreakdown = [];
+    let cuotaCombinadaCalculada = 0;
+
+    if (usarCuotasReales) {
+        // --- DUTCHING CON CUOTAS REALES DE LA CASA ---
+        // Formula: Suma de la inversa de cada cuota (1 / Odds)
+        const invSum = manualScoreOdds.reduce((acc, odd) => acc + (1 / odd), 0);
+        cuotaCombinadaCalculada = (1 / invSum).toFixed(2);
+
+        top3DutchingBreakdown = top3.map((item, index) => {
+            const realOdd = manualScoreOdds[index];
+            const stakeSharePct = ((1 / realOdd) / invSum) * 100;
+            return {
+                score: item.score,
+                probPct: item.probPct,
+                cuotaUsada: realOdd.toFixed(2),
+                stakePct: stakeSharePct.toFixed(1),
+                esReal: true
+            };
+        });
+    } else {
+        // --- DUTCHING CON CUOTAS TEÓRICAS (MODELO) ---
+        const probTop3Sum = top3.reduce((acc, curr) => acc + curr.probDecimal, 0);
+        cuotaCombinadaCalculada = (1 / probTop3Sum).toFixed(2);
+
+        top3DutchingBreakdown = top3.map(item => {
+            const cuotaTeorica = 1 / item.probDecimal;
+            const stakeSharePct = (item.probDecimal / probTop3Sum) * 100;
+            return {
+                score: item.score,
+                probPct: item.probPct,
+                cuotaUsada: cuotaTeorica.toFixed(2),
+                stakePct: stakeSharePct.toFixed(1),
+                esReal: false
+            };
+        });
+    }
+    // FIN
 
     function getEV(prob, odds) {
         if (!odds || odds <= 1) return null;
@@ -99,6 +148,12 @@ function calcularProbabilidades(stats) {
             score: s.score,
             prob: ((s.prob / totalP) * 100).toFixed(1) + "%"
         })),
+        dutchingTop3: {
+            probTotalPct: (top3.reduce((a, b) => a + b.probDecimal, 0) * 100).toFixed(1),
+            cuotaCombinada: cuotaCombinadaCalculada,
+            esCuotaReal: usarCuotasReales,
+            items: top3DutchingBreakdown
+        },
         mercados
     };
 }

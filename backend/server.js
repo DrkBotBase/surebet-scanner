@@ -126,7 +126,7 @@ app.get('/analyze', (req, res) => {
 const { parsearFlashscoreMobi } = require('./services/scraper');
 const { calcularProbabilidades } = require('./services/quantEngineV2');
 app.post('/analyze', async (req, res) => {
-    const { url, leagueAvg, oddsOver, oddsBtts } = req.body;
+    const { url, leagueAvg, oddsOver, oddsBtts, oddsScore1, oddsScore2, oddsScore3 } = req.body;
 
     if (!url || !url.includes('flashscore')) {
         return res.render('calc', { 
@@ -145,12 +145,17 @@ app.post('/analyze', async (req, res) => {
             lastUrl: url, oddsOver, oddsBtts 
         });
     }
+    
+    const odds1 = parseFloat(oddsScore1) || null;
+    const odds2 = parseFloat(oddsScore2) || null;
+    const odds3 = parseFloat(oddsScore3) || null;
 
     const quantResults = calcularProbabilidades({
         ...scrapedData,
         leagueAvg: parseFloat(leagueAvg) || 1.10,
         oddsOver: parseFloat(oddsOver) || null,
-        oddsBtts: parseFloat(oddsBtts) || null
+        oddsBtts: parseFloat(oddsBtts) || null,
+        manualScoreOdds: [odds1, odds2, odds3]
     });
 
     res.render('calc', {
@@ -159,7 +164,10 @@ app.post('/analyze', async (req, res) => {
             ...quantResults,
             leagueAvg: parseFloat(leagueAvg) || 1.10,
             manualOddsOver: oddsOver,
-            manualOddsBtts: oddsBtts
+            manualOddsBtts: oddsBtts,
+            manualOddsScore1: oddsScore1,
+            manualOddsScore2: oddsScore2,
+            manualOddsScore3: oddsScore3
         },
         error: null,
         lastUrl: url
