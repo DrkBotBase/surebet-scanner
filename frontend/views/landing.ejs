@@ -598,22 +598,26 @@
             <div class="space-y-3 pt-2">
                 <div>
                     <label class="block text-xs font-semibold text-slate-300 mb-1">Monto Total Inversión ($)</label>
-                    <input id="sb-total" type="number" value="100000" class="w-full bg-mejv-dark border border-slate-700 rounded-lg px-3 py-2 text-white font-mono text-sm focus:border-mejv-lime outline-none">
+                    <input id="sb-total" type="number" value="100000" oninput="calculateSurebet()" class="w-full bg-mejv-dark border border-slate-700 rounded-lg px-3 py-2 text-white font-mono text-sm focus:border-mejv-lime outline-none">
+                </div>
+                <!-- Nueva opción de redondeo -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Redondear a múltiplos de:</label>
+                    <input id="sb-rounding" type="number" value="1000" oninput="calculateSurebet()" class="w-full bg-mejv-dark border border-slate-700 rounded-lg px-3 py-2 text-white font-mono text-sm focus:border-mejv-lime outline-none">
+                    <p class="text-[10px] text-amber-500 mt-1 font-medium">
+                        <i class="fa-solid fa-shield-halved mr-1"></i> Para mayor seguridad redondear a 1000 COP
+                    </p>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-semibold text-slate-300 mb-1">Cuota Casa 1</label>
-                        <input id="sb-c1" type="number" step="0.01" value="2.35" class="w-full bg-mejv-dark border border-slate-700 rounded-lg px-3 py-2 text-white font-mono text-sm focus:border-mejv-lime outline-none">
+                        <input id="sb-c1" type="number" step="0.01" value="2.35" oninput="calculateSurebet()" class="w-full bg-mejv-dark border border-slate-700 rounded-lg px-3 py-2 text-white font-mono text-sm focus:border-mejv-lime outline-none">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-300 mb-1">Cuota Casa 2</label>
-                        <input id="sb-c2" type="number" step="0.01" value="2.05" class="w-full bg-mejv-dark border border-slate-700 rounded-lg px-3 py-2 text-white font-mono text-sm focus:border-mejv-lime outline-none">
+                        <input id="sb-c2" type="number" step="0.01" value="2.05" oninput="calculateSurebet()" class="w-full bg-mejv-dark border border-slate-700 rounded-lg px-3 py-2 text-white font-mono text-sm focus:border-mejv-lime outline-none">
                     </div>
                 </div>
-
-                <button onclick="calculateSurebet()" class="w-full py-2.5 bg-mejv-lime text-mejv-black font-display font-bold rounded-lg text-sm hover:bg-mejv-lime/90 transition-colors shadow-neon-lime">
-                    Calcular Distribución
-                </button>
 
                 <div id="sb-result" class="bg-mejv-black p-3 rounded-lg border border-slate-800 space-y-1 text-xs">
                     <div class="flex justify-between text-slate-300">
@@ -751,6 +755,7 @@
 
         function calculateSurebet() {
             const total = parseFloat(document.getElementById('sb-total').value) || 0;
+            const rounding = parseFloat(document.getElementById('sb-rounding').value) || 1;
             const c1 = parseFloat(document.getElementById('sb-c1').value) || 1;
             const c2 = parseFloat(document.getElementById('sb-c2').value) || 1;
 
@@ -758,12 +763,22 @@
             const inv2 = 1 / c2;
             const sumInv = inv1 + inv2;
 
-            const stake1 = (total * inv1) / sumInv;
-            const stake2 = (total * inv2) / sumInv;
+            // Calcular stakes originales
+            let stake1 = (total * inv1) / sumInv;
+            let stake2 = (total * inv2) / sumInv;
 
-            const returnVal = stake1 * c1;
-            const profit = returnVal - total;
-            const profitPct = (profit / total) * 100;
+            // Aplicar redondeo
+            stake1 = Math.round(stake1 / rounding) * rounding;
+            stake2 = Math.round(stake2 / rounding) * rounding;
+
+            // Recalcular ganancias con los stakes redondeados
+            const return1 = stake1 * c1;
+            const return2 = stake2 * c2;
+            const actualTotalStaked = stake1 + stake2;
+            
+            // La ganancia depende del resultado, tomamos la menor de las dos posibilidades
+            const profit = Math.min(return1, return2) - actualTotalStaked;
+            const profitPct = (profit / actualTotalStaked) * 100;
 
             document.getElementById('sb-res-1').innerText = '$' + Math.round(stake1).toLocaleString();
             document.getElementById('sb-res-2').innerText = '$' + Math.round(stake2).toLocaleString();
