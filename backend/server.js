@@ -79,12 +79,32 @@ app.get('/', async (req, res) => {
             return moment(date).tz("America/Bogota").format();
         };
 
+        const getMatchStatus = (date, timeStr) => {
+            if (!timeStr || typeof timeStr !== 'string' || !timeStr.includes(':')) return null;
+            try {
+                const [h, m] = timeStr.split(':').map(Number);
+                const d = new Date(date);
+                const year = d.getUTCFullYear();
+                const month = d.getUTCMonth();
+                const day = d.getUTCDate();
+                
+                const matchTime = moment.tz({ year, month, day, hour: h, minute: m }, "America/Bogota");
+                const now = moment().tz("America/Bogota");
+                const matchEnd = matchTime.clone().add(105, 'minutes');
+                
+                if (now.isBetween(matchTime, matchEnd)) return 'LIVE';
+                if (now.isAfter(matchEnd)) return 'FINALIZADO';
+                return null;
+            } catch(e) { console.error('Error calculating match status:', e); return null; }
+        };
+
         // Procesar predicciones y ordenar por fecha+hora en Colombia
         const processedPredictions = predictions
             .map(p => ({
                 ...p._doc,
                 eventDateColombia: moment(p.eventDate).tz("America/Bogota").toDate(),
-                timeColombia: moment(p.eventDate).tz("America/Bogota").format('HH:mm')
+                timeColombia: moment(p.eventDate).tz("America/Bogota").format('HH:mm'),
+                matchStatus: getMatchStatus(p.eventDate, p.time)
             }))
             .sort((a, b) => {
                 // Ordenar por fecha en Colombia (más reciente primero)
@@ -98,7 +118,8 @@ app.get('/', async (req, res) => {
             .map(g => ({
                 ...g._doc,
                 eventDateColombia: moment(g.eventDate).tz("America/Bogota").toDate(),
-                timeColombia: moment(g.eventDate).tz("America/Bogota").format('HH:mm')
+                timeColombia: moment(g.eventDate).tz("America/Bogota").format('HH:mm'),
+                matchStatus: getMatchStatus(g.eventDate, g.time)
             }))
             .sort((a, b) => {
                 if (a.eventDateColombia > b.eventDateColombia) return -1;
@@ -110,7 +131,8 @@ app.get('/', async (req, res) => {
             news, 
             surebets, 
             predictions: processedPredictions, 
-            goalTables: processedGoalTables 
+            goalTables: processedGoalTables,
+            moment // Pasar moment al contexto de la vista
         });
     } catch (error) {
         console.error('Error al cargar datos:', error);

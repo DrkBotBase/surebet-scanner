@@ -35,9 +35,11 @@ axiosInstance.interceptors.response.use(
     }
 );
 
-async function obtenerCuotas1xBet(idXbet) {
+async function obtenerCuotas1xBet(idXbet, isLive = false) {
     try {
-        const url = `https://1xbet-c.com/service-api/main-line-feed/v1/gameEvents?cfView=3&countEvents=250&country=91&gameId=${idXbet}&gr=455&grMode=4&lng=es&marketType=1&ref=1&supportedSpecialType=1`;
+        const url = isLive
+            ? `https://1xbet-c.com/service-api/main-live-feed/v3/gameEvents?cfView=3&countEvents=250&fcountry=91&gameId=${idXbet}&gr=455&grMode=4&lng=es&marketType=1&ref=1&supportedSpecialType=1`
+            : `https://1xbet-c.com/service-api/main-line-feed/v1/gameEvents?cfView=3&countEvents=250&country=91&gameId=${idXbet}&gr=455&grMode=4&lng=es&marketType=1&ref=1&supportedSpecialType=1`;
         
         const response = await axiosInstance({
             method: 'GET',

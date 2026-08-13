@@ -551,6 +551,7 @@ function refreshMatchFromModal() {
     if (!result) return;
 
     const { idXbet, idKambi } = result;
+    const isLive = false; 
     
     let stats = null;
     if (result.hasQuantAnalysis && result.statsUsed) {
@@ -572,7 +573,7 @@ function refreshMatchFromModal() {
     closeModal();
     renderResults();
     
-    scanMatch(idXbet, idKambi, stats);
+    scanMatch(idXbet, idKambi, stats, isLive);
 }
 
 function deleteMatchFromModal() {
@@ -613,7 +614,7 @@ let lastScanTime = 0;
 let isRateLimited = false;
 let rateLimitResetTime = null;
 
-async function scanMatch(idXbet, idKambi, stats = null) {
+async function scanMatch(idXbet, idKambi, stats = null, isLive = false) {
     if (isRateLimited && rateLimitResetTime) {
         const now = Date.now();
         if (now < rateLimitResetTime) {
@@ -641,7 +642,7 @@ async function scanMatch(idXbet, idKambi, stats = null) {
     renderResults();
 
     try {
-        const payload = { idXbet, idKambi };
+        const payload = { idXbet, idKambi, isLive };
         if (stats) {
             payload.stats = stats;
         }
@@ -869,6 +870,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const idXbet = document.getElementById('idXbet').value.trim();
         const idKambi = document.getElementById('idKambi').value.trim();
+        const isLive = document.getElementById('isLive') ? document.getElementById('isLive').checked : false;
 
         if (!idXbet || !idKambi) {
             alert('Por favor ingresa ambos IDs');
@@ -876,10 +878,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const stats = getStatsFromForm();
-        await scanMatch(idXbet, idKambi, stats);
+        await scanMatch(idXbet, idKambi, stats, isLive);
         
         document.getElementById('idXbet').value = '';
         document.getElementById('idKambi').value = '';
+        if (document.getElementById('isLive')) document.getElementById('isLive').checked = false;
     });
 
     document.getElementById('closeModal').addEventListener('click', closeModal);

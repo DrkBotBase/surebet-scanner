@@ -193,7 +193,22 @@ router.get('/api/surebets', auth, async (req, res) => {
 router.post('/api/surebets', auth, async (req, res) => {
     try {
         const { event, time, eventDate, market, line, percentage, bookmaker1, odds1, bookmaker2, odds2 } = req.body;
-        const newSure = new Surebet({ event, time, eventDate, market, line, percentage, bookmaker1, odds1, bookmaker2, odds2 });
+        
+        // Convertir la fecha a hora Colombia antes de guardar
+        const colombiaDate = moment.tz(eventDate, "America/Bogota").toDate();
+        
+        const newSure = new Surebet({ 
+            event, 
+            time, 
+            eventDate: colombiaDate, 
+            market, 
+            line, 
+            percentage, 
+            bookmaker1, 
+            odds1, 
+            bookmaker2, 
+            odds2 
+        });
         await newSure.save();
         res.status(201).json(newSure);
     } catch (error) {
@@ -204,8 +219,21 @@ router.post('/api/surebets', auth, async (req, res) => {
 router.post('/api/surebets/edit/:id', auth, async (req, res) => {
     try {
         const { event, time, eventDate, market, line, percentage, bookmaker1, odds1, bookmaker2, odds2 } = req.body;
+        
+        // Convertir la fecha a hora Colombia antes de guardar
+        const colombiaDate = moment.tz(eventDate, "America/Bogota").toDate();
+        
         const updated = await Surebet.findByIdAndUpdate(req.params.id, {
-            event, time, eventDate, market, line, percentage, bookmaker1, odds1, bookmaker2, odds2
+            event, 
+            time, 
+            eventDate: colombiaDate, 
+            market, 
+            line, 
+            percentage, 
+            bookmaker1, 
+            odds1, 
+            bookmaker2, 
+            odds2
         }, { returnDocument: 'after' });
         res.json(updated);
     } catch (error) {

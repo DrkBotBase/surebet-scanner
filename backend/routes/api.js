@@ -133,8 +133,8 @@ router.post('/scan', async (req, res) => {
             });
         }
 
-        const { idXbet, idKambi, stats } = req.body;
-        
+        const { idXbet, idKambi, stats, isLive } = req.body;
+
         if (!idXbet || !idKambi) {
             return res.status(400).json({ 
                 error: 'Se requieren ambos IDs (idXbet y idKambi)' 
@@ -147,14 +147,15 @@ router.post('/scan', async (req, res) => {
         } else {
             cacheKey = `${idXbet}_${idKambi}_no_stats`;
         }
-        
-        const cachedResult = cache.get(cacheKey);
-        
-        if (cachedResult) {
-            return res.json({
-                ...cachedResult,
-                fromCache: true
-            });
+
+        if (!isLive) {
+            const cachedResult = cache.get(cacheKey);
+            if (cachedResult) {
+                return res.json({
+                    ...cachedResult,
+                    fromCache: true
+                });
+            }
         }
 
         const timeoutPromise = new Promise((_, reject) => {
@@ -162,7 +163,7 @@ router.post('/scan', async (req, res) => {
         });
 
         const fetchPromise = Promise.all([
-            xbetService.obtenerCuotas1xBet(idXbet),
+            xbetService.obtenerCuotas1xBet(idXbet, isLive),
             kambiService.obtenerDatosKambi(idKambi)
         ]);
 
@@ -203,7 +204,9 @@ router.post('/scan', async (req, res) => {
             statsUsed: stats || null
         };
 
-        cache.set(cacheKey, result);
+        if (!isLive) {
+            cache.set(cacheKey, result);
+        }
 
         res.json(result);
         
