@@ -90,7 +90,7 @@ app.get('/', async (req, res) => {
                 
                 const matchTime = moment.tz({ year, month, day, hour: h, minute: m }, "America/Bogota");
                 const now = moment().tz("America/Bogota");
-                const matchEnd = matchTime.clone().add(105, 'minutes');
+                const matchEnd = matchTime.clone().add(112, 'minutes');
                 
                 if (now.isBetween(matchTime, matchEnd)) return 'LIVE';
                 if (now.isAfter(matchEnd)) return 'FINALIZADO';
