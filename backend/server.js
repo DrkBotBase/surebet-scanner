@@ -18,7 +18,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 días
+        maxAge: 30 * 24 * 60 * 60 * 1000
     }
 }));
 
@@ -57,70 +57,103 @@ const GoalTable = require('./models/GoalTable');
 
 app.get('/', async (req, res) => {
     try {
-        // Fecha de ayer en hora Colombia
-        const yesterday = moment().tz("America/Bogota")
-            .subtract(1, 'days')
+        const today = moment().tz("America/Bogota")
+            .startOf('day')
+            .toDate();
+        
+        const tomorrow = moment().tz("America/Bogota")
+            .add(1, 'days')
             .startOf('day')
             .toDate();
 
         const [news, surebets, predictions, goalTables] = await Promise.all([
             News.find().sort({ createdAt: -1 }).limit(3),
-            Surebet.find({ eventDate: { $gte: yesterday } }).sort({ eventDate: 1 }).limit(6),
-            Prediction.find({ eventDate: { $gte: yesterday } })
-                .sort({ eventDate: -1 })
-                .limit(6),
-            GoalTable.find({ eventDate: { $gte: yesterday } })
-                .sort({ eventDate: -1 })
-                .limit(10)
+            Surebet.find({ eventDate: { $gte: today } }).sort({ eventDate: 1 }).limit(6),
+            Prediction.find({ 
+                eventDate: { 
+                    $gte: today,
+                    $lt: tomorrow
+                } 
+            })
+            .sort({ eventDate: -1 })
+            .limit(10),
+            GoalTable.find({ 
+                eventDate: { 
+                    $gte: today,
+                    $lt: tomorrow
+                } 
+            })
+            .sort({ eventDate: -1 })
+            .limit(10)
         ]);
 
-        // Convertir fechas a hora Colombia para el renderizado
-        const formatToColombia = (date) => {
-            return moment(date).tz("America/Bogota").format();
-        };
-
-        const getMatchStatus = (date, timeStr) => {
+        const getMatchStatus = (eventDate, timeStr) => {
             if (!timeStr || typeof timeStr !== 'string' || !timeStr.includes(':')) return null;
             try {
                 const [h, m] = timeStr.split(':').map(Number);
-                const d = new Date(date);
-                const year = d.getUTCFullYear();
-                const month = d.getUTCMonth();
-                const day = d.getUTCDate();
                 
-                const matchTime = moment.tz({ year, month, day, hour: h, minute: m }, "America/Bogota");
+                const matchTime = moment(eventDate)
+                    .tz("America/Bogota")
+                    .hour(h)
+                    .minute(m)
+                    .second(0);
+                
                 const now = moment().tz("America/Bogota");
                 const matchEnd = matchTime.clone().add(112, 'minutes');
                 
                 if (now.isBetween(matchTime, matchEnd)) return 'LIVE';
                 if (now.isAfter(matchEnd)) return 'FINALIZADO';
                 return null;
-            } catch(e) { console.error('Error calculating match status:', e); return null; }
+            } catch(e) {
+                console.error('Error calculating match status:', e);
+                return null;
+            }
         };
 
-        // Procesar predicciones y ordenar por fecha+hora en Colombia
         const processedPredictions = predictions
-            .map(p => ({
-                ...p._doc,
-                eventDateColombia: moment(p.eventDate).tz("America/Bogota").toDate(),
-                timeColombia: moment(p.eventDate).tz("America/Bogota").format('HH:mm'),
-                matchStatus: getMatchStatus(p.eventDate, p.time)
-            }))
+            .map(p => {
+                const pObj = p.toObject ? p.toObject() : { ...p };
+                
+                const [h, m] = pObj.time.split(':').map(Number);
+                const fullDate = moment(pObj.eventDate)
+                    .tz("America/Bogota")
+                    .hour(h)
+                    .minute(m)
+                    .second(0);
+                
+                const matchStatus = getMatchStatus(pObj.eventDate, pObj.time);
+                
+                return {
+                    ...pObj,
+                    eventDateColombia: fullDate.toDate(),
+                    timeColombia: pObj.time,
+                    matchStatus: matchStatus
+                };
+            })
             .sort((a, b) => {
-                // Ordenar por fecha en Colombia (más reciente primero)
                 if (a.eventDateColombia > b.eventDateColombia) return -1;
                 if (a.eventDateColombia < b.eventDateColombia) return 1;
-                // Si misma fecha, por hora
                 return a.time.localeCompare(b.time);
             });
 
         const processedGoalTables = goalTables
-            .map(g => ({
-                ...g._doc,
-                eventDateColombia: moment(g.eventDate).tz("America/Bogota").toDate(),
-                timeColombia: moment(g.eventDate).tz("America/Bogota").format('HH:mm'),
-                matchStatus: getMatchStatus(g.eventDate, g.time)
-            }))
+            .map(g => {
+                const gObj = g.toObject ? g.toObject() : { ...g };
+                
+                const [h, m] = gObj.time.split(':').map(Number);
+                const fullDate = moment(gObj.eventDate)
+                    .tz("America/Bogota")
+                    .hour(h)
+                    .minute(m)
+                    .second(0);
+                
+                return {
+                    ...gObj,
+                    eventDateColombia: fullDate.toDate(),
+                    timeColombia: gObj.time,
+                    matchStatus: getMatchStatus(gObj.eventDate, gObj.time)
+                };
+            })
             .sort((a, b) => {
                 if (a.eventDateColombia > b.eventDateColombia) return -1;
                 if (a.eventDateColombia < b.eventDateColombia) return 1;
@@ -132,7 +165,7 @@ app.get('/', async (req, res) => {
             surebets, 
             predictions: processedPredictions, 
             goalTables: processedGoalTables,
-            moment // Pasar moment al contexto de la vista
+            moment
         });
     } catch (error) {
         console.error('Error al cargar datos:', error);

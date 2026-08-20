@@ -77,13 +77,13 @@ async function obtenerCuotas1xBet(idXbet, isLive = false) {
             })) || []
         };
     } catch (error) {
-        console.error('❌ Error 1xBet:', error.message);
+        console.error('Error 1xBet:', error.message);
         
         if (error.code === 'ECONNABORTED') {
-            console.error('⏱️ Timeout en 1xBet');
+            console.error(' Timeout en 1xBet');
         }
         if (error.response?.status === 429) {
-            console.error('⏳ Rate limit excedido en 1xBet');
+            console.error('Rate limit excedido en 1xBet');
         }
         
         return null;

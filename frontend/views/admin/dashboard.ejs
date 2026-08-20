@@ -301,7 +301,10 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status })
-      }).then(handleResponse)
+      }).then(handleResponse),
+      
+      // Refresh
+      refreshMatch: (type, id) => fetch(`/admin/api/refresh-match/${type}/${id}`, { method: 'POST' }).then(handleResponse)
     };
 
     function handleResponse(res) {
@@ -583,6 +586,7 @@
         </td>
         <td class="px-4 py-3 text-center">${badge}</td>
         <td class="px-4 py-3 text-right whitespace-nowrap">
+          <button data-id="${p._id}" data-accion="refresh" class="bg-mejv-lime/20 hover:bg-mejv-lime text-mejv-lime hover:text-mejv-black w-7 h-7 rounded-lg transition mr-1" title="Actualizar Resultado"><i class="fas fa-sync-alt text-[10px]"></i></button>
           <div class="inline-flex gap-1 items-center bg-mejv-black/30 border border-gray-800/80 rounded-xl p-1 shadow-inner mr-3">
             <button data-id="${p._id}" data-accion="check" class="bg-emerald-950/20 hover:bg-emerald-600 text-emerald-400 hover:text-white w-6 h-6 rounded-lg transition flex items-center justify-center border border-emerald-800/40" title="Marcar como Ganado/Verificado"><i class="fas fa-check text-[9px]"></i></button>
             <button data-id="${p._id}" data-accion="cross" class="bg-rose-950/20 hover:bg-rose-600 text-rose-400 hover:text-white w-6 h-6 rounded-lg transition flex items-center justify-center border border-rose-800/40" title="Marcar como Perdido/Fallido"><i class="fas fa-times text-[9px]"></i></button>
@@ -598,6 +602,22 @@
     container.innerHTML = html;
 
     // Event listeners
+    container.querySelectorAll('[data-accion="refresh"]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = btn.dataset.id;
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fas fa-spinner animate-spin text-[10px]"></i>`;
+      try {
+        await api.refreshMatch('prediction', id);
+        showToast('Resultado actualizado correctamente');
+        cargarPronosticos();
+      } catch (err) { 
+        showToast(err.message, 'error'); 
+        btn.innerHTML = `<i class="fas fa-sync-alt text-[10px]"></i>`;
+        btn.disabled = false;
+      }
+    });
+    });
     container.querySelectorAll('[data-accion="check"]').forEach(btn => {
     btn.addEventListener('click', async () => {
       const id = btn.dataset.id;
@@ -696,6 +716,7 @@
             </td>
             <td class="px-4 py-3 text-center">${badge}</td>
             <td class="px-4 py-3 text-right whitespace-nowrap">
+              <button data-id="${t._id}" data-accion="refresh" class="bg-mejv-lime/20 hover:bg-mejv-lime text-mejv-lime hover:text-mejv-black w-7 h-7 rounded-lg transition mr-1" title="Actualizar Resultado"><i class="fas fa-sync-alt text-[10px]"></i></button>
               <div class="inline-flex gap-1 items-center bg-mejv-black/30 border border-gray-800/80 rounded-xl p-1 shadow-inner mr-3">
                 <button data-id="${t._id}" data-accion="check" class="bg-emerald-950/20 hover:bg-emerald-600 text-emerald-400 hover:text-white w-6 h-6 rounded-lg transition flex items-center justify-center border border-emerald-800/40" title="Marcar como Ganado/Verificado"><i class="fas fa-check text-[9px]"></i></button>
                 <button data-id="${t._id}" data-accion="cross" class="bg-rose-950/20 hover:bg-rose-600 text-rose-400 hover:text-white w-6 h-6 rounded-lg transition flex items-center justify-center border border-rose-800/40" title="Marcar como Perdido/Fallido"><i class="fas fa-times text-[9px]"></i></button>
@@ -710,8 +731,23 @@
       html += `</tbody></table></div></div>`;
       container.innerHTML = html;
       
-      // Event listeners
-      container.querySelectorAll('[data-accion="check"]').forEach(btn => {
+    container.querySelectorAll('[data-accion="refresh"]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = btn.dataset.id;
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fas fa-spinner animate-spin text-[10px]"></i>`;
+      try {
+        await api.refreshMatch('goal-table', id);
+        showToast('Resultado actualizado correctamente');
+        cargarTablaGoles();
+      } catch (err) { 
+        showToast(err.message, 'error'); 
+        btn.innerHTML = `<i class="fas fa-sync-alt text-[10px]"></i>`;
+        btn.disabled = false;
+      }
+    });
+    });
+    container.querySelectorAll('[data-accion="check"]').forEach(btn => {
         btn.addEventListener('click', async () => {
           const id = btn.dataset.id;
           try {
@@ -947,10 +983,28 @@
       // PRONÓSTICOS FORM
       } else if (section === 'pronosticos') {
         title.innerHTML = `<i class="fas fa-futbol text-mejv-blue"></i> ${action === 'crear' ? 'Nuevo Pronóstico' : 'Editar Pronóstico'}`;
-        fields.innerHTML = `
+        
+        // --- NUEVA LÓGICA DE SCRAPING ---
+        const scrapeSection = action === 'crear' ? `
+          <div class="bg-mejv-black p-4 rounded-xl border border-mejv-blue/30 mb-4">
+            <label class="block text-xs font-semibold text-mejv-blue uppercase tracking-wider mb-2">Automatizar por Flashscore ID</label>
+            <div class="flex gap-2">
+              <input id="f_scrapeId" type="text" class="w-full bg-mejv-dark border border-gray-800 rounded-xl px-3 py-2 text-xs text-white" placeholder="Ej: QyHcyjU6" />
+              <button type="button" id="btnScrape" class="bg-mejv-blue hover:bg-mejv-blue-dark text-white text-xs font-bold px-3 py-2 rounded-xl transition">Obtener</button>
+            </div>
+            <p id="scrapeStatus" class="text-[10px] text-gray-500 mt-2 hidden"></p>
+          </div>
+        ` : '';
+
+        fields.innerHTML = scrapeSection + `
           <div>
             <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Encuentro / Partido</label>
             <input id="f_event" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" value="${data ? escapaHTML(data.event) : ''}" required placeholder="ej: Liverpool vs Arsenal" />
+            <input type="hidden" id="f_team1_name" value="${data && data.team1 ? escapaHTML(data.team1.name) : ''}" />
+            <input type="hidden" id="f_team1_logo" value="${data && data.team1 ? escapaHTML(data.team1.logo) : ''}" />
+            <input type="hidden" id="f_team2_name" value="${data && data.team2 ? escapaHTML(data.team2.name) : ''}" />
+            <input type="hidden" id="f_team2_logo" value="${data && data.team2 ? escapaHTML(data.team2.logo) : ''}" />
+            <input type="hidden" id="f_flashscoreId" value="${data ? escapaHTML(data.flashscoreId || '') : ''}" />
           </div>
           <div class="grid grid-cols-2 gap-3">
             <div>
@@ -987,15 +1041,85 @@
               <option value="verificado" ${data && data.status === 'verificado' ? 'selected' : ''}>Ganado (Verificado)</option>
               <option value="fallido" ${data && data.status === 'fallido' ? 'selected' : ''}>Perdido (Fallido)</option>
               <option value="return" ${data && data.status === 'return' ? 'selected' : ''}>Reembolso</option>
+              <option value="live" ${data && data.status === 'live' ? 'selected' : ''}>En Vivo</option>
+              <option value="finished" ${data && data.status === 'finished' ? 'selected' : ''}>Finalizado</option>
+              <option value="not_started" ${data && data.status === 'not_started' ? 'selected' : ''}>No Iniciado</option>
             </select>
           </div>
         `;
+        
+        // --- LÓGICA DE SCRAPING ---
+        if (action === 'crear') {
+            document.getElementById('btnScrape').addEventListener('click', async () => {
+                const id = document.getElementById('f_scrapeId').value.trim();
+                const statusP = document.getElementById('scrapeStatus');
+                if(!id) return;
+                
+                statusP.textContent = "Obteniendo datos...";
+                statusP.classList.remove('hidden', 'text-rose-400');
+                statusP.classList.add('text-mejv-blue');
+                
+                try {
+                    const res = await fetch('/admin/api/scrape-match', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id })
+                    });
+                    const data = await res.json();
+                    console.log(data)
+                    
+                    if(!res.ok) throw new Error(data.error);
+                    
+                    // Llenar campos
+                    document.getElementById('f_event').value = `${data.team1.name} - ${data.team2.name}`;
+                    document.getElementById('f_score').value = data.score;
+                    document.getElementById('f_status').value = data.status;
+                    
+                    if(data.datetime && data.datetime.iso) {
+                        document.getElementById('f_eventDate').value = formatInputDate(data.datetime.iso);
+                    }
+                    
+                    // Asegurar que la hora se cargue correctamente
+                    if (data.datetime && data.datetime.colombia) {
+                       const timePart = data.datetime.colombia.split(' ')[1];
+                       if (timePart) document.getElementById('f_time').value = timePart;
+                    }
+                    
+                    // Campos ocultos
+                    document.getElementById('f_team1_name').value = data.team1.name;
+                    document.getElementById('f_team1_logo').value = data.team1.logo || '';
+                    document.getElementById('f_team2_name').value = data.team2.name;
+                    document.getElementById('f_team2_logo').value = data.team2.logo || '';
+                    document.getElementById('f_flashscoreId').value = data.id;
+                    
+                    statusP.textContent = "✅ Datos cargados correctamente";
+                    statusP.classList.add('text-emerald-400');
+                } catch(err) {
+                    statusP.textContent = `❌ Error: ${err.message}`;
+                    statusP.classList.add('text-rose-400');
+                }
+            });
+        }
+        
         submitBtn.innerHTML = `<i class="fas fa-save"></i> ${action === 'crear' ? 'Registrar Pronóstico' : 'Guardar Cambios'}`;
 
       // TABLA GOLES FORM
       } else if (section === 'tablagoles') {
         title.innerHTML = `<i class="fas fa-bullseye text-mejv-lime"></i> ${action === 'crear' ? 'Nueva Entrada Goles' : 'Editar Entrada Goles'}`;
-        fields.innerHTML = `
+        
+        // --- NUEVA LÓGICA DE SCRAPING ---
+        const scrapeSection = action === 'crear' ? `
+          <div class="bg-mejv-black p-4 rounded-xl border border-mejv-lime/30 mb-4">
+            <label class="block text-xs font-semibold text-mejv-lime uppercase tracking-wider mb-2">Automatizar por Flashscore ID</label>
+            <div class="flex gap-2">
+              <input id="f_scrapeId" type="text" class="w-full bg-mejv-dark border border-gray-800 rounded-xl px-3 py-2 text-xs text-white" placeholder="Ej: QyHcyjU6" />
+              <button type="button" id="btnScrape" class="bg-mejv-lime hover:bg-mejv-lime-dark text-mejv-black text-xs font-bold px-3 py-2 rounded-xl transition">Obtener</button>
+            </div>
+            <p id="scrapeStatus" class="text-[10px] text-gray-500 mt-2 hidden"></p>
+          </div>
+        ` : '';
+
+        fields.innerHTML = scrapeSection + `
           <div>
             <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Liga / Competición</label>
             <input id="f_league" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" placeholder="ej: Premier League" value="${data ? escapaHTML(data.league) : ''}" required />
@@ -1003,6 +1127,11 @@
           <div>
             <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Encuentro / Partido</label>
             <input id="f_event" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" placeholder="ej: Chelsea vs Tottenham" value="${data ? escapaHTML(data.event) : ''}" required />
+            <input type="hidden" id="f_team1_name" value="${data && data.team1 ? escapaHTML(data.team1.name) : ''}" />
+            <input type="hidden" id="f_team1_logo" value="${data && data.team1 ? escapaHTML(data.team1.logo) : ''}" />
+            <input type="hidden" id="f_team2_name" value="${data && data.team2 ? escapaHTML(data.team2.name) : ''}" />
+            <input type="hidden" id="f_team2_logo" value="${data && data.team2 ? escapaHTML(data.team2.logo) : ''}" />
+            <input type="hidden" id="f_flashscoreId" value="${data ? escapaHTML(data.flashscoreId || '') : ''}" />
           </div>
           <div class="grid grid-cols-2 gap-3">
             <div>
@@ -1039,9 +1168,65 @@
               <option value="verificado" ${data && data.status === 'verificado' ? 'selected' : ''}>Ganado (Verificado)</option>
               <option value="fallido" ${data && data.status === 'fallido' ? 'selected' : ''}>Perdido (Fallido)</option>
               <option value="return" ${data && data.status === 'return' ? 'selected' : ''}>Reembolso</option>
+              <option value="live" ${data && data.status === 'live' ? 'selected' : ''}>En Vivo</option>
+              <option value="finished" ${data && data.status === 'finished' ? 'selected' : ''}>Finalizado</option>
+              <option value="not_started" ${data && data.status === 'not_started' ? 'selected' : ''}>No Iniciado</option>
             </select>
           </div>
         `;
+        
+        // --- LÓGICA DE SCRAPING ---
+        if (action === 'crear') {
+            document.getElementById('btnScrape').addEventListener('click', async () => {
+                const id = document.getElementById('f_scrapeId').value.trim();
+                const statusP = document.getElementById('scrapeStatus');
+                if(!id) return;
+                
+                statusP.textContent = "Obteniendo datos...";
+                statusP.classList.remove('hidden', 'text-rose-400');
+                statusP.classList.add('text-mejv-lime');
+                
+                try {
+                    const res = await fetch('/admin/api/scrape-match', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id })
+                    });
+                    const data = await res.json();
+                    
+                    if(!res.ok) throw new Error(data.error);
+                    
+                    // Llenar campos
+                    document.getElementById('f_event').value = `${data.team1.name} vs ${data.team2.name}`;
+                    document.getElementById('f_score').value = data.score;
+                    document.getElementById('f_status').value = data.status;
+                    
+                    if(data.datetime && data.datetime.iso) {
+                        document.getElementById('f_eventDate').value = formatInputDate(data.datetime.iso);
+                    }
+                    
+                    // Asegurar que la hora se cargue correctamente
+                    if (data.datetime && data.datetime.colombia) {
+                       const timePart = data.datetime.colombia.split(' ')[1];
+                       if (timePart) document.getElementById('f_time').value = timePart;
+                    }
+                    
+                    // Campos ocultos
+                    document.getElementById('f_team1_name').value = data.team1.name;
+                    document.getElementById('f_team1_logo').value = data.team1.logo || '';
+                    document.getElementById('f_team2_name').value = data.team2.name;
+                    document.getElementById('f_team2_logo').value = data.team2.logo || '';
+                    document.getElementById('f_flashscoreId').value = data.id;
+                    
+                    statusP.textContent = "✅ Datos cargados correctamente";
+                    statusP.classList.add('text-emerald-400');
+                } catch(err) {
+                    statusP.textContent = `❌ Error: ${err.message}`;
+                    statusP.classList.add('text-rose-400');
+                }
+            });
+        }
+        
         submitBtn.innerHTML = `<i class="fas fa-save"></i> ${action === 'crear' ? 'Registrar Entrada' : 'Guardar Cambios'}`;
       }
 
@@ -1124,6 +1309,15 @@
         } else if (section === 'pronosticos') {
           const data = {
             event: document.getElementById('f_event').value.trim(),
+            team1: { 
+                name: document.getElementById('f_team1_name').value.trim(),
+                logo: document.getElementById('f_team1_logo').value.trim()
+            },
+            team2: { 
+                name: document.getElementById('f_team2_name').value.trim(),
+                logo: document.getElementById('f_team2_logo').value.trim()
+            },
+            flashscoreId: document.getElementById('f_flashscoreId').value.trim(),
             eventDate: new Date(document.getElementById('f_eventDate').value + 'T00:00:00Z'),
             time: document.getElementById('f_time').value,
             prediction: document.getElementById('f_prediction').value.trim(),
@@ -1147,6 +1341,15 @@
           const data = {
             league: document.getElementById('f_league').value.trim(),
             event: document.getElementById('f_event').value.trim(),
+            team1: { 
+                name: document.getElementById('f_team1_name').value.trim(),
+                logo: document.getElementById('f_team1_logo').value.trim()
+            },
+            team2: { 
+                name: document.getElementById('f_team2_name').value.trim(),
+                logo: document.getElementById('f_team2_logo').value.trim()
+            },
+            flashscoreId: document.getElementById('f_flashscoreId').value.trim(),
             eventDate: new Date(document.getElementById('f_eventDate').value + 'T00:00:00Z'),
             time: document.getElementById('f_time').value,
             prediction: document.getElementById('f_prediction').value.trim(),

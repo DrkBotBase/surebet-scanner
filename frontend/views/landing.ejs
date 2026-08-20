@@ -3,17 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MEJV Sports - Pronósticos, Surebets y Estadísticas</title>
-    <meta name="description" content="Encuentra los mejores pronósticos deportivos, surebets sin riesgo, noticias actualizadas y herramientas de análisis como la calculadora de goles en MEJV Sports.">
+    
+    <title>MEJV Sports | Surebets, Pronósticos y Análisis Deportivo</title>
+    <meta name="description" content="Descubre las mejores surebets sin riesgo, pronósticos deportivos precisos y herramientas de análisis en MEJV Sports. Calculadora de goles y noticias actualizadas.">
+    
+    <link rel="icon" type="image/png" sizes="32x32" href="https://mejv.pro/assets/images/icon.png">
     <link rel="apple-touch-icon" href="https://mejv.pro/assets/images/icon.png">
-    <!-- Tailwind CSS -->
+    
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://arbs.mejv.pro/">
+    <meta property="og:title" content="MEJV Sports - Surebets y Pronósticos">
+    <meta property="og:description" content="Herramientas de análisis, surebets sin riesgo y los mejores pronósticos deportivos.">
+    <meta property="og:image" content="https://arbs.mejv.pro/images/banner.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="MEJV Sports - Surebets y Pronósticos">
+    <meta name="twitter:description" content="Herramientas de análisis, surebets sin riesgo y pronósticos deportivos.">
+    <meta name="twitter:image" content="https://arbs.mejv.pro/images/banner.jpg">
+    
+    <link rel="canonical" href="https://arbs.mejv.pro/">
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Space Grotesk & Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">  
     
     <script>
         tailwind.config = {
@@ -44,7 +60,6 @@
         }
     </script>
     <style>
-        /* Estilos de animación para el Menú Hamburguesa */
         .hamburger-line {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             transform-origin: center;
@@ -60,7 +75,6 @@
             transform: translateY(-7px) rotate(-45deg);
         }
 
-        /* Animaciones de Scroll Reveal */
         .reveal {
             opacity: 0;
             transform: translateY(30px);
@@ -71,7 +85,6 @@
             transform: translateY(0);
         }
 
-        /* Scrollbar personalizada */
         .custom-scrollbar::-webkit-scrollbar {
             height: 6px;
             width: 6px;
@@ -88,7 +101,6 @@
             background: #bfeb30;
         }
 
-        /* Estilos para estados de pendiente */
         .estado-pendiente[data-estado="pendiente"] {
             color: #fbbf24;
         }
@@ -99,7 +111,6 @@
             color: #f87171;
         }
         
-        /* Animación de pulso para pendiente */
         .estado-pendiente[data-estado="pendiente"] {
             animation: pulse 1.5s ease-in-out infinite;
         }
@@ -109,7 +120,6 @@
             50% { opacity: 0.5; }
         }
 
-        /* Mensaje de error */
         .mensaje-error-estados {
             animation: slideDown 0.3s ease-out;
         }
@@ -127,11 +137,8 @@
     </style>
 </head>
 <body class="bg-mejv-black text-slate-100 font-sans antialiased selection:bg-mejv-lime selection:text-mejv-black">
-
-    <!-- NAV / NAVEGACIÓN PRINCIPAL -->
     <nav class="fixed top-0 left-0 w-full z-50 bg-mejv-black/90 backdrop-blur-md border-b border-mejv-card-dark transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <!-- Logo -->
             <a href="/" class="flex items-center gap-2.5 group">
                 <div class="w-10 h-10 rounded-xl flex items-center justify-center text-mejv-lime shadow-neon-blue bg-mejv-black">
                     <img src="https://mejv.pro/assets/images/icon.png" alt="icon mejv" class="w-7 h-7">
@@ -142,7 +149,6 @@
                 </div>
             </a>
 
-            <!-- Botón Hamburguesa Animado -->
             <button id="menu-btn" aria-label="Abrir Menú" class="p-2.5 rounded-xl bg-mejv-card-dark text-slate-200 hover:text-mejv-lime hover:bg-mejv-dark border border-mejv-card-dark focus:outline-none transition-colors z-50">
                 <div class="w-6 h-5 flex flex-col justify-between items-center">
                     <span class="line1 hamburger-line w-6 h-0.5 bg-current rounded-full"></span>
@@ -152,11 +158,7 @@
             </button>
         </div>
     </nav>
-
-    <!-- Overlay de Fondo para Menú -->
     <div id="menu-overlay" class="fixed inset-0 bg-mejv-black/80 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300"></div>
-
-    <!-- Menú Desplegable Lateral (Side Menu) -->
     <aside id="side-menu" class="fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-mejv-dark/95 border-l border-mejv-card-dark z-40 transform translate-x-full transition-transform duration-300 ease-out flex flex-col pt-24 px-6 pb-8 justify-between shadow-2xl">
         <div class="space-y-6">
             <div class="text-xs font-display font-bold uppercase tracking-widest text-mejv-lime border-b border-mejv-card-dark pb-2">Navegación</div>
@@ -197,12 +199,9 @@
         </div>
     </aside>
 
-    <!-- HEADER / HERO SLIDER DE IMÁGENES -->
     <header id="Inicio" class="pt-16 relative overflow-hidden bg-mejv-black">
         <div class="relative w-full h-[70vh] sm:h-[80vh] min-h-[480px] overflow-hidden">
-            <!-- Slides Container -->
             <div id="carousel-slides" class="w-full h-full flex transition-transform duration-700 ease-out">
-                
                 <!-- Slide 1 -->
                 <div class="w-full h-full flex-shrink-0 relative">
                     <img src="https://www.catapult.com/wp-content/uploads/2024/06/FC_koln_matchtracker_shot_from_video_cropped-scaled-1.jpg" alt="Análisis Deportivo" class="w-full h-full object-cover">
@@ -218,7 +217,6 @@
                         </div>
                     </div>
                 </div>
-
                 <!-- Slide 2 -->
                 <div class="w-full h-full flex-shrink-0 relative">
                     <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1400&q=80" alt="Balón de fútbol" class="w-full h-full object-cover">
@@ -234,7 +232,6 @@
                         </div>
                     </div>
                 </div>
-
                 <!-- Slide 3 -->
                 <div class="w-full h-full flex-shrink-0 relative">
                     <img src="https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=1400&q=80" alt="Estrategia táctica" class="w-full h-full object-cover">
@@ -250,7 +247,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
 
             <!-- Controles del Slider -->
@@ -272,7 +268,6 @@
 
     <!-- MAIN CONTENT -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-20">
-
         <!-- SECCIÓN NOTICIAS DEPORTIVAS -->
         <section id="Noticias" class="reveal">
             <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 border-b border-mejv-card-dark pb-4 gap-2">
@@ -321,7 +316,6 @@
                 </div>
             <% } %>
         </section>
-
         <!-- SECCIÓN SUREBET -->
         <section id="Surebets" class="reveal">
             <div class="bg-gradient-to-br from-mejv-black via-mejv-dark to-mejv-black p-6 sm:p-8 rounded-3xl border border-mejv-lime/30 shadow-neon-lime/10 relative overflow-hidden">
@@ -394,7 +388,6 @@
                 </div>
             </div>
         </section>
-
         <!-- SECCIÓN PRONÓSTICOS DEPORTIVOS -->
         <section id="Pronosticos" class="reveal">
             <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-6 border-b border-mejv-card-dark pb-4 gap-2">
@@ -420,13 +413,13 @@
                 <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                     <% predictions.forEach(pred => { %>
                         <div class="bg-mejv-card-dark border border-slate-800 rounded-xl overflow-hidden shadow-lg flex flex-col" data-id="<%= pred._id %>">
-                            <!-- Header de la tarjeta - Compacto -->
+                            <!-- Header de la tarjeta -->
                             <div class="px-3 py-2 flex items-center justify-between border-b border-slate-800/50">
                                 <div class="flex items-center gap-2">
                                     <span class="text-[10px] font-mono text-slate-400"><%= pred.time %></span>
-                                    <% if (pred.matchStatus === 'LIVE') { %>
+                                    <% if (pred.status === 'live') { %>
                                         <span class="bg-red-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase animate-pulse">LIVE</span>
-                                    <% } else if (pred.matchStatus === 'FINALIZADO') { %>
+                                    <% } else if (pred.status === 'finished') { %>
                                         <span class="bg-slate-700 text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">FINALIZADO</span>
                                     <% } %>
                                 </div>
@@ -442,14 +435,28 @@
                                 <span class="<%= badgeColor %> <%= textColor %> text-[9px] font-bold px-1.5 py-0.5 rounded uppercase"><%= badgeText %></span>
                             </div>
                             
-                            <!-- Contenido de la tarjeta (Encuentro) - Compacto -->
-                            <div class="px-3 py-3 text-center">
-                                <div class="font-display font-bold text-mejv-white text-sm">
-                                    <%= pred.event %>
+                            <!-- Contenido de la tarjeta - Con Logos (Nombres en línea) -->
+                            <div class="px-3 py-4 flex items-center justify-between gap-3">
+                                <% if (pred.team1 && pred.team1.logo) { %>
+                                    <img src="<%= pred.team1.logo %>" alt="<%= pred.team1.name %>" class="w-8 h-8 object-contain" />
+                                <% } %>
+                                
+                                <div class="flex-1 flex items-center justify-center gap-2 text-center">
+                                    <div class="font-display font-bold text-mejv-white text-xs truncate">
+                                        <%= pred.team1 && pred.team1.name ? pred.team1.name : pred.event.split(' vs ')[0] %>
+                                    </div>
+                                    <div class="text-[10px] text-slate-500 font-bold uppercase shrink-0">vs</div>
+                                    <div class="font-display font-bold text-mejv-white text-xs truncate">
+                                        <%= pred.team2 && pred.team2.name ? pred.team2.name : pred.event.split(' vs ')[1] %>
+                                    </div>
                                 </div>
+                                
+                                <% if (pred.team2 && pred.team2.logo) { %>
+                                    <img src="<%= pred.team2.logo %>" alt="<%= pred.team2.name %>" class="w-8 h-8 object-contain" />
+                                <% } %>
                             </div>
                             
-                            <!-- Pie de tarjeta (Predicción y Cuota) - Compacto -->
+                            <!-- Pie de tarjeta (Predicción y Cuota) -->
                             <div class="bg-mejv-black px-3 py-2 flex items-center justify-between border-t border-slate-800">
                                 <span class="text-[11px] text-slate-300">
                                     <span class="text-slate-500 font-bold uppercase">Pred: </span> <%= pred.prediction %>
@@ -463,7 +470,6 @@
                 </div>
             <% } %>
         </section>
-
         <!-- SECCIÓN CALCULADORA DE GOLES -->
         <section id="Calculadora" class="reveal">
             <div class="bg-mejv-dark border border-mejv-blue/30 rounded-3xl p-6 sm:p-8 shadow-neon-blue/10 space-y-6">
@@ -503,6 +509,7 @@
                     <% } else { %>
                         <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                             <% goalTables.forEach(item => { %>
+                            <% console.log(item) %>
                                 <div class="bg-mejv-card-dark border border-slate-800 rounded-xl overflow-hidden shadow-lg flex flex-col" data-id="<%= item._id %>">
                                     <!-- Header -->
                                     <div class="px-3 py-2 flex items-center justify-between border-b border-slate-800/50">
@@ -547,12 +554,10 @@
                 </div>
             </div>
         </section>
-        
     </main>
     <!-- FOOTER -->
     <footer class="bg-mejv-black border-t border-mejv-card-dark text-slate-400 py-12 px-4 sm:px-6 lg:px-8 mt-20">
         <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            
             <!-- Alineado a la izquierda: Redes Sociales -->
             <div class="text-left space-y-3 order-2 md:order-1">
                 <h4 class="text-xs uppercase font-display font-bold tracking-widest text-mejv-lime">Redes Sociales</h4>
@@ -568,7 +573,6 @@
                     </a>
                 </div>
             </div>
-
             <!-- Centrado: MEJV / Derechos / Descargo -->
             <div class="text-center space-y-2 order-1 md:order-2 md:border-l border-slate-800/80 md:pl-8">
                 <h3 class="font-display text-3xl font-black text-mejv-white tracking-widest">MEJV</h3>
@@ -579,12 +583,9 @@
                     <span class="font-bold text-mejv-lime">Descargo de responsabilidad:</span> juega bajo tu propio riesgo y siempre dinero que estes dispuesto a perder.
                 </p>
             </div>
-
         </div>
     </footer>
-
     <!-- MODALES / HERRAMIENTAS INTERACTIVAS -->
-
     <!-- Modal Noticia Detalle -->
     <div id="news-modal" class="fixed inset-0 bg-mejv-black/85 backdrop-blur-md z-50 hidden items-center justify-center p-4">
         <div class="bg-mejv-card-dark border border-slate-700 w-full max-w-lg rounded-2xl p-6 relative shadow-2xl space-y-4">
@@ -598,7 +599,6 @@
             </div>
         </div>
     </div>
-
     <!-- Modal Calculadora Surebet Interactiva -->
     <div id="surebet-modal" class="fixed inset-0 bg-mejv-black/85 backdrop-blur-md z-50 hidden items-center justify-center p-4">
         <div class="bg-mejv-card-dark border border-slate-700 w-full max-w-md rounded-2xl p-6 relative shadow-2xl space-y-4">
@@ -651,10 +651,8 @@
             </div>
         </div>
     </div>
-
     <!-- JAVASCRIPT LÓGICA E INTERACTIVIDAD -->
     <script>
-        // 1. Menú Hamburguesa y Side Menu
         const menuBtn = document.getElementById('menu-btn');
         const sideMenu = document.getElementById('side-menu');
         const menuOverlay = document.getElementById('menu-overlay');
@@ -689,7 +687,6 @@
             });
         });
 
-        // 2. Carousel / Slider de Imágenes del Header
         const slidesContainer = document.getElementById('carousel-slides');
         const prevBtn = document.getElementById('prev-slide');
         const nextBtn = document.getElementById('next-slide');
@@ -723,7 +720,6 @@
             updateSlider(currentSlide + 1);
         }, 5000);
 
-        // 3. Scroll Reveal Animations (Intersection Observer)
         const revealElements = document.querySelectorAll('.reveal');
 
         const observer = new IntersectionObserver((entries) => {
@@ -738,7 +734,6 @@
 
         revealElements.forEach(el => observer.observe(el));
 
-        // 4. Modales y Lógica de Modales
         function openNewsModal(button) {
             const title = button.getAttribute('data-title');
             const body = button.getAttribute('data-body');
@@ -778,20 +773,17 @@
             const inv2 = 1 / c2;
             const sumInv = inv1 + inv2;
 
-            // Calcular stakes originales
+
             let stake1 = (total * inv1) / sumInv;
             let stake2 = (total * inv2) / sumInv;
 
-            // Aplicar redondeo
             stake1 = Math.round(stake1 / rounding) * rounding;
             stake2 = Math.round(stake2 / rounding) * rounding;
 
-            // Recalcular ganancias con los stakes redondeados
             const return1 = stake1 * c1;
             const return2 = stake2 * c2;
             const actualTotalStaked = stake1 + stake2;
             
-            // La ganancia depende del resultado, tomamos la menor de las dos posibilidades
             const profit = Math.min(return1, return2) - actualTotalStaked;
             const profitPct = (profit / actualTotalStaked) * 100;
 
@@ -805,30 +797,24 @@
             window.open('https://arbs.mejv.pro/arbs', '_blank');
         }
 
-        // 5. FUNCIONALIDAD DE VERIFICACIÓN DE PENDIENTES
         async function verificarPendientes() {
             const elementosPendientes = document.querySelectorAll('.estado-pendiente');
             
-            // Mostrar estado de carga
             elementosPendientes.forEach(el => {
                 if (el.dataset.estado === 'pendiente') {
                     el.textContent = '⏳';
                 }
             });
 
-            // Eliminar mensajes de error anteriores
             document.querySelectorAll('.mensaje-error-estados').forEach(el => el.remove());
 
             try {
-                // Intentar obtener datos del backend
                 const response = await fetch('/api/verificar-pendientes');
                 
-                // Verificar si la respuesta es exitosa
                 if (!response.ok) {
                     throw new Error(`Error HTTP: ${response.status}`);
                 }
                 
-                // Intentar parsear la respuesta como JSON
                 let data;
                 try {
                     data = await response.json();
@@ -836,12 +822,10 @@
                     throw new Error('La respuesta no es un JSON válido');
                 }
                 
-                // Verificar que los datos tengan el formato esperado
                 if (!data || typeof data !== 'object') {
                     throw new Error('Datos inválidos del backend');
                 }
                 
-                // Actualizar cada elemento con los datos del backend
                 elementosPendientes.forEach(element => {
                     const fila = element.closest('tr');
                     const id = fila.dataset.id;
@@ -851,7 +835,6 @@
                         return;
                     }
                     
-                    // Buscar el estado en los datos del backend
                     const estadoBackend = data[id];
                     
                     if (estadoBackend === true) {
@@ -861,7 +844,6 @@
                         element.textContent = '❌';
                         element.dataset.estado = 'fallido';
                     } else {
-                        // Si no hay datos para este elemento, mantener pendiente
                         element.textContent = '⏳';
                         element.dataset.estado = 'pendiente';
                     }
@@ -872,7 +854,6 @@
             } catch (error) {
                 console.warn('⚠️ No se pudieron obtener los estados del backend:', error.message);
                 
-                // Mostrar todos los elementos como pendientes (⏳) cuando hay error
                 elementosPendientes.forEach(element => {
                     if (element.dataset.estado !== 'verificado' && element.dataset.estado !== 'fallido') {
                         element.textContent = '⏳';
@@ -880,12 +861,10 @@
                     }
                 });
                 
-                // Mostrar un mensaje al usuario
                 mostrarMensajeError('No se pudieron cargar los estados de verificación');
             }
         }
 
-        // Función para mostrar mensaje de error
         function mostrarMensajeError(mensaje) {
             const existingMessage = document.querySelector('.mensaje-error-estados');
             if (existingMessage) {
@@ -899,14 +878,11 @@
                 <span>${mensaje}</span>
             `;
             
-            // Insertar mensaje al inicio de la tabla de pronósticos
             const tablaPronosticos = document.querySelector('#Pronosticos .bg-mejv-card-dark');
             if (tablaPronosticos) {
                 tablaPronosticos.parentElement.insertBefore(messageDiv, tablaPronosticos);
             }
         }
-
-        // Función para simular datos del backend (ejemplo para pruebas)
         function simularBackend() {
             // Simular datos de ejemplo
             const datosSimulados = {
@@ -918,7 +894,6 @@
                 'paok-anderlecht-goles': false
             };
             
-            // Actualizar directamente con datos simulados
             document.querySelectorAll('.estado-pendiente').forEach(element => {
                 const fila = element.closest('tr');
                 const id = fila.dataset.id;
@@ -937,20 +912,15 @@
             console.log('✅ Estados simulados actualizados');
         }
 
-        // Ejecutar verificación al cargar la página (con fallback a simulación)
         document.addEventListener('DOMContentLoaded', () => {
-            // Intentar verificar con el backend
             verificarPendientes().catch(() => {
-                // Si falla, usar datos simulados para demostración
                 console.log('Usando datos de simulación para demostración');
                 simularBackend();
             });
         });
 
-        // Ejecutar verificación cada 2 minutos (opcional)
         // setInterval(verificarPendientes, 120000);
         
-        // Exponer funciones globalmente
         window.verificarPendientes = verificarPendientes;
         window.simularBackend = simularBackend;
     </script>

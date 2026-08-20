@@ -76,15 +76,14 @@ async function obtenerDatosKambi(eventId) {
             })) || []
         };
     } catch (error) {
-        console.error('❌ Error Kambi:', error.message);
+        console.error('Error Kambi:', error.message);
         
         if (error.code === 'ECONNABORTED') {
-            console.error('⏱️ Timeout en Kambi');
+            console.error(' Timeout en Kambi');
         }
         if (error.response?.status === 429) {
-            console.error('⏳ Rate limit excedido en Kambi');
+            console.error('Rate limit excedido en Kambi');
         }
-        
         return null;
     }
 }

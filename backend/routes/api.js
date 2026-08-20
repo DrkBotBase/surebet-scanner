@@ -54,8 +54,6 @@ setInterval(() => {
     }
 }, 300000);
 
-
-// Endpoints Noticias
 router.get('/news', async (req, res) => {
     try {
         const news = await News.find().sort({ createdAt: -1 });
@@ -70,7 +68,6 @@ router.post('/admin/news', async (req, res) => {
     res.status(201).json(news);
 });
 
-// Endpoints Pronósticos
 router.get('/predictions', async (req, res) => {
     const predictions = await Prediction.find().sort({ createdAt: -1 });
     res.json(predictions);
@@ -81,7 +78,6 @@ router.post('/admin/predictions', async (req, res) => {
     res.status(201).json(prediction);
 });
 
-// Endpoints Surebets
 router.get('/surebets', async (req, res) => {
     const surebets = await Surebet.find().sort({ createdAt: -1 });
     res.json(surebets);
@@ -92,7 +88,6 @@ router.post('/admin/surebets', async (req, res) => {
     res.status(201).json(surebet);
 });
 
-// Endpoints Tabla de Goles
 router.get('/goal-tables', async (req, res) => {
     const goalTables = await GoalTable.find().sort({ createdAt: -1 });
     res.json(goalTables);

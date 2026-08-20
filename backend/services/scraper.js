@@ -90,7 +90,7 @@ async function parsearFlashscoreMobi(url) {
         };
 
     } catch (error) {
-        console.error('❌ Error en Scraper:', error.message);
+        console.error('Error en Scraper:', error.message);
         return null;
     }
 }
