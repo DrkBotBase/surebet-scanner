@@ -129,7 +129,7 @@ class FlashscoreScraper {
       const [yearCol, monthCol, dayCol] = colombiaDateStr.split('-').map(Number);
       const [hours, minutes] = colombiaTimeStr.split(':').map(Number);
       
-      const eventDate = new Date(Date.UTC(yearCol, monthCol - 1, dayCol, 0, 0, 0));
+      const eventDate = moment.tz(`${yearCol}-${monthCol}-${dayCol}`, "America/Bogota").startOf('day').toDate();
       
       return {
         original: dateTimeStr,

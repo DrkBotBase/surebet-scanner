@@ -1371,6 +1371,7 @@
         }
       } catch (err) {
         showToast('Error al guardar: ' + err.message, 'error');
+      } finally {
         // Reset submit button state
         const submitBtn = document.getElementById('modalSubmit');
         submitBtn.disabled = false;

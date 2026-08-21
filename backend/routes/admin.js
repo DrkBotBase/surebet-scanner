@@ -128,7 +128,7 @@ router.post('/api/predictions', auth, async (req, res) => {
     try {
         const { event, team1, team2, flashscoreId, time, eventDate, prediction, odds, bookmaker, status, score } = req.body;
         
-        const colombiaDate = moment.tz(eventDate, "America/Bogota").toDate();
+        const colombiaDate = moment.tz(eventDate, "America/Bogota").startOf('day').toDate();
         
         const newPred = new Prediction({ 
             event, 
@@ -154,7 +154,7 @@ router.post('/api/predictions/edit/:id', auth, async (req, res) => {
     try {
         const { event, team1, team2, flashscoreId, time, eventDate, prediction, odds, bookmaker, status, score } = req.body;
         const updated = await Prediction.findByIdAndUpdate(req.params.id, {
-            event, team1, team2, flashscoreId, time, eventDate, prediction, odds, bookmaker, status, score
+            event, team1, team2, flashscoreId, time, eventDate: moment.tz(eventDate, "America/Bogota").startOf('day').toDate(), prediction, odds, bookmaker, status, score
         }, { returnDocument: 'after' });
         res.json(updated);
     } catch (error) {
@@ -204,7 +204,7 @@ router.post('/api/surebets', auth, async (req, res) => {
     try {
         const { event, time, eventDate, market, line, percentage, bookmaker1, odds1, bookmaker2, odds2 } = req.body;
         
-        const colombiaDate = moment.tz(eventDate, "America/Bogota").toDate();
+        const colombiaDate = moment.tz(eventDate, "America/Bogota").startOf('day').toDate();
         
         const newSure = new Surebet({ 
             event, 
@@ -229,7 +229,7 @@ router.post('/api/surebets/edit/:id', auth, async (req, res) => {
     try {
         const { event, time, eventDate, market, line, percentage, bookmaker1, odds1, bookmaker2, odds2 } = req.body;
         
-        const colombiaDate = moment.tz(eventDate, "America/Bogota").toDate();
+        const colombiaDate = moment.tz(eventDate, "America/Bogota").startOf('day').toDate();
         
         const updated = await Surebet.findByIdAndUpdate(req.params.id, {
             event, 
@@ -271,7 +271,7 @@ router.post('/api/goal-tables', auth, async (req, res) => {
     try {
         const { league, event, team1, team2, flashscoreId, time, eventDate, prediction, odds, bookmaker, status, score } = req.body;
         
-        const colombiaDate = moment.tz(eventDate, "America/Bogota").toDate();
+        const colombiaDate = moment.tz(eventDate, "America/Bogota").startOf('day').toDate();
         
         const newGoal = new GoalTable({ 
             league, 
@@ -298,7 +298,7 @@ router.post('/api/goal-tables/edit/:id', auth, async (req, res) => {
     try {
         const { league, event, team1, team2, flashscoreId, time, eventDate, prediction, odds, bookmaker, status, score } = req.body;
         const updated = await GoalTable.findByIdAndUpdate(req.params.id, {
-            league, event, team1, team2, flashscoreId, time, eventDate, prediction, odds, bookmaker, status, score
+            league, event, team1, team2, flashscoreId, time, eventDate: moment.tz(eventDate, "America/Bogota").startOf('day').toDate(), prediction, odds, bookmaker, status, score
         }, { returnDocument: 'after' });
         res.json(updated);
     } catch (error) {
@@ -341,7 +341,7 @@ router.post('/api/refresh-match/:type/:id', auth, async (req, res) => {
         item.status = updatedData.status;
         
         if (updatedData.datetime && updatedData.datetime.iso) {
-            item.eventDate = new Date(updatedData.datetime.iso);
+            item.eventDate = moment.tz(updatedData.datetime.iso, "America/Bogota").startOf('day').toDate();
         }
         
         await item.save();

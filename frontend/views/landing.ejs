@@ -460,9 +460,17 @@
                                 <span class="text-[11px] text-slate-300">
                                     <span class="text-slate-500 font-bold uppercase">Pred: </span> <%= pred.prediction %>
                                 </span>
-                                <span class="bg-mejv-dark border border-mejv-blue/30 text-mejv-white font-bold px-2 py-0.5 rounded text-[11px]">
-                                    <%= pred.odds %>
-                                </span>
+                                <div class="flex items-center gap-1.5">
+                                    <% 
+                                        const bookieSlug = pred.bookmaker.toLowerCase().replace(/\s+/g, '-');
+                                        const logoPath = `/images/logos/${bookieSlug}.png`;
+                                    %>
+                                    <img src="<%= logoPath %>" alt="<%= pred.bookmaker %>" class="w-5 h-5 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                    <span class="text-[10px] text-slate-400 font-bold" style="display: none;"><%= pred.bookmaker %></span>
+                                    <span class="bg-mejv-dark border border-mejv-blue/30 text-mejv-white font-bold px-2 py-0.5 rounded text-[11px]">
+                                        <%= pred.odds %>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     <% }) %>
@@ -530,25 +538,49 @@
                                       %>
                                       <span class="<%= badgeColor %> <%= textColor %> text-[9px] font-bold px-1.5 py-0.5 rounded uppercase"><%= badgeText %></span>
                                     </div>
-                                    <!-- Cuerpo -->
-                                    <div class="px-3 py-3 text-center">
-                                        <div class="font-display font-bold text-mejv-white text-sm">
-                                            <%= item.event %>
+
+                                    <!-- Contenido de la tarjeta - Con Logos (Nombres en línea) -->
+                                    <div class="px-3 py-4 flex items-center justify-between gap-3">
+                                        <% if (item.team1 && item.team1.logo) { %>
+                                            <img src="<%= item.team1.logo %>" alt="<%= item.team1.name %>" class="w-8 h-8 object-contain" />
+                                        <% } %>
+
+                                        <div class="flex-1 flex items-center justify-center gap-2 text-center">
+                                            <div class="font-display font-bold text-mejv-white text-xs truncate">
+                                                <%= item.team1 && item.team1.name ? item.team1.name : item.event.split(' vs ')[0] %>
+                                            </div>
+                                            <div class="text-[10px] text-slate-500 font-bold uppercase shrink-0">vs</div>
+                                            <div class="font-display font-bold text-mejv-white text-xs truncate">
+                                                <%= item.team2 && item.team2.name ? item.team2.name : item.event.split(' vs ')[1] %>
+                                            </div>
                                         </div>
+
+                                        <% if (item.team2 && item.team2.logo) { %>
+                                            <img src="<%= item.team2.logo %>" alt="<%= item.team2.name %>" class="w-8 h-8 object-contain" />
+                                        <% } %>
                                     </div>
-                                    <!-- Pie -->
+
+                                    <!-- Pie de tarjeta (Predicción y Cuota) -->
                                     <div class="bg-mejv-black px-3 py-2 flex items-center justify-between border-t border-slate-800">
                                         <span class="text-[11px] text-slate-300">
                                             <span class="text-slate-500 font-bold uppercase">Pred: </span> <%= item.prediction %>
                                         </span>
-                                        <span class="bg-mejv-dark border border-mejv-blue/30 text-mejv-white font-bold px-2 py-0.5 rounded text-[11px]">
-                                            <%= item.odds %>
-                                        </span>
+                                        <div class="flex items-center gap-1.5">
+                                            <% 
+                                                const bookieSlug = item.bookmaker.toLowerCase().replace(/\s+/g, '-');
+                                                const logoPath = `/images/logos/${bookieSlug}.png`;
+                                            %>
+                                            <img src="<%= logoPath %>" alt="<%= item.bookmaker %>" class="w-5 h-5 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                            <span class="text-[10px] text-slate-400 font-bold" style="display: none;"><%= item.bookmaker %></span>
+                                            <span class="bg-mejv-dark border border-mejv-blue/30 text-mejv-white font-bold px-2 py-0.5 rounded text-[11px]">
+                                                <%= item.odds %>
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             <% }) %>
                         </div>
-                    <% } %>
+                        <% } %>
                 </div>
             </div>
         </section>
