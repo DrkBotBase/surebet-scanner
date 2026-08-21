@@ -159,7 +159,7 @@ app.get('/', async (req, res) => {
                 if (a.eventDateColombia < b.eventDateColombia) return 1;
                 return a.time.localeCompare(b.time);
             });
-
+        
         res.render('landing', { 
             news, 
             surebets, 

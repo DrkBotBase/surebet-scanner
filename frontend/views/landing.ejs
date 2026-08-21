@@ -350,7 +350,6 @@
                     <% } else { %>
                         <% surebets.forEach(surebet => { %>
                         <!-- Surebet -->
-                        <% console.log(surebet) %>
                         <div class="bg-mejv-dark/80 border border-slate-800 rounded-2xl p-5 hover:border-mejv-lime/50 transition-all duration-300">
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-800/80 gap-2">
                                 <div>
@@ -417,9 +416,9 @@
                             <div class="px-3 py-2 flex items-center justify-between border-b border-slate-800/50">
                                 <div class="flex items-center gap-2">
                                     <span class="text-[10px] font-mono text-slate-400"><%= pred.time %></span>
-                                    <% if (pred.status === 'live') { %>
+                                    <% if (pred.matchStatus === 'LIVE') { %>
                                         <span class="bg-red-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase animate-pulse">LIVE</span>
-                                    <% } else if (pred.status === 'finished') { %>
+                                    <% } else if (pred.matchStatus === 'FINALIZADO') { %>
                                         <span class="bg-slate-700 text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">FINALIZADO</span>
                                     <% } %>
                                 </div>
@@ -509,7 +508,6 @@
                     <% } else { %>
                         <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                             <% goalTables.forEach(item => { %>
-                            <% console.log(item) %>
                                 <div class="bg-mejv-card-dark border border-slate-800 rounded-xl overflow-hidden shadow-lg flex flex-col" data-id="<%= item._id %>">
                                     <!-- Header -->
                                     <div class="px-3 py-2 flex items-center justify-between border-b border-slate-800/50">
@@ -848,9 +846,6 @@
                         element.dataset.estado = 'pendiente';
                     }
                 });
-                
-                console.log('✅ Estados actualizados correctamente');
-                
             } catch (error) {
                 console.warn('⚠️ No se pudieron obtener los estados del backend:', error.message);
                 
@@ -908,13 +903,10 @@
                     }
                 }
             });
-            
-            console.log('✅ Estados simulados actualizados');
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             verificarPendientes().catch(() => {
-                console.log('Usando datos de simulación para demostración');
                 simularBackend();
             });
         });
