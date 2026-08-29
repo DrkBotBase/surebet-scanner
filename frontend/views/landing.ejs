@@ -578,10 +578,10 @@
                                         const logoPathGoal = `/images/logos/${bookieSlugGoal}.png`;
                                         const initialGoal = item.bookmaker.charAt(0).toUpperCase();
                                     %>
-                                    <div class="relative w-5 h-5 flex items-center justify-center">
+                                    <div class="relative w-10 h-5 flex items-center justify-center">
                                         <img src="<%= logoPathGoal %>" 
                                              alt="<%= item.bookmaker %>" 
-                                             class="w-5 h-5 object-contain absolute inset-0" 
+                                             class="w-10 h-5 object-contain absolute inset-0" 
                                              onerror="this.style.display='none'; this.parentElement.querySelector('.bookmaker-initial-goal').style.display='flex';">
                                         <span class="bookmaker-initial-goal text-[9px] text-slate-400 font-bold bg-slate-800 rounded-full w-5 h-5 flex items-center justify-center" style="display: none;"><%= initialGoal %></span>
                                     </div>
