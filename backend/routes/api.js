@@ -72,6 +72,7 @@ router.get('/predictions', async (req, res) => {
     const predictions = await Prediction.find().sort({ createdAt: -1 });
     res.json(predictions);
 });
+
 router.post('/admin/predictions', async (req, res) => {
     const prediction = new Prediction(req.body);
     await prediction.save();

@@ -169,6 +169,12 @@
           <p class="text-xs text-gray-400">Publica predicciones de cuotas de partidos y evalúa su estatus final</p>
         </div>
         <div class="flex gap-2 items-center">
+          <label class="flex items-center cursor-pointer text-white text-xs gap-2 bg-mejv-card-dark px-3 py-2 rounded-lg" title="Auto-Scraper (cada 10 min)">
+            <input type="checkbox" id="toggleScraper" class="form-checkbox h-4 w-4 text-mejv-lime">
+          </label>
+          <button id="btnValidarTodos" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-2 rounded-lg shadow flex items-center gap-1.5 transition">
+            <i class="fas fa-check-double"></i> Validar Pendientes
+          </button>
           <input type="text" id="search-pronosticos" placeholder="Buscar encuentro..." class="bg-mejv-card-dark border border-gray-800 text-xs px-3 py-2 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-mejv-lime transition w-44" />
           <button id="btnCrearPronostico" class="bg-mejv-blue hover:bg-mejv-blue-dark text-white text-xs font-bold px-4 py-2 rounded-lg shadow-neon-blue flex items-center gap-1.5 transition">
             <i class="fas fa-plus-circle"></i> Crear Pronóstico
@@ -304,8 +310,16 @@
       }).then(handleResponse),
       
       // Refresh
-      refreshMatch: (type, id) => fetch(`/admin/api/refresh-match/${type}/${id}`, { method: 'POST' }).then(handleResponse)
-    };
+      refreshMatch: (type, id) => fetch(`/admin/api/refresh-match/${type}/${id}`, { method: 'POST' }).then(handleResponse),
+
+      // Scraper
+      getScraperConfig: () => fetch('/admin/api/config/scraper').then(handleResponse),
+      toggleScraper: (enabled) => fetch('/admin/api/config/scraper', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enabled })
+      }).then(handleResponse)
+      };
 
     function handleResponse(res) {
       if (!res.ok) {
@@ -1018,7 +1032,20 @@
           </div>
           <div>
             <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Recomendación de Pronóstico</label>
-            <input id="f_prediction" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" placeholder="ej: Ambos Equipos Marcan (Sí)" value="${data ? escapaHTML(data.prediction) : ''}" required />
+            <select id="f_prediction" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-mejv-blue transition" required>
+              <option value="">Seleccione una opción</option>
+              <option value="1" ${data && data.prediction === '1' ? 'selected' : ''}>Local (1)</option>
+              <option value="x" ${data && data.prediction === 'x' ? 'selected' : ''}>Empate (X)</option>
+              <option value="2" ${data && data.prediction === '2' ? 'selected' : ''}>Visitante (2)</option>
+              <option value="1x" ${data && data.prediction === '1x' ? 'selected' : ''}>Local o Empate (1X)</option>
+              <option value="x2" ${data && data.prediction === 'x2' ? 'selected' : ''}>Empate o Visitante (X2)</option>
+              <option value="btts_si" ${data && data.prediction === 'btts_si' ? 'selected' : ''}>Ambos Marcan</option>
+              <option value="btts_no" ${data && data.prediction === 'btts_no' ? 'selected' : ''}>Ambos No Marcan</option>
+              <option value="o25" ${data && data.prediction === 'o25' ? 'selected' : ''}>Más 2.5 Goles</option>
+              <option value="u25" ${data && data.prediction === 'u25' ? 'selected' : ''}>Menos 2.5 Goles</option>
+              <option value="dnb1" ${data && data.prediction === 'dnb1' ? 'selected' : ''}>Apuesta no empate Local</option>
+              <option value="dnb2" ${data && data.prediction === 'dnb2' ? 'selected' : ''}>Apuesta no empate Visitante</option>
+            </select>
           </div>
           <div>
             <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Marcador</label>
@@ -1145,7 +1172,13 @@
           </div>
           <div>
             <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Recomendación Goles</label>
-            <input id="f_prediction" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" placeholder="ej: Más de 2.5 goles" value="${data ? escapaHTML(data.prediction) : ''}" required />
+            <select id="f_prediction" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-mejv-blue transition" required>
+              <option value="">Seleccione una opción</option>
+              <option value="over 2.5" ${data && data.prediction === 'over 2.5' ? 'selected' : ''}>Over 2.5 Goles</option>
+              <option value="under 2.5" ${data && data.prediction === 'under 2.5' ? 'selected' : ''}>Under 2.5 Goles</option>
+              <option value="over 0.5" ${data && data.prediction === 'over 0.5' ? 'selected' : ''}>Over 0.5 Goles</option>
+              <option value="under 0.5" ${data && data.prediction === 'under 0.5' ? 'selected' : ''}>Under 0.5 Goles</option>
+            </select>
           </div>
           <div>
             <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Marcador</label>
@@ -1530,10 +1563,42 @@
     });
 
     // Registrar disparadores para botones "Crear" externos
+    document.getElementById('btnValidarTodos').addEventListener('click', async () => {
+        const pendientes = localState.pronosticos.filter(p => p.status === 'pendiente');
+        if(pendientes.length === 0) return showToast('No hay pendientes para validar');
+        
+        if(!confirm(`¿Validar ${pendientes.length} encuentros?`)) return;
+        
+        showToast(`Iniciando validación de ${pendientes.length} encuentros...`, 'success');
+        
+        for (const p of pendientes) {
+            try {
+                await api.refreshMatch('prediction', p._id);
+            } catch(e) { console.error(e); }
+        }
+        showToast('Validación masiva finalizada');
+        cargarPronosticos();
+    });
+    
     document.getElementById('btnCrearNoticia').addEventListener('click', () => abrirModal('noticias', 'crear'));
     document.getElementById('btnCrearSurebet').addEventListener('click', () => abrirModal('surebets', 'crear'));
     document.getElementById('btnCrearPronostico').addEventListener('click', () => abrirModal('pronosticos', 'crear'));
     document.getElementById('btnCrearTablaGoles').addEventListener('click', () => abrirModal('tablagoles', 'crear'));
+
+    // Configuración scraper
+    const toggleScraper = document.getElementById('toggleScraper');
+    api.getScraperConfig().then(data => {
+        toggleScraper.checked = data.enabled;
+    });
+    toggleScraper.addEventListener('change', async () => {
+        try {
+            await api.toggleScraper(toggleScraper.checked);
+            showToast(toggleScraper.checked ? 'Scraper automático activado' : 'Scraper automático desactivado');
+        } catch (e) {
+            showToast('Error al actualizar configuración', 'error');
+            toggleScraper.checked = !toggleScraper.checked;
+        }
+    });
 
     // Iniciar con la primera pestaña activa
     document.querySelector('.tab-btn').click();

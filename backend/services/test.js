@@ -116,8 +116,11 @@ class FlashscoreScraper {
       const [date, time] = dateTimeStr.split(' ');
       const [day, month, year] = date.split('.');
       
+      const paddedMonth = month.padStart(2, '0');
+      const paddedDay = day.padStart(2, '0');
+      
       const flashscoreTime = moment.tz(
-        `${year}-${month}-${day} ${time}`, 
+        `${year}-${paddedMonth}-${paddedDay} ${time}`, 
         'YYYY-MM-DD HH:mm', 
         'Europe/Zagreb'
       );
@@ -129,7 +132,10 @@ class FlashscoreScraper {
       const [yearCol, monthCol, dayCol] = colombiaDateStr.split('-').map(Number);
       const [hours, minutes] = colombiaTimeStr.split(':').map(Number);
       
-      const eventDate = moment.tz(`${yearCol}-${monthCol}-${dayCol}`, "America/Bogota").startOf('day').toDate();
+      const paddedMonthCol = String(monthCol).padStart(2, '0');
+      const paddedDayCol = String(dayCol).padStart(2, '0');
+      
+      const eventDate = moment.tz(`${yearCol}-${paddedMonthCol}-${paddedDayCol}`, "America/Bogota").startOf('day').toDate();
       
       return {
         original: dateTimeStr,

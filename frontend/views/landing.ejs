@@ -387,88 +387,206 @@
                 </div>
             </div>
         </section>
-        <!-- SECCIÓN PRONÓSTICOS DEPORTIVOS -->
-        <section id="Pronosticos" class="reveal">
-            <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-6 border-b border-mejv-card-dark pb-4 gap-2">
-                <div>
-                    <span class="text-mejv-lime text-xs font-display font-bold uppercase tracking-widest">Predicciones Diarias</span>
-                    <h2 class="font-display text-2xl sm:text-3xl font-extrabold text-mejv-white flex items-center gap-2">
-                        <i class="fa-solid fa-chart-line text-mejv-lime text-xl"></i> Pronósticos Deportivos
-                    </h2>
+<!-- SECCIÓN PRONÓSTICOS DEPORTIVOS -->
+<section id="Pronosticos" class="reveal">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-6 border-b border-mejv-card-dark pb-4 gap-2">
+        <div>
+            <span class="text-mejv-lime text-xs font-display font-bold uppercase tracking-widest">Predicciones Diarias</span>
+            <h2 class="font-display text-2xl sm:text-3xl font-extrabold text-mejv-white flex items-center gap-2">
+                <i class="fa-solid fa-chart-line text-mejv-lime text-xl"></i> Pronósticos Deportivos
+            </h2>
+        </div>
+        <div class="flex items-center gap-3">
+            <span class="text-xs text-slate-400">Actualizado: Agosto 2026</span>
+        </div>
+    </div>
+
+    <!-- Tarjetas de Pronósticos -->
+    <% if (predictions.length === 0) { %>
+        <div class="bg-mejv-card-dark rounded-2xl border border-slate-800 p-8 text-center">
+            <i class="fa-solid fa-chart-line text-slate-600 text-4xl mb-4"></i>
+            <h3 class="text-mejv-white font-display font-bold text-lg mb-2">No hay pronósticos disponibles</h3>
+            <p class="text-slate-400 text-sm">Estamos analizando los próximos eventos.</p>
+        </div>
+    <% } else { %>
+        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <% predictions.forEach(pred => { %>
+                <div class="bg-mejv-card-dark border border-slate-800 rounded-xl overflow-hidden shadow-lg flex flex-col" data-id="<%= pred._id %>">
+                    <!-- Header de la tarjeta -->
+                    <div class="px-3 py-2 flex items-center justify-between border-b border-slate-800/50">
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] font-mono text-slate-400"><%= pred.time %></span>
+                            <% if (pred.matchStatus === 'LIVE') { %>
+                                <span class="bg-red-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase animate-pulse">LIVE</span>
+                            <% } else if (pred.matchStatus === 'FINALIZADO') { %>
+                                <span class="bg-slate-700 text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">FINALIZADO</span>
+                            <% } %>
+                        </div>
+                        <span class="text-[10px] font-bold text-mejv-white bg-slate-900 px-1.5 py-0.5 rounded border border-slate-700"><%= pred.score || '0:0' %></span>
+                        <% 
+                            let badgeColor = 'bg-slate-700';
+                            let badgeText = 'PENDIENTE';
+                            let textColor = 'text-white';
+                            if (pred.status === 'verificado') { badgeColor = 'bg-emerald-600'; textColor = 'text-black'; badgeText = 'GANADA'; }
+                            else if (pred.status === 'fallido') { badgeColor = 'bg-rose-600'; textColor = 'text-black'; badgeText = 'PERDIDA'; }
+                            else if (pred.status === 'return') { badgeColor = 'bg-amber-600'; textColor = 'text-black'; badgeText = 'RETORNO'; }
+                        %>
+                        <span class="<%= badgeColor %> <%= textColor %> text-[9px] font-bold px-1.5 py-0.5 rounded uppercase"><%= badgeText %></span>
+                    </div>
+                    
+                    <!-- Contenido de la tarjeta - Con Logos (Nombres en línea) -->
+                    <div class="px-3 py-4 flex items-center justify-between gap-3">
+                        <% if (pred.team1 && pred.team1.logo) { %>
+                            <img src="<%= pred.team1.logo %>" alt="<%= pred.team1.name %>" class="w-8 h-8 object-contain" />
+                        <% } %>
+                        
+                        <div class="flex-1 flex items-center justify-center gap-2 text-center">
+                            <div class="font-display font-bold text-mejv-white text-xs truncate">
+                                <%= pred.team1 && pred.team1.name ? pred.team1.name : pred.event.split(' vs ')[0] %>
+                            </div>
+                            <div class="text-[10px] text-slate-500 font-bold uppercase shrink-0">vs</div>
+                            <div class="font-display font-bold text-mejv-white text-xs truncate">
+                                <%= pred.team2 && pred.team2.name ? pred.team2.name : pred.event.split(' vs ')[1] %>
+                            </div>
+                        </div>
+                        
+                        <% if (pred.team2 && pred.team2.logo) { %>
+                            <img src="<%= pred.team2.logo %>" alt="<%= pred.team2.name %>" class="w-8 h-8 object-contain" />
+                        <% } %>
+                    </div>
+                    
+                    <!-- Pie de tarjeta (Predicción y Cuota) -->
+                    <div class="bg-mejv-black px-3 py-2 flex items-center justify-between border-t border-slate-800">
+                        <span class="text-[11px] text-slate-300">
+                            <span class="text-slate-500 font-bold uppercase">Pred: </span> <%= pred.prediction %>
+                        </span>
+                        <div class="flex items-center gap-1.5">
+                            <% 
+                                const bookieSlug = pred.bookmaker.toLowerCase().replace(/\s+/g, '-');
+                                const logoPath = `/images/logos/${bookieSlug}.png`;
+                                const initial = pred.bookmaker.charAt(0).toUpperCase();
+                            %>
+                            <div class="relative w-5 h-5 flex items-center justify-center">
+                                <img src="<%= logoPath %>" 
+                                     alt="<%= pred.bookmaker %>" 
+                                     class="w-5 h-5 object-contain absolute inset-0" 
+                                     onerror="this.style.display='none'; this.parentElement.querySelector('.bookmaker-initial').style.display='flex';">
+                                <span class="bookmaker-initial text-[9px] text-slate-400 font-bold bg-slate-800 rounded-full w-5 h-5 flex items-center justify-center" style="display: none;"><%= initial %></span>
+                            </div>
+                            <span class="bg-mejv-dark border border-mejv-blue/30 text-mejv-white font-bold px-2 py-0.5 rounded text-[11px]">
+                                <%= pred.odds %>
+                            </span>
+                        </div>
+                    </div>
                 </div>
-                <div class="flex items-center gap-3">
-                    <span class="text-xs text-slate-400">Actualizado: Agosto 2026</span>
+            <% }) %>
+        </div>
+    <% } %>
+</section>
+
+<!-- SECCIÓN TABLA DE GOLES -->
+<section id="Calculadora" class="reveal">
+    <div class="bg-mejv-dark border border-mejv-blue/30 rounded-3xl p-6 sm:p-8 shadow-neon-blue/10 space-y-6">
+        <!-- Encabezado con Redirección a Calculadora -->
+        <div class="bg-mejv-black p-5 rounded-2xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-start gap-4">
+                <div class="p-3.5 bg-mejv-lime text-mejv-black border border-mejv-lime/30 rounded-2xl text-2xl flex-shrink-0">
+                    <i class="fa-solid fa-calculator"></i>
+                </div>
+                <div>
+                    <span class="text-mejv-lime text-xs font-display font-bold uppercase tracking-wider">Herramienta de Análisis</span>
+                    <p class="text-mejv-white font-medium text-sm sm:text-base mt-0.5">
+                        Top 10 marcadores, si quieres analizar más encuentros entra directamente a la calculadora en el siguiente link
+                    </p>
                 </div>
             </div>
+            
+            <!-- Botón/Icono Calculadora con Redirección URL -->
+            <a href="https://arbs/mejv.pro/arbs" target="_blank" rel="noopener noreferrer" onclick="openInteractiveCalculatorModal(event)" class="w-full md:w-auto px-6 py-3.5 bg-mejv-blue hover:bg-mejv-blue/90 text-mejv-white font-display font-bold text-sm rounded-xl transition-all shadow-neon-blue flex items-center justify-center gap-3 group flex-shrink-0">
+                <i class="fa-solid fa-square-root-variable text-lg group-hover:scale-110 transition-transform"></i>
+                <span>Abrir Calculadora</span>
+                <i class="fa-solid fa-arrow-up-right-from-square text-xs opacity-70"></i>
+            </a>
+        </div>
 
-            <!-- Tarjetas de Pronósticos -->
-            <% if (predictions.length === 0) { %>
+        <!-- Tarjetas de Tabla de Goles (Misma estructura que Predictions) -->
+        <div>
+            <h3 class="font-display text-lg font-bold text-mejv-white mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-list-ol text-mejv-lime"></i> Pronosticos Goles
+            </h3>
+            <% if (goalTables.length === 0) { %>
                 <div class="bg-mejv-card-dark rounded-2xl border border-slate-800 p-8 text-center">
-                    <i class="fa-solid fa-chart-line text-slate-600 text-4xl mb-4"></i>
-                    <h3 class="text-mejv-white font-display font-bold text-lg mb-2">No hay pronósticos disponibles</h3>
-                    <p class="text-slate-400 text-sm">Estamos analizando los próximos eventos.</p>
+                    <i class="fa-solid fa-list-ol text-slate-600 text-3xl mb-4"></i>
+                    <h3 class="text-mejv-white font-display font-bold text-lg mb-2">No hay tablas de goles disponibles</h3>
+                    <p class="text-slate-400 text-sm">Pronto tendremos nuevas ligas actualizadas.</p>
                 </div>
             <% } else { %>
                 <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    <% predictions.forEach(pred => { %>
-                        <div class="bg-mejv-card-dark border border-slate-800 rounded-xl overflow-hidden shadow-lg flex flex-col" data-id="<%= pred._id %>">
+                    <% goalTables.forEach(item => { %>
+                        <div class="bg-mejv-card-dark border border-slate-800 rounded-xl overflow-hidden shadow-lg flex flex-col" data-id="<%= item._id %>">
                             <!-- Header de la tarjeta -->
                             <div class="px-3 py-2 flex items-center justify-between border-b border-slate-800/50">
                                 <div class="flex items-center gap-2">
-                                    <span class="text-[10px] font-mono text-slate-400"><%= pred.time %></span>
-                                    <% if (pred.matchStatus === 'LIVE') { %>
+                                    <span class="text-[10px] font-mono text-slate-400"><%= item.time %></span>
+                                    <% if (item.matchStatus === 'LIVE') { %>
                                         <span class="bg-red-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase animate-pulse">LIVE</span>
-                                    <% } else if (pred.matchStatus === 'FINALIZADO') { %>
+                                    <% } else if (item.matchStatus === 'FINALIZADO') { %>
                                         <span class="bg-slate-700 text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">FINALIZADO</span>
                                     <% } %>
                                 </div>
-                                <span class="text-[10px] font-bold text-mejv-white bg-slate-900 px-1.5 py-0.5 rounded border border-slate-700"><%= pred.score || '0:0' %></span>
+                                <span class="text-[10px] font-bold text-mejv-white bg-slate-900 px-1.5 py-0.5 rounded border border-slate-700"><%= item.score || '0:0' %></span>
                                 <% 
-                                    let badgeColor = 'bg-slate-700';
-                                    let badgeText = 'PENDIENTE';
-                                    let textColor = 'text-white';
-                                    if (pred.status === 'verificado') { badgeColor = 'bg-emerald-600'; textColor = 'text-black'; badgeText = 'GANADA'; }
-                                    else if (pred.status === 'fallido') { badgeColor = 'bg-rose-600'; textColor = 'text-black'; badgeText = 'PERDIDA'; }
-                                    else if (pred.status === 'return') { badgeColor = 'bg-amber-600'; textColor = 'text-black'; badgeText = 'RETORNO'; }
+                                    let badgeColorGoal = 'bg-slate-700';
+                                    let badgeTextGoal = 'PENDIENTE';
+                                    let textColorGoal = 'text-white';
+                                    if (item.status === 'verificado') { badgeColorGoal = 'bg-emerald-600'; textColorGoal = 'text-black'; badgeTextGoal = 'GANADA'; }
+                                    else if (item.status === 'fallido') { badgeColorGoal = 'bg-rose-600'; textColorGoal = 'text-black'; badgeTextGoal = 'PERDIDA'; }
+                                    else if (item.status === 'return') { badgeColorGoal = 'bg-amber-600'; textColorGoal = 'text-black'; badgeTextGoal = 'RETORNO'; }
                                 %>
-                                <span class="<%= badgeColor %> <%= textColor %> text-[9px] font-bold px-1.5 py-0.5 rounded uppercase"><%= badgeText %></span>
+                                <span class="<%= badgeColorGoal %> <%= textColorGoal %> text-[9px] font-bold px-1.5 py-0.5 rounded uppercase"><%= badgeTextGoal %></span>
                             </div>
                             
                             <!-- Contenido de la tarjeta - Con Logos (Nombres en línea) -->
                             <div class="px-3 py-4 flex items-center justify-between gap-3">
-                                <% if (pred.team1 && pred.team1.logo) { %>
-                                    <img src="<%= pred.team1.logo %>" alt="<%= pred.team1.name %>" class="w-8 h-8 object-contain" />
+                                <% if (item.team1 && item.team1.logo) { %>
+                                    <img src="<%= item.team1.logo %>" alt="<%= item.team1.name %>" class="w-8 h-8 object-contain" />
                                 <% } %>
                                 
                                 <div class="flex-1 flex items-center justify-center gap-2 text-center">
                                     <div class="font-display font-bold text-mejv-white text-xs truncate">
-                                        <%= pred.team1 && pred.team1.name ? pred.team1.name : pred.event.split(' vs ')[0] %>
+                                        <%= item.team1 && item.team1.name ? item.team1.name : item.event.split(' vs ')[0] %>
                                     </div>
                                     <div class="text-[10px] text-slate-500 font-bold uppercase shrink-0">vs</div>
                                     <div class="font-display font-bold text-mejv-white text-xs truncate">
-                                        <%= pred.team2 && pred.team2.name ? pred.team2.name : pred.event.split(' vs ')[1] %>
+                                        <%= item.team2 && item.team2.name ? item.team2.name : item.event.split(' vs ')[1] %>
                                     </div>
                                 </div>
                                 
-                                <% if (pred.team2 && pred.team2.logo) { %>
-                                    <img src="<%= pred.team2.logo %>" alt="<%= pred.team2.name %>" class="w-8 h-8 object-contain" />
+                                <% if (item.team2 && item.team2.logo) { %>
+                                    <img src="<%= item.team2.logo %>" alt="<%= item.team2.name %>" class="w-8 h-8 object-contain" />
                                 <% } %>
                             </div>
                             
                             <!-- Pie de tarjeta (Predicción y Cuota) -->
                             <div class="bg-mejv-black px-3 py-2 flex items-center justify-between border-t border-slate-800">
                                 <span class="text-[11px] text-slate-300">
-                                    <span class="text-slate-500 font-bold uppercase">Pred: </span> <%= pred.prediction %>
+                                    <span class="text-slate-500 font-bold uppercase">Pred: </span> <%= item.prediction %>
                                 </span>
                                 <div class="flex items-center gap-1.5">
                                     <% 
-                                        const bookieSlug = pred.bookmaker.toLowerCase().replace(/\s+/g, '-');
-                                        const logoPath = `/images/logos/${bookieSlug}.png`;
+                                        const bookieSlugGoal = item.bookmaker.toLowerCase().replace(/\s+/g, '-');
+                                        const logoPathGoal = `/images/logos/${bookieSlugGoal}.png`;
+                                        const initialGoal = item.bookmaker.charAt(0).toUpperCase();
                                     %>
-                                    <img src="<%= logoPath %>" alt="<%= pred.bookmaker %>" class="w-5 h-5 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                                    <span class="text-[10px] text-slate-400 font-bold" style="display: none;"><%= pred.bookmaker %></span>
+                                    <div class="relative w-5 h-5 flex items-center justify-center">
+                                        <img src="<%= logoPathGoal %>" 
+                                             alt="<%= item.bookmaker %>" 
+                                             class="w-5 h-5 object-contain absolute inset-0" 
+                                             onerror="this.style.display='none'; this.parentElement.querySelector('.bookmaker-initial-goal').style.display='flex';">
+                                        <span class="bookmaker-initial-goal text-[9px] text-slate-400 font-bold bg-slate-800 rounded-full w-5 h-5 flex items-center justify-center" style="display: none;"><%= initialGoal %></span>
+                                    </div>
                                     <span class="bg-mejv-dark border border-mejv-blue/30 text-mejv-white font-bold px-2 py-0.5 rounded text-[11px]">
-                                        <%= pred.odds %>
+                                        <%= item.odds %>
                                     </span>
                                 </div>
                             </div>
@@ -476,115 +594,10 @@
                     <% }) %>
                 </div>
             <% } %>
-        </section>
-        <!-- SECCIÓN CALCULADORA DE GOLES -->
-        <section id="Calculadora" class="reveal">
-            <div class="bg-mejv-dark border border-mejv-blue/30 rounded-3xl p-6 sm:p-8 shadow-neon-blue/10 space-y-6">
-                <!-- Encabezado con Redirección a Calculadora -->
-                <div class="bg-mejv-black p-5 rounded-2xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
-                    <div class="flex items-start gap-4">
-                        <div class="p-3.5 bg-mejv-lime text-mejv-black border border-mejv-lime/30 rounded-2xl text-2xl flex-shrink-0">
-                            <i class="fa-solid fa-calculator"></i>
-                        </div>
-                        <div>
-                            <span class="text-mejv-lime text-xs font-display font-bold uppercase tracking-wider">Herramienta de Análisis</span>
-                            <p class="text-mejv-white font-medium text-sm sm:text-base mt-0.5">
-                                Top 10 marcadores, si quieres analizar más encuentros entra directamente a la calculadora en el siguiente link
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <!-- Botón/Icono Calculadora con Redirección URL -->
-                    <a href="https://arbs/mejv.pro/arbs" target="_blank" rel="noopener noreferrer" onclick="openInteractiveCalculatorModal(event)" class="w-full md:w-auto px-6 py-3.5 bg-mejv-blue hover:bg-mejv-blue/90 text-mejv-white font-display font-bold text-sm rounded-xl transition-all shadow-neon-blue flex items-center justify-center gap-3 group flex-shrink-0">
-                        <i class="fa-solid fa-square-root-variable text-lg group-hover:scale-110 transition-transform"></i>
-                        <span>Abrir Calculadora</span>
-                        <i class="fa-solid fa-arrow-up-right-from-square text-xs opacity-70"></i>
-                    </a>
-                </div>
-
-                <!-- Tabla Top 10 Marcadores Goles -->
-                <div>
-                    <h3 class="font-display text-lg font-bold text-mejv-white mb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-list-ol text-mejv-lime"></i> Pronosticos Goles
-                    </h3>
-                    <% if (goalTables.length === 0) { %>
-                        <div class="bg-mejv-card-dark rounded-2xl border border-slate-800 p-8 text-center">
-                            <i class="fa-solid fa-list-ol text-slate-600 text-3xl mb-4"></i>
-                            <h3 class="text-mejv-white font-display font-bold text-lg mb-2">No hay tablas de goles disponibles</h3>
-                            <p class="text-slate-400 text-sm">Pronto tendremos nuevas ligas actualizadas.</p>
-                        </div>
-                    <% } else { %>
-                        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                            <% goalTables.forEach(item => { %>
-                                <div class="bg-mejv-card-dark border border-slate-800 rounded-xl overflow-hidden shadow-lg flex flex-col" data-id="<%= item._id %>">
-                                    <!-- Header -->
-                                    <div class="px-3 py-2 flex items-center justify-between border-b border-slate-800/50">
-                                      <div class="flex items-center gap-2">
-                                        <span class="text-[10px] font-mono text-slate-400"><%= item.time %></span>
-                                        <% if (item.matchStatus === 'LIVE') { %>
-                                            <span class="bg-red-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase animate-pulse">LIVE</span>
-                                        <% } else if (item.matchStatus === 'FINALIZADO') { %>
-                                            <span class="bg-slate-700 text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">FINALIZADO</span>
-                                        <% } %>
-                                      </div>
-                                      <span class="text-[10px] font-bold text-mejv-white bg-slate-900 px-1.5 py-0.5 rounded border border-slate-700"><%= item.score || '0:0' %></span>
-                                      <% 
-                                          let badgeColor = 'bg-slate-700';
-                                          let badgeText = 'PENDIENTE';
-                                          let textColor = 'text-white';
-                                          if (item.status === 'verificado') { badgeColor = 'bg-emerald-600'; textColor = 'text-black'; badgeText = 'GANADA'; }
-                                          else if (item.status === 'fallido') { badgeColor = 'bg-rose-600'; textColor = 'text-black'; badgeText = 'PERDIDA'; }
-                                          else if (item.status === 'return') { badgeColor = 'bg-amber-600'; textColor = 'text-black'; badgeText = 'RETORNO'; }
-                                      %>
-                                      <span class="<%= badgeColor %> <%= textColor %> text-[9px] font-bold px-1.5 py-0.5 rounded uppercase"><%= badgeText %></span>
-                                    </div>
-
-                                    <!-- Contenido de la tarjeta - Con Logos (Nombres en línea) -->
-                                    <div class="px-3 py-4 flex items-center justify-between gap-3">
-                                        <% if (item.team1 && item.team1.logo) { %>
-                                            <img src="<%= item.team1.logo %>" alt="<%= item.team1.name %>" class="w-8 h-8 object-contain" />
-                                        <% } %>
-
-                                        <div class="flex-1 flex items-center justify-center gap-2 text-center">
-                                            <div class="font-display font-bold text-mejv-white text-xs truncate">
-                                                <%= item.team1 && item.team1.name ? item.team1.name : item.event.split(' vs ')[0] %>
-                                            </div>
-                                            <div class="text-[10px] text-slate-500 font-bold uppercase shrink-0">vs</div>
-                                            <div class="font-display font-bold text-mejv-white text-xs truncate">
-                                                <%= item.team2 && item.team2.name ? item.team2.name : item.event.split(' vs ')[1] %>
-                                            </div>
-                                        </div>
-
-                                        <% if (item.team2 && item.team2.logo) { %>
-                                            <img src="<%= item.team2.logo %>" alt="<%= item.team2.name %>" class="w-8 h-8 object-contain" />
-                                        <% } %>
-                                    </div>
-
-                                    <!-- Pie de tarjeta (Predicción y Cuota) -->
-                                    <div class="bg-mejv-black px-3 py-2 flex items-center justify-between border-t border-slate-800">
-                                        <span class="text-[11px] text-slate-300">
-                                            <span class="text-slate-500 font-bold uppercase">Pred: </span> <%= item.prediction %>
-                                        </span>
-                                        <div class="flex items-center gap-1.5">
-                                            <% 
-                                                const bookieSlug = item.bookmaker.toLowerCase().replace(/\s+/g, '-');
-                                                const logoPath = `/images/logos/${bookieSlug}.png`;
-                                            %>
-                                            <img src="<%= logoPath %>" alt="<%= item.bookmaker %>" class="w-5 h-5 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                                            <span class="text-[10px] text-slate-400 font-bold" style="display: none;"><%= item.bookmaker %></span>
-                                            <span class="bg-mejv-dark border border-mejv-blue/30 text-mejv-white font-bold px-2 py-0.5 rounded text-[11px]">
-                                                <%= item.odds %>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            <% }) %>
-                        </div>
-                        <% } %>
-                </div>
-            </div>
-        </section>
-    </main>
+        </div>
+    </div>
+</section>
+</main>
     <!-- FOOTER -->
     <footer class="bg-mejv-black border-t border-mejv-card-dark text-slate-400 py-12 px-4 sm:px-6 lg:px-8 mt-20">
         <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center">

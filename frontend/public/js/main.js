@@ -891,7 +891,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('detailModal').addEventListener('click', (e) => {
         if (e.target === e.currentTarget) closeModal();
     });
-
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') closeModal();
     });

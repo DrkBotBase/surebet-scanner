@@ -5,9 +5,11 @@ const News = require('../models/News');
 const Prediction = require('../models/Prediction');
 const Surebet = require('../models/Surebet');
 const GoalTable = require('../models/GoalTable');
+const SystemConfig = require('../models/SystemConfig');
 const upload = require('../middlewares/multer');
 const cloudinary = require('../config/cloudinary');
 const { getMatchInfo } = require('../services/test');
+const { validatePredictionStatus } = require('../services/validateService');
 
 const auth = (req, res, next) => {
     if (req.session.isAdmin) return next();
@@ -128,7 +130,7 @@ router.post('/api/predictions', auth, async (req, res) => {
     try {
         const { event, team1, team2, flashscoreId, time, eventDate, prediction, odds, bookmaker, status, score } = req.body;
         
-        const colombiaDate = moment.tz(eventDate, "America/Bogota").startOf('day').toDate();
+        const colombiaDate = moment.utc(eventDate).startOf('day').toDate();
         
         const newPred = new Prediction({ 
             event, 
@@ -154,7 +156,7 @@ router.post('/api/predictions/edit/:id', auth, async (req, res) => {
     try {
         const { event, team1, team2, flashscoreId, time, eventDate, prediction, odds, bookmaker, status, score } = req.body;
         const updated = await Prediction.findByIdAndUpdate(req.params.id, {
-            event, team1, team2, flashscoreId, time, eventDate: moment.tz(eventDate, "America/Bogota").startOf('day').toDate(), prediction, odds, bookmaker, status, score
+            event, team1, team2, flashscoreId, time, eventDate: moment.utc(eventDate).startOf('day').toDate(), prediction, odds, bookmaker, status, score
         }, { returnDocument: 'after' });
         res.json(updated);
     } catch (error) {
@@ -167,6 +169,16 @@ router.post('/api/predictions/status/:id', auth, async (req, res) => {
         const { status } = req.body;
         const updated = await Prediction.findByIdAndUpdate(req.params.id, { status }, { returnDocument: 'after' });
         res.json(updated);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.post('/api/predictions/validate/:id', auth, async (req, res) => {
+    try {
+        const result = await validatePredictionStatus(req.params.id);
+        if (!result.success) return res.status(400).json(result);
+        res.json(result);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -204,7 +216,7 @@ router.post('/api/surebets', auth, async (req, res) => {
     try {
         const { event, time, eventDate, market, line, percentage, bookmaker1, odds1, bookmaker2, odds2 } = req.body;
         
-        const colombiaDate = moment.tz(eventDate, "America/Bogota").startOf('day').toDate();
+        const colombiaDate = moment.utc(eventDate).startOf('day').toDate();
         
         const newSure = new Surebet({ 
             event, 
@@ -229,7 +241,7 @@ router.post('/api/surebets/edit/:id', auth, async (req, res) => {
     try {
         const { event, time, eventDate, market, line, percentage, bookmaker1, odds1, bookmaker2, odds2 } = req.body;
         
-        const colombiaDate = moment.tz(eventDate, "America/Bogota").startOf('day').toDate();
+        const colombiaDate = moment.utc(eventDate).startOf('day').toDate();
         
         const updated = await Surebet.findByIdAndUpdate(req.params.id, {
             event, 
@@ -271,7 +283,7 @@ router.post('/api/goal-tables', auth, async (req, res) => {
     try {
         const { league, event, team1, team2, flashscoreId, time, eventDate, prediction, odds, bookmaker, status, score } = req.body;
         
-        const colombiaDate = moment.tz(eventDate, "America/Bogota").startOf('day').toDate();
+        const colombiaDate = moment.utc(eventDate).startOf('day').toDate();
         
         const newGoal = new GoalTable({ 
             league, 
@@ -298,7 +310,7 @@ router.post('/api/goal-tables/edit/:id', auth, async (req, res) => {
     try {
         const { league, event, team1, team2, flashscoreId, time, eventDate, prediction, odds, bookmaker, status, score } = req.body;
         const updated = await GoalTable.findByIdAndUpdate(req.params.id, {
-            league, event, team1, team2, flashscoreId, time, eventDate: moment.tz(eventDate, "America/Bogota").startOf('day').toDate(), prediction, odds, bookmaker, status, score
+            league, event, team1, team2, flashscoreId, time, eventDate: moment.utc(eventDate).startOf('day').toDate(), prediction, odds, bookmaker, status, score
         }, { returnDocument: 'after' });
         res.json(updated);
     } catch (error) {
@@ -320,6 +332,31 @@ router.post('/api/goal-tables/delete/:id', auth, async (req, res) => {
     try {
         await GoalTable.findByIdAndDelete(req.params.id);
         res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Configuración de scraper automático
+router.get('/api/config/scraper', auth, async (req, res) => {
+    try {
+        let config = await SystemConfig.findOne({ key: 'autoScraper' });
+        if (!config) config = await SystemConfig.create({ key: 'autoScraper', value: false });
+        res.json({ enabled: config.value });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.post('/api/config/scraper', auth, async (req, res) => {
+    try {
+        const { enabled } = req.body;
+        await SystemConfig.findOneAndUpdate(
+            { key: 'autoScraper' },
+            { value: enabled },
+            { upsert: true, returnDocument: 'after' }
+        );
+        res.json({ success: true, enabled });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

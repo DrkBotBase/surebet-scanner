@@ -50,43 +50,96 @@ app.use(express.static(path.join(__dirname, '../frontend/public')));
 app.use('/api', apiRoutes);
 app.use('/admin', adminRoutes);
 
+const SystemConfig = require('./models/SystemConfig');
+const { getMatchInfo } = require('./services/test');
+const { validatePredictionStatus } = require('./services/validateService');
+
+async function autoValidarPendientes() {
+    try {
+        const config = await SystemConfig.findOne({ key: 'autoScraper' });
+        if (!config || !config.value) return;
+
+        console.log('🔄 Ejecutando validación automática...');
+        
+        // Obtener pendientes de ambos modelos
+        const [pendientesPronosticos, pendientesGoles] = await Promise.all([
+            Prediction.find({ status: { $in: ['pendiente', 'pending'] } }),
+            GoalTable.find({ status: { $in: ['pendiente', 'pending'] } })
+        ]);
+        
+        const todosPendientes = [
+            ...pendientesPronosticos.map(p => ({ doc: p, type: 'prediction' })),
+            ...pendientesGoles.map(g => ({ doc: g, type: 'goal-table' }))
+        ];
+        
+        for (const item of todosPendientes) {
+            try {
+                const { doc, type } = item;
+                
+                if (type === 'prediction') {
+                    // Usar servicio de validación automática para pronósticos
+                    await validatePredictionStatus(doc._id);
+                } else {
+                    // Mantener lógica para tablas de goles
+                    const updatedData = await getMatchInfo(doc.flashscoreId);
+                    
+                    doc.score = updatedData.score;
+                    doc.status = updatedData.status;
+                    if (updatedData.datetime && updatedData.datetime.iso) {
+                        doc.eventDate = moment.tz(updatedData.datetime.iso, "America/Bogota").startOf('day').toDate();
+                    }
+                    await doc.save();
+                }
+                
+                // Pausa para evitar rate-limiting
+                await new Promise(resolve => setTimeout(resolve, 5000));
+            } catch (e) {
+                console.error(`Error validando ${item.type} ${item.doc._id}:`, e);
+            }
+        }
+        console.log('✅ Validación automática finalizada.');
+    } catch (error) {
+        console.error('Error en validación automática:', error);
+    }
+}
+
+// Ejecutar cada 10 minutos (10 * 60 * 1000)
+setInterval(autoValidarPendientes, 10 * 60 * 1000);
+
 const News = require('./models/News');
 const Prediction = require('./models/Prediction');
 const Surebet = require('./models/Surebet');
 const GoalTable = require('./models/GoalTable');
 
+
 app.get('/', async (req, res) => {
     try {
-        const today = moment().tz("America/Bogota")
-            .startOf('day')
-            .toDate();
+        const todayColombia = moment().tz("America/Bogota").startOf('day');
         
-        const tomorrow = moment().tz("America/Bogota")
-            .add(1, 'days')
-            .startOf('day')
-            .toDate();
+        const todayStart = todayColombia.clone().utc().startOf('day').toDate();
+        const todayEnd = todayColombia.clone().utc().endOf('day').toDate();
 
         const [news, surebets, predictions, goalTables] = await Promise.all([
             News.find().sort({ createdAt: -1 }).limit(3),
-            Surebet.find({ eventDate: { $gte: today } }).sort({ eventDate: 1 }).limit(6),
+            Surebet.find({ eventDate: { $gte: todayStart } }).sort({ eventDate: 1 }).limit(6),
             Prediction.find({ 
                 eventDate: { 
-                    $gte: today,
-                    $lt: tomorrow
+                    $gte: todayStart,
+                    $lte: todayEnd
                 } 
             })
             .sort({ eventDate: -1 })
             .limit(10),
             GoalTable.find({ 
                 eventDate: { 
-                    $gte: today,
-                    $lt: tomorrow
+                    $gte: todayStart,
+                    $lte: todayEnd
                 } 
             })
             .sort({ eventDate: -1 })
             .limit(10)
         ]);
-
+        
         const getMatchStatus = (eventDate, timeStr) => {
             if (!timeStr || typeof timeStr !== 'string' || !timeStr.includes(':')) return null;
             try {

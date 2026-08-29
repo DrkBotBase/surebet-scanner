@@ -1,0 +1,8 @@
+const mongoose = require('mongoose');
+
+const systemConfigSchema = new mongoose.Schema({
+    key: { type: String, required: true, unique: true },
+    value: { type: Boolean, default: false }
+});
+
+module.exports = mongoose.model('SystemConfig', systemConfigSchema);
