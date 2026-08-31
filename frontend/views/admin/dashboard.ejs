@@ -66,145 +66,163 @@
     ::-webkit-scrollbar-thumb:hover {
       background: #bfeb30;
     }
+    
+    /* Mobile first improvements */
+    @media (max-width: 640px) {
+      .tab-btn {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.65rem;
+      }
+      .tab-btn i {
+        font-size: 0.75rem;
+      }
+      .header-actions {
+        flex-wrap: wrap;
+        gap: 0.25rem;
+      }
+      .header-actions a {
+        font-size: 0.6rem;
+        padding: 0.3rem 0.6rem;
+      }
+    }
   </style>
 </head>
 <body class="bg-mejv-black text-gray-100 font-sans antialiased min-h-screen selection:bg-mejv-lime selection:text-mejv-black">
 
   <!-- ========== HEADER ========== -->
   <header class="bg-mejv-dark sticky top-0 z-20 border-b border-gray-800 shadow-neon-blue">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="bg-mejv-lime text-mejv-black p-2 rounded-xl flex items-center justify-center shadow-neon-lime">
-          <i class="fas fa-chart-line text-lg"></i>
+    <div class="max-w-7xl mx-auto px-3 py-2 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="bg-mejv-lime text-mejv-black p-1.5 rounded-xl flex items-center justify-center shadow-neon-lime">
+          <i class="fas fa-chart-line text-base"></i>
         </div>
         <div>
-          <h1 class="text-base sm:text-lg font-bold font-display text-white tracking-wide">MEJV Sports</h1>
-          <p class="text-[10px] text-mejv-lime font-bold uppercase tracking-widest leading-none">Admin Panel</p>
+          <h1 class="text-sm font-bold font-display text-white tracking-wide">MEJV Sports</h1>
+          <p class="text-[9px] text-mejv-lime font-bold uppercase tracking-widest leading-none">Admin Panel</p>
         </div>
       </div>
-      <div class="flex items-center gap-4 text-sm">
-        <span class="hidden md:inline text-gray-400 font-medium">
-          <i class="far fa-calendar-alt mr-1.5 text-mejv-lime"></i><span id="header-date">--.--.----</span>
+      <div class="flex items-center gap-2 header-actions">
+        <span class="hidden sm:inline text-gray-400 font-medium text-xs">
+          <i class="far fa-calendar-alt mr-1 text-mejv-lime"></i><span id="header-date">--.--.----</span>
         </span>
-        <div class="flex items-center gap-2">
-          <a href="/" target="_blank" class="bg-mejv-card-dark hover:bg-mejv-card-hover border border-gray-800 text-gray-300 hover:text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1">
-            <i class="fas fa-external-link-alt text-[10px]"></i> Ver Sitio
-          </a>
-          <a href="/admin/logout" class="bg-rose-950/40 hover:bg-rose-900/60 border border-rose-800/50 text-rose-300 hover:text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1">
-            <i class="fas fa-sign-out-alt"></i> Salir
-          </a>
-        </div>
+        <a href="/" target="_blank" class="bg-mejv-card-dark hover:bg-mejv-card-hover border border-gray-800 text-gray-300 hover:text-white px-2 py-1 rounded-lg text-[10px] font-semibold transition flex items-center gap-1">
+          <i class="fas fa-external-link-alt text-[8px]"></i> Ver Sitio
+        </a>
+        <a href="/admin/logout" class="bg-rose-950/40 hover:bg-rose-900/60 border border-rose-800/50 text-rose-300 hover:text-white px-2 py-1 rounded-lg text-[10px] font-semibold transition flex items-center gap-1">
+          <i class="fas fa-sign-out-alt text-[10px]"></i> Salir
+        </a>
       </div>
     </div>
     
     <!-- MENU PESTAÑAS (TABS) -->
-    <nav class="max-w-7xl mx-auto px-4 flex gap-1 overflow-x-auto border-t border-gray-800 scrollbar-none">
-      <button data-tab="noticias" class="tab-btn py-3 px-4 text-xs font-bold text-gray-400 border-b-2 border-transparent hover:text-mejv-lime hover:border-mejv-lime/40 whitespace-nowrap transition flex items-center gap-2 active">
+    <nav class="max-w-7xl mx-auto px-2 flex gap-0.5 overflow-x-auto border-t border-gray-800 scrollbar-none">
+      <button data-tab="noticias" class="tab-btn py-2 px-3 text-xs font-bold text-gray-400 border-b-2 border-transparent hover:text-mejv-lime hover:border-mejv-lime/40 whitespace-nowrap transition flex items-center gap-1.5 active">
         <i class="fas fa-newspaper text-sm"></i>Noticias
       </button>
-      <button data-tab="surebets" class="tab-btn py-3 px-4 text-xs font-bold text-gray-400 border-b-2 border-transparent hover:text-mejv-lime hover:border-mejv-lime/40 whitespace-nowrap transition flex items-center gap-2">
+      <button data-tab="surebets" class="tab-btn py-2 px-3 text-xs font-bold text-gray-400 border-b-2 border-transparent hover:text-mejv-lime hover:border-mejv-lime/40 whitespace-nowrap transition flex items-center gap-1.5">
         <i class="fas fa-percent text-sm"></i>Surebets
       </button>
-      <button data-tab="pronosticos" class="tab-btn py-3 px-4 text-xs font-bold text-gray-400 border-b-2 border-transparent hover:text-mejv-lime hover:border-mejv-lime/40 whitespace-nowrap transition flex items-center gap-2">
+      <button data-tab="pronosticos" class="tab-btn py-2 px-3 text-xs font-bold text-gray-400 border-b-2 border-transparent hover:text-mejv-lime hover:border-mejv-lime/40 whitespace-nowrap transition flex items-center gap-1.5">
         <i class="fas fa-futbol text-sm"></i>Pronósticos
       </button>
-      <button data-tab="tablagoles" class="tab-btn py-3 px-4 text-xs font-bold text-gray-400 border-b-2 border-transparent hover:text-mejv-lime hover:border-mejv-lime/40 whitespace-nowrap transition flex items-center gap-2">
-        <i class="fas fa-bullseye text-sm"></i>Tabla Goles
+      <button data-tab="tablagoles" class="tab-btn py-2 px-3 text-xs font-bold text-gray-400 border-b-2 border-transparent hover:text-mejv-lime hover:border-mejv-lime/40 whitespace-nowrap transition flex items-center gap-1.5">
+        <i class="fas fa-bullseye text-sm"></i>Goles
+      </button>
+      <!-- Acciones globales en la navegación -->
+      <button id="btnValidarTodos" class="tab-btn py-2 px-3 text-xs font-bold text-amber-400 border-b-2 border-transparent hover:text-amber-300 hover:border-amber-500/40 whitespace-nowrap transition flex items-center gap-1.5 bg-amber-950/20 rounded-t-lg">
+        <i class="fas fa-check-double text-sm"></i>Validar
+      </button>
+      <button id="toggleScraperBtn" class="tab-btn py-2 px-3 text-xs font-bold text-mejv-lime border-b-2 border-transparent hover:text-mejv-lime hover:border-mejv-lime/40 whitespace-nowrap transition flex items-center gap-1.5 bg-mejv-lime/5 rounded-t-lg">
+        <i class="fas fa-robot text-sm"></i>Scraper
       </button>
     </nav>
   </header>
 
   <!-- ========== CONTENIDO PRINCIPAL ========== -->
-  <main class="max-w-7xl mx-auto px-4 py-6 pb-24">
+  <main class="max-w-7xl mx-auto px-3 py-4 pb-24">
 
     <!-- ===== SECCIÓN NOTICIAS ===== -->
     <section id="section-noticias" class="tab-content">
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
         <div>
-          <h2 class="text-xl font-bold font-display flex items-center gap-2 text-white">
+          <h2 class="text-lg font-bold font-display flex items-center gap-2 text-white">
             <i class="fas fa-newspaper text-mejv-lime"></i> Gestión de Noticias
           </h2>
-          <p class="text-xs text-gray-400">Publica artículos, fichajes y novedades deportivas de MEJV Sports</p>
+          <p class="text-[10px] text-gray-400">Publica artículos, fichajes y novedades deportivas</p>
         </div>
-        <div class="flex gap-2 items-center">
-          <input type="text" id="search-noticias" placeholder="Buscar noticia..." class="bg-mejv-card-dark border border-gray-800 text-xs px-3 py-2 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-mejv-lime transition w-44" />
-          <button id="btnCrearNoticia" class="bg-mejv-blue hover:bg-mejv-blue-dark text-white text-xs font-bold px-4 py-2 rounded-lg shadow-neon-blue flex items-center gap-1.5 transition">
-            <i class="fas fa-plus-circle"></i> Crear Noticia
+        <div class="flex flex-wrap gap-2 items-center">
+          <input type="text" id="search-noticias" placeholder="Buscar..." class="bg-mejv-card-dark border border-gray-800 text-xs px-3 py-1.5 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-mejv-lime transition w-32 sm:w-44" />
+          <button id="btnCrearNoticia" class="bg-mejv-blue hover:bg-mejv-blue-dark text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-neon-blue flex items-center gap-1 transition whitespace-nowrap">
+            <i class="fas fa-plus-circle"></i> Crear
           </button>
         </div>
       </div>
       
       <!-- Contenedor lista -->
-      <div id="noticias-list" class="space-y-4"></div>
+      <div id="noticias-list" class="space-y-3"></div>
     </section>
 
     <!-- ===== SECCIÓN SUREBETS ===== -->
     <section id="section-surebets" class="tab-content hidden">
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
         <div>
-          <h2 class="text-xl font-bold font-display flex items-center gap-2 text-white">
+          <h2 class="text-lg font-bold font-display flex items-center gap-2 text-white">
             <i class="fas fa-percent text-emerald-400"></i> Arbitraje de Surebets
           </h2>
-          <p class="text-xs text-gray-400">Gestiona surebets de apuestas seguras con porcentaje de retorno garantizado</p>
+          <p class="text-[10px] text-gray-400">Gestiona surebets de apuestas seguras con retorno garantizado</p>
         </div>
-        <div class="flex gap-2 items-center">
-          <input type="text" id="search-surebets" placeholder="Buscar encuentro..." class="bg-mejv-card-dark border border-gray-800 text-xs px-3 py-2 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-mejv-lime transition w-44" />
-          <button id="btnCrearSurebet" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-lg shadow flex items-center gap-1.5 transition">
-            <i class="fas fa-plus-circle"></i> Crear Surebet
+        <div class="flex flex-wrap gap-2 items-center">
+          <input type="text" id="search-surebets" placeholder="Buscar..." class="bg-mejv-card-dark border border-gray-800 text-xs px-3 py-1.5 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-mejv-lime transition w-32 sm:w-44" />
+          <button id="btnCrearSurebet" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow flex items-center gap-1 transition whitespace-nowrap">
+            <i class="fas fa-plus-circle"></i> Crear
           </button>
         </div>
       </div>
       
       <!-- Contenedor lista -->
-      <div id="surebets-list" class="space-y-4"></div>
+      <div id="surebets-list" class="space-y-3"></div>
     </section>
 
     <!-- ===== SECCIÓN PRONÓSTICOS ===== -->
     <section id="section-pronosticos" class="tab-content hidden">
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
         <div>
-          <h2 class="text-xl font-bold font-display flex items-center gap-2 text-white">
+          <h2 class="text-lg font-bold font-display flex items-center gap-2 text-white">
             <i class="fas fa-futbol text-mejv-blue"></i> Pronósticos Premium
           </h2>
-          <p class="text-xs text-gray-400">Publica predicciones de cuotas de partidos y evalúa su estatus final</p>
+          <p class="text-[10px] text-gray-400">Publica predicciones de cuotas y evalúa su estatus final</p>
         </div>
-        <div class="flex gap-2 items-center">
-          <label class="flex items-center cursor-pointer text-white text-xs gap-2 bg-mejv-card-dark px-3 py-2 rounded-lg" title="Auto-Scraper (cada 10 min)">
-            <input type="checkbox" id="toggleScraper" class="form-checkbox h-4 w-4 text-mejv-lime">
-          </label>
-          <button id="btnValidarTodos" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-2 rounded-lg shadow flex items-center gap-1.5 transition">
-            <i class="fas fa-check-double"></i> Validar Pendientes
-          </button>
-          <input type="text" id="search-pronosticos" placeholder="Buscar encuentro..." class="bg-mejv-card-dark border border-gray-800 text-xs px-3 py-2 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-mejv-lime transition w-44" />
-          <button id="btnCrearPronostico" class="bg-mejv-blue hover:bg-mejv-blue-dark text-white text-xs font-bold px-4 py-2 rounded-lg shadow-neon-blue flex items-center gap-1.5 transition">
-            <i class="fas fa-plus-circle"></i> Crear Pronóstico
+        <div class="flex flex-wrap gap-2 items-center">
+          <input type="text" id="search-pronosticos" placeholder="Buscar..." class="bg-mejv-card-dark border border-gray-800 text-xs px-3 py-1.5 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-mejv-lime transition w-32 sm:w-44" />
+          <button id="btnCrearPronostico" class="bg-mejv-blue hover:bg-mejv-blue-dark text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-neon-blue flex items-center gap-1 transition whitespace-nowrap">
+            <i class="fas fa-plus-circle"></i> Crear
           </button>
         </div>
       </div>
       
       <!-- Contenedor lista -->
-      <div id="pronosticos-list" class="space-y-4"></div>
+      <div id="pronosticos-list" class="space-y-3"></div>
     </section>
 
     <!-- ===== SECCIÓN TABLA DE GOLES ===== -->
     <section id="section-tablagoles" class="tab-content hidden">
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
         <div>
-          <h2 class="text-xl font-bold font-display flex items-center gap-2 text-white">
+          <h2 class="text-lg font-bold font-display flex items-center gap-2 text-white">
             <i class="fas fa-bullseye text-mejv-lime"></i> Tabla de Goles
           </h2>
-          <p class="text-xs text-gray-400">Administra recomendaciones para apuestas del mercado de over/under de goles</p>
+          <p class="text-[10px] text-gray-400">Administra recomendaciones para el mercado over/under</p>
         </div>
-        <div class="flex gap-2 items-center">
-          <input type="text" id="search-tablagoles" placeholder="Buscar liga o evento..." class="bg-mejv-card-dark border border-gray-800 text-xs px-3 py-2 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-mejv-lime transition w-44" />
-          <button id="btnCrearTablaGoles" class="bg-mejv-lime hover:bg-mejv-lime-dark text-mejv-black text-xs font-extrabold px-4 py-2 rounded-lg shadow-neon-lime flex items-center gap-1.5 transition">
-            <i class="fas fa-plus-circle"></i> Crear Entrada
+        <div class="flex flex-wrap gap-2 items-center">
+          <input type="text" id="search-tablagoles" placeholder="Buscar..." class="bg-mejv-card-dark border border-gray-800 text-xs px-3 py-1.5 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-mejv-lime transition w-32 sm:w-44" />
+          <button id="btnCrearTablaGoles" class="bg-mejv-lime hover:bg-mejv-lime-dark text-mejv-black text-xs font-extrabold px-3 py-1.5 rounded-lg shadow-neon-lime flex items-center gap-1 transition whitespace-nowrap">
+            <i class="fas fa-plus-circle"></i> Crear
           </button>
         </div>
       </div>
       
       <!-- Contenedor lista -->
-      <div id="tablagoles-list" class="space-y-4"></div>
+      <div id="tablagoles-list" class="space-y-3"></div>
     </section>
 
   </main>
@@ -214,21 +232,21 @@
     <div class="bg-mejv-dark border border-gray-800 rounded-2xl w-full max-w-xl shadow-2xl max-h-[92vh] overflow-y-auto transform transition duration-300 scale-95 opacity-0" id="modalContainer">
       
       <!-- Modal Header -->
-      <div class="sticky top-0 bg-mejv-dark/95 backdrop-blur-md z-10 px-6 py-4 border-b border-gray-800 flex items-center justify-between rounded-t-2xl">
-        <h3 id="modalTitle" class="text-base font-bold font-display text-white flex items-center gap-2">Crear</h3>
+      <div class="sticky top-0 bg-mejv-dark/95 backdrop-blur-md z-10 px-5 py-3 border-b border-gray-800 flex items-center justify-between rounded-t-2xl">
+        <h3 id="modalTitle" class="text-sm font-bold font-display text-white flex items-center gap-2">Crear</h3>
         <button id="modalClose" class="text-gray-400 hover:text-mejv-lime text-2xl transition duration-150 leading-none">&times;</button>
       </div>
       
       <!-- Modal Body -->
-      <div class="p-6">
+      <div class="p-5">
         <form id="modalForm" class="space-y-4">
           <!-- campos dinámicos se inyectan aquí -->
           <div id="modalFields" class="space-y-4 text-gray-300"></div>
           
           <!-- botones -->
           <div class="flex justify-end gap-2.5 pt-4 border-t border-gray-800/60">
-            <button type="button" id="modalCancel" class="px-4 py-2 text-xs font-bold border border-gray-800 rounded-xl text-gray-400 hover:text-white hover:bg-gray-800/50 transition">Cancelar</button>
-            <button type="submit" id="modalSubmit" class="px-5 py-2 text-xs font-bold bg-mejv-blue hover:bg-mejv-blue-dark text-white rounded-xl shadow-neon-blue flex items-center gap-1.5 transition"><i class="fas fa-save"></i> Guardar Cambios</button>
+            <button type="button" id="modalCancel" class="px-4 py-1.5 text-xs font-bold border border-gray-800 rounded-xl text-gray-400 hover:text-white hover:bg-gray-800/50 transition">Cancelar</button>
+            <button type="submit" id="modalSubmit" class="px-4 py-1.5 text-xs font-bold bg-mejv-blue hover:bg-mejv-blue-dark text-white rounded-xl shadow-neon-blue flex items-center gap-1.5 transition"><i class="fas fa-save"></i> Guardar</button>
           </div>
         </form>
         
@@ -369,12 +387,12 @@
 
     function renderEmptyState(container, mensaje, btnId, actionSection) {
       container.innerHTML = `
-        <div class="bg-mejv-card-dark border border-dashed border-gray-800 rounded-2xl p-8 text-center shadow-card-glow max-w-xl mx-auto my-6">
-          <div class="w-12 h-12 rounded-full bg-gray-900 flex items-center justify-center mx-auto mb-3">
-            <i class="fas fa-folder-open text-gray-600 text-lg"></i>
+        <div class="bg-mejv-card-dark border border-dashed border-gray-800 rounded-2xl p-6 text-center shadow-card-glow max-w-xl mx-auto my-4">
+          <div class="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center mx-auto mb-2">
+            <i class="fas fa-folder-open text-gray-600 text-base"></i>
           </div>
-          <p class="text-gray-400 text-xs mb-4 font-semibold">${mensaje}</p>
-          <button id="${btnId}" class="bg-mejv-lime hover:bg-mejv-lime-dark text-mejv-black text-xs font-extrabold px-4 py-2 rounded-xl transition shadow-neon-lime"><i class="fas fa-plus mr-1.5"></i>Registrar el Primero</button>
+          <p class="text-gray-400 text-[10px] mb-3 font-semibold">${mensaje}</p>
+          <button id="${btnId}" class="bg-mejv-lime hover:bg-mejv-lime-dark text-mejv-black text-[10px] font-extrabold px-3 py-1.5 rounded-xl transition shadow-neon-lime"><i class="fas fa-plus mr-1"></i>Registrar el Primero</button>
         </div>
       `;
       document.getElementById(btnId)?.addEventListener('click', () => abrirModal(actionSection, 'crear'));
@@ -382,9 +400,9 @@
 
     function renderSpinner(container) {
       container.innerHTML = `
-        <div class="flex flex-col items-center justify-center py-12 gap-3">
-          <div class="w-8 h-8 border-4 border-mejv-blue border-t-mejv-lime rounded-full animate-spin"></div>
-          <p class="text-xs text-gray-400 font-semibold tracking-wider uppercase">Cargando datos...</p>
+        <div class="flex flex-col items-center justify-center py-8 gap-3">
+          <div class="w-7 h-7 border-3 border-mejv-blue border-t-mejv-lime rounded-full animate-spin"></div>
+          <p class="text-[10px] text-gray-400 font-semibold tracking-wider uppercase">Cargando datos...</p>
         </div>
       `;
     }
@@ -393,9 +411,11 @@
       if (!dateStr) return '';
       const d = new Date(dateStr);
       if (isNaN(d.getTime())) return '';
-      const year = d.getUTCFullYear();
-      const month = String(d.getUTCMonth() + 1).padStart(2, '0');
-      const day = String(d.getUTCDate()).padStart(2, '0');
+      const options = { timeZone: 'America/Bogota', year: 'numeric', month: '2-digit', day: '2-digit' };
+      const parts = new Intl.DateTimeFormat('en-CA', options).formatToParts(d);
+      const year = parts.find(p => p.type === 'year').value;
+      const month = parts.find(p => p.type === 'month').value;
+      const day = parts.find(p => p.type === 'day').value;
       return `${year}-${month}-${day}`;
     }
 
@@ -405,6 +425,29 @@
       if (isNaN(d.getTime())) return '';
       const options = { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: 'UTC' };
       return d.toLocaleDateString('es-ES', options);
+    }
+    
+    function getStatusColor(status) {
+      switch(status) {
+        case 'verificado':
+          return 'bg-emerald-500 shadow-lg shadow-emerald-500/30';
+        case 'fallido':
+          return 'bg-rose-500 shadow-lg shadow-rose-500/30';
+        case 'return':
+          return 'bg-amber-500 shadow-lg shadow-amber-500/30';
+        case 'pendiente':
+        default:
+          return 'bg-gray-500 shadow-lg shadow-gray-500/20';
+      }
+    }
+    
+    function getSurebetStatusColor(percentage) {
+      if (!percentage) return 'bg-gray-500 shadow-lg shadow-gray-500/20';
+      const num = parseFloat(percentage);
+      if (isNaN(num)) return 'bg-gray-500 shadow-lg shadow-gray-500/20';
+      if (num >= 2) return 'bg-emerald-500 shadow-lg shadow-emerald-500/30';
+      if (num >= 1) return 'bg-amber-500 shadow-lg shadow-amber-500/30';
+      return 'bg-rose-500 shadow-lg shadow-rose-500/30';
     }
 
     // ============================================================
@@ -421,11 +464,11 @@
             <table class="w-full text-xs text-left">
               <thead class="bg-mejv-black text-gray-400 font-bold uppercase tracking-wider border-b border-gray-800">
                 <tr>
-                  <th class="px-4 py-3">Título</th>
-                  <th class="px-4 py-3 hidden sm:table-cell">Descripción</th>
-                  <th class="px-4 py-3">Tag / Categoria</th>
-                  <th class="px-4 py-3 text-center">Imagen</th>
-                  <th class="px-4 py-3 text-right">Acciones</th>
+                  <th class="px-3 py-2">Título</th>
+                  <th class="px-3 py-2 hidden sm:table-cell">Descripción</th>
+                  <th class="px-3 py-2">Tag</th>
+                  <th class="px-3 py-2 text-center hidden xs:table-cell">Img</th>
+                  <th class="px-3 py-2 text-right">Acciones</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-800/60">
@@ -433,17 +476,17 @@
       lista.forEach(n => {
         html += `
           <tr class="hover:bg-mejv-card-hover/40 transition duration-100">
-            <td class="px-4 py-3 font-semibold text-white max-w-xs truncate">${escapaHTML(n.title)}</td>
-            <td class="px-4 py-3 text-gray-400 hidden sm:table-cell max-w-sm truncate">${escapaHTML(n.body)}</td>
-            <td class="px-4 py-3 whitespace-nowrap">
-              <span class="bg-mejv-blue/20 border border-mejv-blue/40 text-mejv-blue px-2 py-0.5 rounded-full text-[10px] font-bold uppercase">${escapaHTML(n.category || 'General')}</span>
+            <td class="px-3 py-2 font-semibold text-white max-w-[120px] truncate text-[10px]">${escapaHTML(n.title)}</td>
+            <td class="px-3 py-2 text-gray-400 hidden sm:table-cell max-w-sm truncate text-[10px]">${escapaHTML(n.body)}</td>
+            <td class="px-3 py-2 whitespace-nowrap">
+              <span class="bg-mejv-blue/20 border border-mejv-blue/40 text-mejv-blue px-1.5 py-0.5 rounded-full text-[8px] font-bold uppercase">${escapaHTML(n.category || 'General')}</span>
             </td>
-            <td class="px-4 py-3 text-center">
-              ${n.imageUrl ? `<img src="${n.imageUrl}" alt="img" class="h-9 w-9 rounded-lg object-cover mx-auto border border-gray-800" onerror="this.src='https://placehold.co/100x100/0e263e/white?text=No+Img'" />` : '<span class="text-gray-600 font-medium">sin imagen</span>'}
+            <td class="px-3 py-2 text-center hidden xs:table-cell">
+              ${n.imageUrl ? `<img src="${n.imageUrl}" alt="img" class="h-7 w-7 rounded-lg object-cover mx-auto border border-gray-800" onerror="this.src='https://placehold.co/60x60/0e263e/white?text=No'" />` : '<span class="text-gray-600 text-[8px] font-medium">sin img</span>'}
             </td>
-            <td class="px-4 py-3 text-right whitespace-nowrap">
-              <button data-id="${n._id}" data-accion="editar" class="bg-mejv-blue/10 hover:bg-mejv-blue text-mejv-blue hover:text-white w-7 h-7 rounded-lg transition mr-1" title="Editar"><i class="fas fa-edit text-[10px]"></i></button>
-              <button data-id="${n._id}" data-accion="eliminar" class="bg-rose-950/20 hover:bg-rose-600 text-rose-400 hover:text-white w-7 h-7 rounded-lg transition" title="Eliminar"><i class="fas fa-trash-alt text-[10px]"></i></button>
+            <td class="px-3 py-2 text-right whitespace-nowrap">
+              <button data-id="${n._id}" data-accion="editar" class="bg-mejv-blue/10 hover:bg-mejv-blue text-mejv-blue hover:text-white w-6 h-6 rounded-lg transition mr-0.5" title="Editar"><i class="fas fa-edit text-[9px]"></i></button>
+              <button data-id="${n._id}" data-accion="eliminar" class="bg-rose-950/20 hover:bg-rose-600 text-rose-400 hover:text-white w-6 h-6 rounded-lg transition" title="Eliminar"><i class="fas fa-trash-alt text-[9px]"></i></button>
             </td>
           </tr>
         `;
@@ -486,43 +529,47 @@
             <table class="w-full text-xs text-left">
               <thead class="bg-mejv-black text-gray-400 font-bold uppercase tracking-wider border-b border-gray-800">
                 <tr>
-                  <th class="px-4 py-3">Encuentro / Fecha</th>
-                  <th class="px-4 py-3">Mercado / Línea</th>
-                  <th class="px-4 py-3 text-center">Cuotas / Casas</th>
-                  <th class="px-4 py-3 text-center">Retorno %</th>
-                  <th class="px-4 py-3 text-right">Acciones</th>
+                  <th class="px-3 py-2">Encuentro / Fecha</th>
+                  <th class="px-3 py-2 hidden sm:table-cell">Mercado</th>
+                  <th class="px-3 py-2 text-center">Cuotas</th>
+                  <th class="px-3 py-2 text-center hidden xs:table-cell">Retorno</th>
+                  <th class="px-3 py-2 text-right">Acciones</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-800/60">
       `;
       lista.forEach(s => {
         const pctStr = s.percentage || '0%';
-        const pctVal = parseFloat(pctStr);
         html += `
           <tr class="hover:bg-mejv-card-hover/40 transition duration-100">
-            <td class="px-4 py-3">
-              <span class="font-bold text-white block">${escapaHTML(s.event)}</span>
-              <span class="text-[10px] text-gray-500 font-semibold uppercase tracking-wider"><i class="far fa-calendar-alt text-mejv-lime mr-1"></i>${formatDisplayDate(s.eventDate)} @ ${s.time || '—'}</span>
-            </td>
-            <td class="px-4 py-3 font-semibold text-gray-300">
-              <span class="block text-white">${escapaHTML(s.market)}</span>
-              <span class="text-[10px] text-gray-400 font-bold bg-gray-900 border border-gray-800 px-1.5 py-0.5 rounded">${escapaHTML(s.line)}</span>
-            </td>
-            <td class="px-4 py-3 text-center">
-              <div class="flex justify-center items-center gap-3">
-                <span class="text-gray-400 font-semibold">${escapaHTML(s.bookmaker1)}: <strong class="text-mejv-lime font-mono text-xs bg-mejv-black/40 px-1.5 py-0.5 rounded border border-gray-800">${s.odds1}</strong></span>
-                <span class="text-gray-700">|</span>
-                <span class="text-gray-400 font-semibold">${escapaHTML(s.bookmaker2)}: <strong class="text-mejv-lime font-mono text-xs bg-mejv-black/40 px-1.5 py-0.5 rounded border border-gray-800">${s.odds2}</strong></span>
+            <td class="px-3 py-2">
+              <div class="flex items-start gap-1.5">
+                <span class="inline-block w-2 h-2 min-w-[8px] min-h-[8px] mt-1 rounded-full ${getSurebetStatusColor(s.percentage)}"></span>
+                <div>
+                  <span class="font-bold text-white block text-[10px]">${escapaHTML(s.event)}</span>
+                  <span class="text-[8px] text-gray-500 font-semibold uppercase tracking-wider"><i class="far fa-calendar-alt text-mejv-lime mr-0.5"></i>${formatDisplayDate(s.eventDate)} ${s.time ? '@ '+s.time : ''}</span>
+                </div>
               </div>
             </td>
-            <td class="px-4 py-3 text-center font-mono text-sm font-bold">
-              <span class="px-2.5 py-1 rounded-xl shadow bg-emerald-950/40 border border-emerald-500/30 text-emerald-400 shadow-emerald-950/50">
+            <td class="px-3 py-2 font-semibold text-gray-300 hidden sm:table-cell">
+              <span class="block text-white text-[10px]">${escapaHTML(s.market)}</span>
+              <span class="text-[8px] text-gray-400 font-bold bg-gray-900 border border-gray-800 px-1 py-0.5 rounded">${escapaHTML(s.line)}</span>
+            </td>
+            <td class="px-3 py-2 text-center">
+              <div class="flex justify-center items-center gap-1 text-[8px] flex-wrap">
+                <span class="text-gray-400 font-semibold">${escapaHTML(s.bookmaker1)}: <strong class="text-mejv-lime font-mono bg-mejv-black/40 px-1 py-0.5 rounded border border-gray-800">${s.odds1}</strong></span>
+                <span class="text-gray-700 text-[6px]">|</span>
+                <span class="text-gray-400 font-semibold">${escapaHTML(s.bookmaker2)}: <strong class="text-mejv-lime font-mono bg-mejv-black/40 px-1 py-0.5 rounded border border-gray-800">${s.odds2}</strong></span>
+              </div>
+            </td>
+            <td class="px-3 py-2 text-center font-mono font-bold hidden xs:table-cell">
+              <span class="px-1.5 py-0.5 rounded-xl shadow bg-emerald-950/40 border border-emerald-500/30 text-emerald-400 text-[9px]">
                 ${pctStr}
               </span>
             </td>
-            <td class="px-4 py-3 text-right whitespace-nowrap">
-              <button data-id="${s._id}" data-accion="editar" class="bg-mejv-blue/10 hover:bg-mejv-blue text-mejv-blue hover:text-white w-7 h-7 rounded-lg transition mr-1" title="Editar"><i class="fas fa-edit text-[10px]"></i></button>
-              <button data-id="${s._id}" data-accion="eliminar" class="bg-rose-950/20 hover:bg-rose-600 text-rose-400 hover:text-white w-7 h-7 rounded-lg transition" title="Eliminar"><i class="fas fa-trash-alt text-[10px]"></i></button>
+            <td class="px-3 py-2 text-right whitespace-nowrap">
+              <button data-id="${s._id}" data-accion="editar" class="bg-mejv-blue/10 hover:bg-mejv-blue text-mejv-blue hover:text-white w-6 h-6 rounded-lg transition mr-0.5" title="Editar"><i class="fas fa-edit text-[9px]"></i></button>
+              <button data-id="${s._id}" data-accion="eliminar" class="bg-rose-950/20 hover:bg-rose-600 text-rose-400 hover:text-white w-6 h-6 rounded-lg transition" title="Eliminar"><i class="fas fa-trash-alt text-[9px]"></i></button>
             </td>
           </tr>
         `;
@@ -555,134 +602,136 @@
     }
 
     function renderTablaPronosticos(lista, container) {
-    if (!lista.length) {
-    renderEmptyState(container, 'No se encontraron pronósticos registrados.', 'btnEmptyCrearPronostico', 'pronosticos');
-    return;
-    }
-    let html = `
-    <div class="bg-mejv-card-dark border border-gray-800 rounded-2xl shadow-card-glow overflow-hidden">
-      <div class="table-wrap">
-        <table class="w-full text-xs text-left">
-          <thead class="bg-mejv-black text-gray-400 font-bold uppercase tracking-wider border-b border-gray-800">
-            <tr>
-              <th class="px-4 py-3">Encuentro / Fecha</th>
-              <th class="px-4 py-3">Marcador / Predicción / Casa</th>
-              <th class="px-4 py-3 text-center">Estado</th>
-              <th class="px-4 py-3 text-right">Estatus Rápido / Acciones</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-800/60">
-    `;
-    lista.forEach(p => {
-    const est = p.status || 'pendiente';
-    let badge = '';
-    if (est === 'verificado') {
-      badge = '<span class="bg-emerald-950 border border-emerald-500 text-emerald-400 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase shadow-sm shadow-emerald-900/10">Ganado</span>';
-    } else if (est === 'fallido') {
-      badge = '<span class="bg-rose-950 border border-rose-500 text-rose-400 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase shadow-sm shadow-rose-900/10">Perdido</span>';
-    } else if (est === 'return') {
-      badge = '<span class="bg-amber-950 border border-amber-600 text-amber-400 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase shadow-sm shadow-amber-900/10">Reembolso</span>';
-    } else {
-      badge = '<span class="bg-slate-900 border border-gray-600 text-gray-400 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase shadow-sm shadow-gray-900/10">Pendiente</span>';
-    }
-    html += `
-      <tr class="hover:bg-mejv-card-hover/40 transition duration-100">
-        <td class="px-4 py-3">
-          <span class="font-bold text-white block">${escapaHTML(p.event)}</span>
-          <span class="text-[10px] text-gray-500 font-semibold uppercase tracking-wider"><i class="far fa-calendar-alt text-mejv-lime mr-1"></i>${formatDisplayDate(p.eventDate)} @ ${p.time || '—'}</span>
-        </td>
-        <td class="px-4 py-3 font-semibold text-gray-300">
-          <div class="flex items-center gap-2 mb-1">
-            <span class="text-[10px] font-bold text-mejv-white bg-slate-900 px-1.5 py-0.5 rounded border border-gray-700">${escapaHTML(p.score || '0:0')}</span>
-          </div>
-          <span class="block text-white font-bold"><i class="fas fa-tag text-mejv-blue mr-1 text-[10px]"></i>${escapaHTML(p.prediction)}</span>
-          <span class="text-[10px] text-gray-400 uppercase font-semibold">${escapaHTML(p.bookmaker)} @ <strong class="text-mejv-lime font-mono">${p.odds}</strong></span>
-        </td>
-        <td class="px-4 py-3 text-center">${badge}</td>
-        <td class="px-4 py-3 text-right whitespace-nowrap">
-          <button data-id="${p._id}" data-accion="refresh" class="bg-mejv-lime/20 hover:bg-mejv-lime text-mejv-lime hover:text-mejv-black w-7 h-7 rounded-lg transition mr-1" title="Actualizar Resultado"><i class="fas fa-sync-alt text-[10px]"></i></button>
-          <div class="inline-flex gap-1 items-center bg-mejv-black/30 border border-gray-800/80 rounded-xl p-1 shadow-inner mr-3">
-            <button data-id="${p._id}" data-accion="check" class="bg-emerald-950/20 hover:bg-emerald-600 text-emerald-400 hover:text-white w-6 h-6 rounded-lg transition flex items-center justify-center border border-emerald-800/40" title="Marcar como Ganado/Verificado"><i class="fas fa-check text-[9px]"></i></button>
-            <button data-id="${p._id}" data-accion="cross" class="bg-rose-950/20 hover:bg-rose-600 text-rose-400 hover:text-white w-6 h-6 rounded-lg transition flex items-center justify-center border border-rose-800/40" title="Marcar como Perdido/Fallido"><i class="fas fa-times text-[9px]"></i></button>
-            <button data-id="${p._id}" data-accion="pendiente" class="bg-amber-950/20 hover:bg-amber-600 text-amber-400 hover:text-white w-6 h-6 rounded-lg transition flex items-center justify-center border border-amber-800/40" title="Regresar a Pendiente"><i class="fas fa-undo text-[9px]"></i></button>
-          </div>
-          <button data-id="${p._id}" data-accion="editar" class="bg-mejv-blue/10 hover:bg-mejv-blue text-mejv-blue hover:text-white w-7 h-7 rounded-lg transition mr-1" title="Editar Completo"><i class="fas fa-edit text-[10px]"></i></button>
-          <button data-id="${p._id}" data-accion="eliminar" class="bg-rose-950/20 hover:bg-rose-600 text-rose-400 hover:text-white w-7 h-7 rounded-lg transition" title="Eliminar permanentemente"><i class="fas fa-trash-alt text-[10px]"></i></button>
-        </td>
-      </tr>
-    `;
-    });
-    html += `</tbody></table></div></div>`;
-    container.innerHTML = html;
-
-    // Event listeners
-    container.querySelectorAll('[data-accion="refresh"]').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      const id = btn.dataset.id;
-      btn.disabled = true;
-      btn.innerHTML = `<i class="fas fa-spinner animate-spin text-[10px]"></i>`;
-      try {
-        await api.refreshMatch('prediction', id);
-        showToast('Resultado actualizado correctamente');
-        cargarPronosticos();
-      } catch (err) { 
-        showToast(err.message, 'error'); 
-        btn.innerHTML = `<i class="fas fa-sync-alt text-[10px]"></i>`;
-        btn.disabled = false;
+      if (!lista.length) {
+        renderEmptyState(container, 'No se encontraron pronósticos registrados.', 'btnEmptyCrearPronostico', 'pronosticos');
+        return;
       }
-    });
-    });
-    container.querySelectorAll('[data-accion="check"]').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      const id = btn.dataset.id;
-      try {
-        await api.togglePronosticoEstado(id, 'verificado');
-        showToast('Estatus cambiado a Ganado/Verificado');
-        cargarPronosticos();
-      } catch (err) { showToast(err.message, 'error'); }
-    });
-    });
-    container.querySelectorAll('[data-accion="cross"]').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      const id = btn.dataset.id;
-      try {
-        await api.togglePronosticoEstado(id, 'fallido');
-        showToast('Estatus cambiado a Perdido/Fallido');
-        cargarPronosticos();
-      } catch (err) { showToast(err.message, 'error'); }
-    });
-    });
-    container.querySelectorAll('[data-accion="pendiente"]').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      const id = btn.dataset.id;
-      try {
-        await api.togglePronosticoEstado(id, 'pendiente');
-        showToast('Estatus regresado a Pendiente');
-        cargarPronosticos();
-      } catch (err) { showToast(err.message, 'error'); }
-    });
-    });
-    container.querySelectorAll('[data-accion="editar"]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const id = btn.dataset.id;
-      const item = localState.pronosticos.find(p => p._id === id);
-      if (item) abrirModal('pronosticos', 'editar', item);
-    });
-    });
-    container.querySelectorAll('[data-accion="eliminar"]').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      const id = btn.dataset.id;
-      if (confirm('¿Eliminar este pronóstico permanentemente?')) {
-        try {
-          await api.eliminarPronostico(id);
-          showToast('Pronóstico eliminado correctamente');
-          cargarPronosticos();
-        } catch (err) {
-          showToast('Error al eliminar: ' + err.message, 'error');
+      let html = `
+        <div class="bg-mejv-card-dark border border-gray-800 rounded-2xl shadow-card-glow overflow-hidden">
+          <div class="table-wrap">
+            <table class="w-full text-xs text-left">
+              <thead class="bg-mejv-black text-gray-400 font-bold uppercase tracking-wider border-b border-gray-800">
+                <tr>
+                  <th class="px-3 py-2">Encuentro / Fecha</th>
+                  <th class="px-3 py-2 hidden sm:table-cell">Predicción</th>
+                  <th class="px-3 py-2 text-center hidden xs:table-cell">Estado</th>
+                  <th class="px-3 py-2 text-right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-800/60">
+      `;
+      lista.forEach(p => {
+        const est = p.status || 'pendiente';
+        let badge = '';
+        if (est === 'verificado') {
+          badge = '<span class="bg-emerald-950 border border-emerald-500 text-emerald-400 px-1.5 py-0.5 rounded-full text-[8px] font-bold uppercase">Ganado</span>';
+        } else if (est === 'fallido') {
+          badge = '<span class="bg-rose-950 border border-rose-500 text-rose-400 px-1.5 py-0.5 rounded-full text-[8px] font-bold uppercase">Perdido</span>';
+        } else if (est === 'return') {
+          badge = '<span class="bg-amber-950 border border-amber-600 text-amber-400 px-1.5 py-0.5 rounded-full text-[8px] font-bold uppercase">Reembolso</span>';
+        } else {
+          badge = '<span class="bg-slate-900 border border-gray-600 text-gray-400 px-1.5 py-0.5 rounded-full text-[8px] font-bold uppercase">Pendiente</span>';
         }
-      }
-    });
-    });
+        html += `
+          <tr class="hover:bg-mejv-card-hover/40 transition duration-100">
+            <td class="px-3 py-2">
+              <div class="flex items-start gap-1.5">
+                <span class="inline-block w-2 h-2 min-w-[8px] min-h-[8px] mt-1 rounded-full ${getStatusColor(p.status)}"></span>
+                <div>
+                  <span class="font-bold text-white block text-[10px]">${escapaHTML(p.event)}</span>
+                  <span class="text-[8px] text-gray-500 font-semibold uppercase tracking-wider"><i class="far fa-calendar-alt text-mejv-lime mr-0.5"></i>${formatDisplayDate(p.eventDate)} ${p.time ? '@ '+p.time : ''}</span>
+                </div>
+              </div>
+            </td>
+            <td class="px-3 py-2 font-semibold text-gray-300 hidden sm:table-cell">
+              <span class="block text-white text-[10px]"><i class="fas fa-tag text-mejv-blue mr-0.5 text-[8px]"></i>${escapaHTML(p.prediction)}</span>
+              <span class="text-[8px] text-gray-400 uppercase font-semibold">${escapaHTML(p.bookmaker)} @ <strong class="text-mejv-lime font-mono">${p.odds}</strong></span>
+            </td>
+            <td class="px-3 py-2 text-center hidden xs:table-cell">${badge}</td>
+            <td class="px-3 py-2 text-right whitespace-nowrap">
+              <button data-id="${p._id}" data-accion="refresh" class="bg-mejv-lime/20 hover:bg-mejv-lime text-mejv-lime hover:text-mejv-black w-6 h-6 rounded-lg transition mr-0.5" title="Actualizar"><i class="fas fa-sync-alt text-[9px]"></i></button>
+              <div class="inline-flex gap-0.5 items-center bg-mejv-black/30 border border-gray-800/80 rounded-xl p-0.5 shadow-inner mr-1">
+                <button data-id="${p._id}" data-accion="check" class="bg-emerald-950/20 hover:bg-emerald-600 text-emerald-400 hover:text-white w-5 h-5 rounded-lg transition flex items-center justify-center border border-emerald-800/40" title="Ganado"><i class="fas fa-check text-[7px]"></i></button>
+                <button data-id="${p._id}" data-accion="cross" class="bg-rose-950/20 hover:bg-rose-600 text-rose-400 hover:text-white w-5 h-5 rounded-lg transition flex items-center justify-center border border-rose-800/40" title="Perdido"><i class="fas fa-times text-[7px]"></i></button>
+                <button data-id="${p._id}" data-accion="pendiente" class="bg-amber-950/20 hover:bg-amber-600 text-amber-400 hover:text-white w-5 h-5 rounded-lg transition flex items-center justify-center border border-amber-800/40" title="Pendiente"><i class="fas fa-undo text-[7px]"></i></button>
+              </div>
+              <button data-id="${p._id}" data-accion="editar" class="bg-mejv-blue/10 hover:bg-mejv-blue text-mejv-blue hover:text-white w-6 h-6 rounded-lg transition mr-0.5" title="Editar"><i class="fas fa-edit text-[9px]"></i></button>
+              <button data-id="${p._id}" data-accion="eliminar" class="bg-rose-950/20 hover:bg-rose-600 text-rose-400 hover:text-white w-6 h-6 rounded-lg transition" title="Eliminar"><i class="fas fa-trash-alt text-[9px]"></i></button>
+            </td>
+          </tr>
+        `;
+      });
+      html += `</tbody></table></div></div>`;
+      container.innerHTML = html;
+
+      // Event listeners
+      container.querySelectorAll('[data-accion="refresh"]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = btn.dataset.id;
+          btn.disabled = true;
+          btn.innerHTML = `<i class="fas fa-spinner animate-spin text-[9px]"></i>`;
+          try {
+            await api.refreshMatch('prediction', id);
+            showToast('Resultado actualizado correctamente');
+            cargarPronosticos();
+          } catch (err) { 
+            showToast(err.message, 'error'); 
+            btn.innerHTML = `<i class="fas fa-sync-alt text-[9px]"></i>`;
+            btn.disabled = false;
+          }
+        });
+      });
+      container.querySelectorAll('[data-accion="check"]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = btn.dataset.id;
+          try {
+            await api.togglePronosticoEstado(id, 'verificado');
+            showToast('Estatus cambiado a Ganado/Verificado');
+            cargarPronosticos();
+          } catch (err) { showToast(err.message, 'error'); }
+        });
+      });
+      container.querySelectorAll('[data-accion="cross"]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = btn.dataset.id;
+          try {
+            await api.togglePronosticoEstado(id, 'fallido');
+            showToast('Estatus cambiado a Perdido/Fallido');
+            cargarPronosticos();
+          } catch (err) { showToast(err.message, 'error'); }
+        });
+      });
+      container.querySelectorAll('[data-accion="pendiente"]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = btn.dataset.id;
+          try {
+            await api.togglePronosticoEstado(id, 'pendiente');
+            showToast('Estatus regresado a Pendiente');
+            cargarPronosticos();
+          } catch (err) { showToast(err.message, 'error'); }
+        });
+      });
+      container.querySelectorAll('[data-accion="editar"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.id;
+          const item = localState.pronosticos.find(p => p._id === id);
+          if (item) abrirModal('pronosticos', 'editar', item);
+        });
+      });
+      container.querySelectorAll('[data-accion="eliminar"]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = btn.dataset.id;
+          if (confirm('¿Eliminar este pronóstico permanentemente?')) {
+            try {
+              await api.eliminarPronostico(id);
+              showToast('Pronóstico eliminado correctamente');
+              cargarPronosticos();
+            } catch (err) {
+              showToast('Error al eliminar: ' + err.message, 'error');
+            }
+          }
+        });
+      });
     }
 
     function renderTablaTablaGoles(lista, container) {
@@ -696,10 +745,10 @@
             <table class="w-full text-xs text-left">
               <thead class="bg-mejv-black text-gray-400 font-bold uppercase tracking-wider border-b border-gray-800">
                 <tr>
-                  <th class="px-4 py-3">Liga / Encuentro</th>
-                  <th class="px-4 py-3">Predicción / Casa</th>
-                  <th class="px-4 py-3 text-center">Estado</th>
-                  <th class="px-4 py-3 text-right">Estatus Rápido / Acciones</th>
+                  <th class="px-3 py-2">Liga / Encuentro</th>
+                  <th class="px-3 py-2 hidden sm:table-cell">Predicción</th>
+                  <th class="px-3 py-2 text-center hidden xs:table-cell">Estado</th>
+                  <th class="px-3 py-2 text-right">Acciones</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-800/60">
@@ -708,36 +757,38 @@
         const est = t.status || 'pendiente';
         let badge = '';
         if (est === 'verificado') {
-          badge = '<span class="bg-emerald-950 border border-emerald-500 text-emerald-400 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase shadow-sm shadow-emerald-900/10">Ganado</span>';
+          badge = '<span class="bg-emerald-950 border border-emerald-500 text-emerald-400 px-1.5 py-0.5 rounded-full text-[8px] font-bold uppercase">Ganado</span>';
         } else if (est === 'fallido') {
-          badge = '<span class="bg-rose-950 border border-rose-500 text-rose-400 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase shadow-sm shadow-rose-900/10">Perdido</span>';
+          badge = '<span class="bg-rose-950 border border-rose-500 text-rose-400 px-1.5 py-0.5 rounded-full text-[8px] font-bold uppercase">Perdido</span>';
         } else {
-          badge = '<span class="bg-amber-950 border border-amber-600 text-amber-400 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase shadow-sm shadow-amber-900/10">Pendiente</span>';
+          badge = '<span class="bg-amber-950 border border-amber-600 text-amber-400 px-1.5 py-0.5 rounded-full text-[8px] font-bold uppercase">Pendiente</span>';
         }
         html += `
           <tr class="hover:bg-mejv-card-hover/40 transition duration-100">
-            <td class="px-4 py-3">
-              <span class="text-[10px] bg-mejv-blue/20 text-mejv-blue border border-mejv-blue/40 px-2 py-0.5 rounded font-extrabold uppercase mb-1 inline-block">${escapaHTML(t.league)}</span>
-              <span class="font-bold text-white block">${escapaHTML(t.event)}</span>
-              <span class="text-[10px] text-gray-500 font-semibold uppercase tracking-wider"><i class="far fa-calendar-alt text-mejv-lime mr-1"></i>${formatDisplayDate(t.eventDate)} @ ${t.time || '—'}</span>
-            </td>
-            <td class="px-4 py-3 font-semibold text-gray-300">
-              <div class="flex items-center gap-2 mb-1">
-                <span class="text-[10px] font-bold text-mejv-white bg-slate-900 px-1.5 py-0.5 rounded border border-gray-700">${escapaHTML(t.score || '0:0')}</span>
+            <td class="px-3 py-2">
+              <div class="flex items-start gap-1.5">
+                <span class="inline-block w-2 h-2 min-w-[8px] min-h-[8px] mt-1 rounded-full ${getStatusColor(t.status)}"></span>
+                <div>
+                  <span class="text-[8px] bg-mejv-blue/20 text-mejv-blue border border-mejv-blue/40 px-1 py-0.5 rounded font-extrabold uppercase inline-block">${escapaHTML(t.league)}</span>
+                  <span class="font-bold text-white block text-[10px]">${escapaHTML(t.event)}</span>
+                  <span class="text-[8px] text-gray-500 font-semibold uppercase tracking-wider"><i class="far fa-calendar-alt text-mejv-lime mr-0.5"></i>${formatDisplayDate(t.eventDate)} ${t.time ? '@ '+t.time : ''}</span>
+                </div>
               </div>
-              <span class="block text-white font-bold"><i class="fas fa-tag text-mejv-lime mr-1 text-[10px]"></i>${escapaHTML(t.prediction)}</span>
-              <span class="text-[10px] text-gray-400 uppercase font-semibold">${escapaHTML(t.bookmaker)} @ <strong class="text-mejv-lime font-mono">${t.odds}</strong></span>
             </td>
-            <td class="px-4 py-3 text-center">${badge}</td>
-            <td class="px-4 py-3 text-right whitespace-nowrap">
-              <button data-id="${t._id}" data-accion="refresh" class="bg-mejv-lime/20 hover:bg-mejv-lime text-mejv-lime hover:text-mejv-black w-7 h-7 rounded-lg transition mr-1" title="Actualizar Resultado"><i class="fas fa-sync-alt text-[10px]"></i></button>
-              <div class="inline-flex gap-1 items-center bg-mejv-black/30 border border-gray-800/80 rounded-xl p-1 shadow-inner mr-3">
-                <button data-id="${t._id}" data-accion="check" class="bg-emerald-950/20 hover:bg-emerald-600 text-emerald-400 hover:text-white w-6 h-6 rounded-lg transition flex items-center justify-center border border-emerald-800/40" title="Marcar como Ganado/Verificado"><i class="fas fa-check text-[9px]"></i></button>
-                <button data-id="${t._id}" data-accion="cross" class="bg-rose-950/20 hover:bg-rose-600 text-rose-400 hover:text-white w-6 h-6 rounded-lg transition flex items-center justify-center border border-rose-800/40" title="Marcar como Perdido/Fallido"><i class="fas fa-times text-[9px]"></i></button>
-                <button data-id="${t._id}" data-accion="pendiente" class="bg-amber-950/20 hover:bg-amber-600 text-amber-400 hover:text-white w-6 h-6 rounded-lg transition flex items-center justify-center border border-amber-800/40" title="Regresar a Pendiente"><i class="fas fa-undo text-[9px]"></i></button>
+            <td class="px-3 py-2 font-semibold text-gray-300 hidden sm:table-cell">
+              <span class="block text-white text-[10px]"><i class="fas fa-tag text-mejv-lime mr-0.5 text-[8px]"></i>${escapaHTML(t.prediction)}</span>
+              <span class="text-[8px] text-gray-400 uppercase font-semibold">${escapaHTML(t.bookmaker)} @ <strong class="text-mejv-lime font-mono">${t.odds}</strong></span>
+            </td>
+            <td class="px-3 py-2 text-center hidden xs:table-cell">${badge}</td>
+            <td class="px-3 py-2 text-right whitespace-nowrap">
+              <button data-id="${t._id}" data-accion="refresh" class="bg-mejv-lime/20 hover:bg-mejv-lime text-mejv-lime hover:text-mejv-black w-6 h-6 rounded-lg transition mr-0.5" title="Actualizar"><i class="fas fa-sync-alt text-[9px]"></i></button>
+              <div class="inline-flex gap-0.5 items-center bg-mejv-black/30 border border-gray-800/80 rounded-xl p-0.5 shadow-inner mr-1">
+                <button data-id="${t._id}" data-accion="check" class="bg-emerald-950/20 hover:bg-emerald-600 text-emerald-400 hover:text-white w-5 h-5 rounded-lg transition flex items-center justify-center border border-emerald-800/40" title="Ganado"><i class="fas fa-check text-[7px]"></i></button>
+                <button data-id="${t._id}" data-accion="cross" class="bg-rose-950/20 hover:bg-rose-600 text-rose-400 hover:text-white w-5 h-5 rounded-lg transition flex items-center justify-center border border-rose-800/40" title="Perdido"><i class="fas fa-times text-[7px]"></i></button>
+                <button data-id="${t._id}" data-accion="pendiente" class="bg-amber-950/20 hover:bg-amber-600 text-amber-400 hover:text-white w-5 h-5 rounded-lg transition flex items-center justify-center border border-amber-800/40" title="Pendiente"><i class="fas fa-undo text-[7px]"></i></button>
               </div>
-              <button data-id="${t._id}" data-accion="editar" class="bg-mejv-blue/10 hover:bg-mejv-blue text-mejv-blue hover:text-white w-7 h-7 rounded-lg transition mr-1" title="Editar Completo"><i class="fas fa-edit text-[10px]"></i></button>
-              <button data-id="${t._id}" data-accion="eliminar" class="bg-rose-950/20 hover:bg-rose-600 text-rose-400 hover:text-white w-7 h-7 rounded-lg transition" title="Eliminar permanentemente"><i class="fas fa-trash-alt text-[10px]"></i></button>
+              <button data-id="${t._id}" data-accion="editar" class="bg-mejv-blue/10 hover:bg-mejv-blue text-mejv-blue hover:text-white w-6 h-6 rounded-lg transition mr-0.5" title="Editar"><i class="fas fa-edit text-[9px]"></i></button>
+              <button data-id="${t._id}" data-accion="eliminar" class="bg-rose-950/20 hover:bg-rose-600 text-rose-400 hover:text-white w-6 h-6 rounded-lg transition" title="Eliminar"><i class="fas fa-trash-alt text-[9px]"></i></button>
             </td>
           </tr>
         `;
@@ -745,23 +796,23 @@
       html += `</tbody></table></div></div>`;
       container.innerHTML = html;
       
-    container.querySelectorAll('[data-accion="refresh"]').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      const id = btn.dataset.id;
-      btn.disabled = true;
-      btn.innerHTML = `<i class="fas fa-spinner animate-spin text-[10px]"></i>`;
-      try {
-        await api.refreshMatch('goal-table', id);
-        showToast('Resultado actualizado correctamente');
-        cargarTablaGoles();
-      } catch (err) { 
-        showToast(err.message, 'error'); 
-        btn.innerHTML = `<i class="fas fa-sync-alt text-[10px]"></i>`;
-        btn.disabled = false;
-      }
-    });
-    });
-    container.querySelectorAll('[data-accion="check"]').forEach(btn => {
+      container.querySelectorAll('[data-accion="refresh"]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = btn.dataset.id;
+          btn.disabled = true;
+          btn.innerHTML = `<i class="fas fa-spinner animate-spin text-[9px]"></i>`;
+          try {
+            await api.refreshMatch('goal-table', id);
+            showToast('Resultado actualizado correctamente');
+            cargarTablaGoles();
+          } catch (err) { 
+            showToast(err.message, 'error'); 
+            btn.innerHTML = `<i class="fas fa-sync-alt text-[9px]"></i>`;
+            btn.disabled = false;
+          }
+        });
+      });
+      container.querySelectorAll('[data-accion="check"]').forEach(btn => {
         btn.addEventListener('click', async () => {
           const id = btn.dataset.id;
           try {
@@ -854,30 +905,30 @@
         title.innerHTML = `<i class="fas fa-newspaper text-mejv-lime"></i> ${action === 'crear' ? 'Nueva Noticia' : 'Editar Noticia'}`;
         fields.innerHTML = `
           <div>
-            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Título</label>
-            <input id="f_title" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" value="${data ? escapaHTML(data.title) : ''}" required placeholder="Ingresa el título de la noticia" />
+            <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Título</label>
+            <input id="f_title" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" value="${data ? escapaHTML(data.title) : ''}" required placeholder="Ingresa el título de la noticia" />
           </div>
           <div>
-            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Cuerpo de la Noticia / Descripción</label>
-            <textarea id="f_body" rows="5" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" required placeholder="Escribe el artículo aquí...">${data ? escapaHTML(data.body) : ''}</textarea>
+            <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Cuerpo de la Noticia</label>
+            <textarea id="f_body" rows="4" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" required placeholder="Escribe el artículo aquí...">${data ? escapaHTML(data.body) : ''}</textarea>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Imagen del Artículo</label>
+            <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Imagen del Artículo</label>
             <div class="space-y-2">
-              <input id="f_imagen" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" placeholder="URL de la imagen (ej: http://...)" value="${data ? escapaHTML(data.imageUrl) : ''}" />
-              <div class="flex items-center gap-2">
-                <span class="text-[10px] text-gray-500 font-bold uppercase">Ó Subir Archivo:</span>
-                <label class="bg-mejv-blue hover:bg-mejv-blue-dark text-white px-3 py-1.5 rounded-lg text-[10px] font-bold cursor-pointer transition flex items-center gap-1">
+              <input id="f_imagen" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" placeholder="URL de la imagen (ej: http://...)" value="${data ? escapaHTML(data.imageUrl) : ''}" />
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-[8px] text-gray-500 font-bold uppercase">Ó Subir:</span>
+                <label class="bg-mejv-blue hover:bg-mejv-blue-dark text-white px-2 py-1 rounded-lg text-[8px] font-bold cursor-pointer transition flex items-center gap-1">
                   <i class="fas fa-cloud-upload-alt"></i> Examinar...
                   <input type="file" id="f_imagen_file" accept="image/*" class="hidden" />
                 </label>
-                <span id="f_file_name" class="text-[10px] text-gray-400 max-w-xs truncate font-medium">Ningún archivo</span>
+                <span id="f_file_name" class="text-[8px] text-gray-400 max-w-[120px] truncate font-medium">Ningún archivo</span>
               </div>
             </div>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Categoría / Tag</label>
-            <input id="f_category" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" placeholder="ej: Fichajes, Champions, Premier" value="${data ? escapaHTML(data.category) : 'General'}" />
+            <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Categoría / Tag</label>
+            <input id="f_category" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" placeholder="ej: Fichajes, Champions, Premier" value="${data ? escapaHTML(data.category) : 'General'}" />
           </div>
         `;
         
@@ -888,7 +939,7 @@
         fileInput.addEventListener('change', function() {
           if (this.files && this.files[0]) {
             fileNameEl.textContent = this.files[0].name;
-            urlInput.placeholder = "Se subirá el archivo seleccionado...";
+            urlInput.placeholder = "Se subirá el archivo...";
             urlInput.disabled = true;
           } else {
             fileNameEl.textContent = "Ningún archivo";
@@ -896,54 +947,54 @@
             urlInput.disabled = false;
           }
         });
-        submitBtn.innerHTML = `<i class="fas fa-save"></i> ${action === 'crear' ? 'Publicar Noticia' : 'Guardar Cambios'}`;
+        submitBtn.innerHTML = `<i class="fas fa-save"></i> ${action === 'crear' ? 'Publicar' : 'Guardar'}`;
 
       // SUREBETS FORM
       } else if (section === 'surebets') {
         title.innerHTML = `<i class="fas fa-percent text-emerald-400"></i> ${action === 'crear' ? 'Nueva Surebet' : 'Editar Surebet'}`;
         fields.innerHTML = `
           <div>
-            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Encuentro / Partido</label>
-            <input id="f_event" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" value="${data ? escapaHTML(data.event) : ''}" required placeholder="ej: Real Madrid vs Barcelona" />
+            <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Encuentro / Partido</label>
+            <input id="f_event" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" value="${data ? escapaHTML(data.event) : ''}" required placeholder="ej: Real Madrid vs Barcelona" />
           </div>
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Fecha Evento</label>
-              <input id="f_eventDate" type="date" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-mejv-blue transition" value="${data ? formatInputDate(data.eventDate) : new Date().toISOString().split('T')[0]}" required />
+              <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Fecha</label>
+              <input id="f_eventDate" type="date" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mejv-blue transition" value="${data ? formatInputDate(data.eventDate) : new Date().toISOString().split('T')[0]}" required />
             </div>
             <div>
-              <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Hora Evento</label>
-              <input id="f_time" type="time" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-mejv-blue transition" value="${data ? data.time || '' : ''}" required />
+              <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Hora</label>
+              <input id="f_time" type="time" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mejv-blue transition" value="${data ? data.time || '' : ''}" required />
             </div>
           </div>
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Mercado</label>
-              <input id="f_market" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" placeholder="ej: Total de Goles" value="${data ? escapaHTML(data.market) : ''}" required />
+              <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Mercado</label>
+              <input id="f_market" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" placeholder="ej: Total de Goles" value="${data ? escapaHTML(data.market) : ''}" required />
             </div>
             <div>
-              <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Línea</label>
-              <input id="f_line" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" placeholder="ej: +2.5 / -2.5" value="${data ? escapaHTML(data.line) : ''}" required />
-            </div>
-          </div>
-          <div class="grid grid-cols-2 gap-3 border-t border-gray-800/40 pt-2.5">
-            <div>
-              <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Casa de Apuestas 1</label>
-              <input id="f_bookmaker1" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" value="${data ? escapaHTML(data.bookmaker1) : ''}" required placeholder="ej: Bet365" />
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Cuota 1</label>
-              <input id="f_odds1" type="number" step="0.01" min="1.01" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition font-mono" value="${data ? data.odds1 : ''}" required placeholder="ej: 1.95" />
+              <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Línea</label>
+              <input id="f_line" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" placeholder="ej: +2.5 / -2.5" value="${data ? escapaHTML(data.line) : ''}" required />
             </div>
           </div>
-          <div class="grid grid-cols-2 gap-3 border-t border-gray-800/40 pt-2.5">
+          <div class="grid grid-cols-2 gap-3 border-t border-gray-800/40 pt-2">
             <div>
-              <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Casa de Apuestas 2</label>
-              <input id="f_bookmaker2" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" value="${data ? escapaHTML(data.bookmaker2) : ''}" required placeholder="ej: 1xBet" />
+              <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Casa 1</label>
+              <input id="f_bookmaker1" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" value="${data ? escapaHTML(data.bookmaker1) : ''}" required placeholder="ej: Bet365" />
             </div>
             <div>
-              <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Cuota 2</label>
-              <input id="f_odds2" type="number" step="0.01" min="1.01" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition font-mono" value="${data ? data.odds2 : ''}" required placeholder="ej: 2.15" />
+              <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Cuota 1</label>
+              <input id="f_odds1" type="number" step="0.01" min="1.01" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition font-mono" value="${data ? data.odds1 : ''}" required placeholder="ej: 1.95" />
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3 border-t border-gray-800/40 pt-2">
+            <div>
+              <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Casa 2</label>
+              <input id="f_bookmaker2" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" value="${data ? escapaHTML(data.bookmaker2) : ''}" required placeholder="ej: 1xBet" />
+            </div>
+            <div>
+              <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Cuota 2</label>
+              <input id="f_odds2" type="number" step="0.01" min="1.01" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition font-mono" value="${data ? data.odds2 : ''}" required placeholder="ej: 2.15" />
             </div>
           </div>
         `;
@@ -965,21 +1016,21 @@
             
             calcDiv.classList.remove('hidden');
             calcDiv.innerHTML = `
-              <div class="flex flex-col gap-2">
+              <div class="flex flex-col gap-1.5">
                 <div class="flex justify-between items-center">
-                  <span class="font-bold text-gray-400">Retorno Neto Garantizado:</span>
-                  <span class="font-mono font-extrabold text-sm ${profitPct > 0 ? 'text-emerald-400 shadow-emerald-500/10' : 'text-rose-400'}">
+                  <span class="font-bold text-gray-400 text-[10px]">Retorno Neto:</span>
+                  <span class="font-mono font-extrabold text-sm ${profitPct > 0 ? 'text-emerald-400' : 'text-rose-400'}">
                     ${profitPct.toFixed(2)}%
                   </span>
                 </div>
-                <div class="flex justify-between items-center text-[10px] border-t border-gray-800/40 pt-2">
-                  <span class="font-bold text-gray-500">Distribución de Stake (Base 100 USD):</span>
+                <div class="flex justify-between items-center text-[8px] border-t border-gray-800/40 pt-1.5">
+                  <span class="font-bold text-gray-500">Stake (Base 100):</span>
                   <span class="text-gray-300 font-semibold font-mono">
-                    ${stake1}% en Casa 1 / ${stake2}% en Casa 2
+                    ${stake1}% / ${stake2}%
                   </span>
                 </div>
-                <div class="text-[9px] text-gray-500 font-bold uppercase mt-1">
-                  ${profitPct > 0 ? '✅ ¡Arbitraje Rentable Encontrado!' : '⚠️ Cuotas insuficientes para Arbitraje sin riesgo'}
+                <div class="text-[8px] text-gray-500 font-bold uppercase mt-0.5">
+                  ${profitPct > 0 ? '✅ ¡Arbitraje Rentable!' : '⚠️ Sin arbitraje sin riesgo'}
                 </div>
               </div>
             `;
@@ -992,28 +1043,27 @@
         if (data && data.odds1 && data.odds2) {
           setTimeout(calcSurebet, 100);
         }
-        submitBtn.innerHTML = `<i class="fas fa-save"></i> ${action === 'crear' ? 'Registrar Surebet' : 'Guardar Cambios'}`;
+        submitBtn.innerHTML = `<i class="fas fa-save"></i> ${action === 'crear' ? 'Registrar' : 'Guardar'}`;
 
       // PRONÓSTICOS FORM
       } else if (section === 'pronosticos') {
         title.innerHTML = `<i class="fas fa-futbol text-mejv-blue"></i> ${action === 'crear' ? 'Nuevo Pronóstico' : 'Editar Pronóstico'}`;
         
-        // --- NUEVA LÓGICA DE SCRAPING ---
         const scrapeSection = action === 'crear' ? `
-          <div class="bg-mejv-black p-4 rounded-xl border border-mejv-blue/30 mb-4">
-            <label class="block text-xs font-semibold text-mejv-blue uppercase tracking-wider mb-2">Automatizar por Flashscore ID</label>
+          <div class="bg-mejv-black p-3 rounded-xl border border-mejv-blue/30 mb-3">
+            <label class="block text-[10px] font-semibold text-mejv-blue uppercase tracking-wider mb-1.5">Automatizar por Flashscore ID</label>
             <div class="flex gap-2">
-              <input id="f_scrapeId" type="text" class="w-full bg-mejv-dark border border-gray-800 rounded-xl px-3 py-2 text-xs text-white" placeholder="Ej: QyHcyjU6" />
-              <button type="button" id="btnScrape" class="bg-mejv-blue hover:bg-mejv-blue-dark text-white text-xs font-bold px-3 py-2 rounded-xl transition">Obtener</button>
+              <input id="f_scrapeId" type="text" class="w-full bg-mejv-dark border border-gray-800 rounded-xl px-3 py-1.5 text-xs text-white" placeholder="Ej: QyHcyjU6" />
+              <button type="button" id="btnScrape" class="bg-mejv-blue hover:bg-mejv-blue-dark text-white text-xs font-bold px-3 py-1.5 rounded-xl transition whitespace-nowrap">Obtener</button>
             </div>
-            <p id="scrapeStatus" class="text-[10px] text-gray-500 mt-2 hidden"></p>
+            <p id="scrapeStatus" class="text-[8px] text-gray-500 mt-1.5 hidden"></p>
           </div>
         ` : '';
 
         fields.innerHTML = scrapeSection + `
           <div>
-            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Encuentro / Partido</label>
-            <input id="f_event" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" value="${data ? escapaHTML(data.event) : ''}" required placeholder="ej: Liverpool vs Arsenal" />
+            <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Encuentro / Partido</label>
+            <input id="f_event" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" value="${data ? escapaHTML(data.event) : ''}" required placeholder="ej: Liverpool vs Arsenal" />
             <input type="hidden" id="f_team1_name" value="${data && data.team1 ? escapaHTML(data.team1.name) : ''}" />
             <input type="hidden" id="f_team1_logo" value="${data && data.team1 ? escapaHTML(data.team1.logo) : ''}" />
             <input type="hidden" id="f_team2_name" value="${data && data.team2 ? escapaHTML(data.team2.name) : ''}" />
@@ -1022,17 +1072,17 @@
           </div>
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Fecha Evento</label>
-              <input id="f_eventDate" type="date" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-mejv-blue transition" value="${data ? formatInputDate(data.eventDate) : new Date().toISOString().split('T')[0]}" required />
+              <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Fecha</label>
+              <input id="f_eventDate" type="date" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mejv-blue transition" value="${data ? formatInputDate(data.eventDate) : new Date().toISOString().split('T')[0]}" required />
             </div>
             <div>
-              <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Hora Evento</label>
-              <input id="f_time" type="time" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-mejv-blue transition" value="${data ? data.time || '' : ''}" required />
+              <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Hora</label>
+              <input id="f_time" type="time" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mejv-blue transition" value="${data ? data.time || '' : ''}" required />
             </div>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Recomendación de Pronóstico</label>
-            <select id="f_prediction" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-mejv-blue transition" required>
+            <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Recomendación</label>
+            <select id="f_prediction" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mejv-blue transition" required>
               <option value="">Seleccione una opción</option>
               <option value="1" ${data && data.prediction === '1' ? 'selected' : ''}>Local (1)</option>
               <option value="x" ${data && data.prediction === 'x' ? 'selected' : ''}>Empate (X)</option>
@@ -1043,8 +1093,8 @@
               <option value="btts_no" ${data && data.prediction === 'btts_no' ? 'selected' : ''}>Ambos No Marcan</option>
               <option value="o25" ${data && data.prediction === 'o25' ? 'selected' : ''}>Más 2.5 Goles</option>
               <option value="u25" ${data && data.prediction === 'u25' ? 'selected' : ''}>Menos 2.5 Goles</option>
-              <option value="dnb1" ${data && data.prediction === 'dnb1' ? 'selected' : ''}>Apuesta no empate Local</option>
-              <option value="dnb2" ${data && data.prediction === 'dnb2' ? 'selected' : ''}>Apuesta no empate Visitante</option>
+              <option value="dnb1" ${data && data.prediction === 'dnb1' ? 'selected' : ''}>No empate Local</option>
+              <option value="dnb2" ${data && data.prediction === 'dnb2' ? 'selected' : ''}>No empate Visitante</option>
               <option value="corners_o75" ${data && data.prediction === 'corners_o75' ? 'selected' : ''}>Corners Over 7.5</option>
               <option value="corners_u75" ${data && data.prediction === 'corners_u75' ? 'selected' : ''}>Corners Under 7.5</option>
               <option value="corners_o105" ${data && data.prediction === 'corners_o105' ? 'selected' : ''}>Corners Over 10.5</option>
@@ -1052,29 +1102,29 @@
             </select>
           </div>
           <div id="corners-url-container" class="${data && data.prediction && data.prediction.startsWith('corners_') ? '' : 'hidden'}">
-            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">URL Estadísticas (Tiros Esquina)</label>
-            <input id="f_cornersUrl" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" value="${data ? escapaHTML(data.cornersUrl || '') : ''}" placeholder="https://flashscore.com/..." />
+            <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">URL Estadísticas (Córners)</label>
+            <input id="f_cornersUrl" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" value="${data ? escapaHTML(data.cornersUrl || '') : ''}" placeholder="https://flashscore.com/..." />
           </div>
           <div>
-            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Marcador</label>
-            <input id="f_score" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" placeholder="ej: 0:0" value="${data ? escapaHTML(data.score || '0:0') : '0:0'}" required />
+            <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Marcador</label>
+            <input id="f_score" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" placeholder="ej: 0:0" value="${data ? escapaHTML(data.score || '0:0') : '0:0'}" required />
           </div>
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Casa de Apuestas</label>
-              <input id="f_bookmaker" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" placeholder="ej: Betfair" value="${data ? escapaHTML(data.bookmaker) : ''}" required />
+              <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Casa</label>
+              <input id="f_bookmaker" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" placeholder="ej: Betfair" value="${data ? escapaHTML(data.bookmaker) : ''}" required />
             </div>
             <div>
-              <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Cuota Ofrecida</label>
-              <input id="f_odds" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition font-mono" placeholder="ej: 1.85" value="${data ? data.odds || '' : ''}" required />
+              <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Cuota</label>
+              <input id="f_odds" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition font-mono" placeholder="ej: 1.85" value="${data ? data.odds || '' : ''}" required />
             </div>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Estado</label>
-            <select id="f_status" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-mejv-blue transition">
+            <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Estado</label>
+            <select id="f_status" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mejv-blue transition">
               <option value="pendiente" ${data && data.status === 'pendiente' ? 'selected' : ''}>Pendiente</option>
-              <option value="verificado" ${data && data.status === 'verificado' ? 'selected' : ''}>Ganado (Verificado)</option>
-              <option value="fallido" ${data && data.status === 'fallido' ? 'selected' : ''}>Perdido (Fallido)</option>
+              <option value="verificado" ${data && data.status === 'verificado' ? 'selected' : ''}>Ganado</option>
+              <option value="fallido" ${data && data.status === 'fallido' ? 'selected' : ''}>Perdido</option>
               <option value="return" ${data && data.status === 'return' ? 'selected' : ''}>Reembolso</option>
               <option value="live" ${data && data.status === 'live' ? 'selected' : ''}>En Vivo</option>
               <option value="finished" ${data && data.status === 'finished' ? 'selected' : ''}>Finalizado</option>
@@ -1083,57 +1133,52 @@
           </div>
         `;
         
-        // --- LÓGICA DE SCRAPING ---
+        // Scraping
         if (action === 'crear') {
-            document.getElementById('btnScrape').addEventListener('click', async () => {
-                const id = document.getElementById('f_scrapeId').value.trim();
-                const statusP = document.getElementById('scrapeStatus');
-                if(!id) return;
-                
-                statusP.textContent = "Obteniendo datos...";
-                statusP.classList.remove('hidden', 'text-rose-400');
-                statusP.classList.add('text-mejv-blue');
-                
-                try {
-                    const res = await fetch('/admin/api/scrape-match', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ id })
-                    });
-                    const data = await res.json();
-                    console.log(data)
-                    
-                    if(!res.ok) throw new Error(data.error);
-                    
-                    // Llenar campos
-                    document.getElementById('f_event').value = `${data.team1.name} - ${data.team2.name}`;
-                    document.getElementById('f_score').value = data.score;
-                    document.getElementById('f_status').value = data.status;
-                    
-                    if(data.datetime && data.datetime.iso) {
-                        document.getElementById('f_eventDate').value = formatInputDate(data.datetime.iso);
-                    }
-                    
-                    // Asegurar que la hora se cargue correctamente
-                    if (data.datetime && data.datetime.colombia) {
-                       const timePart = data.datetime.colombia.split(' ')[1];
-                       if (timePart) document.getElementById('f_time').value = timePart;
-                    }
-                    
-                    // Campos ocultos
-                    document.getElementById('f_team1_name').value = data.team1.name;
-                    document.getElementById('f_team1_logo').value = data.team1.logo || '';
-                    document.getElementById('f_team2_name').value = data.team2.name;
-                    document.getElementById('f_team2_logo').value = data.team2.logo || '';
-                    document.getElementById('f_flashscoreId').value = data.id;
-                    
-                    statusP.textContent = "✅ Datos cargados correctamente";
-                    statusP.classList.add('text-emerald-400');
-                } catch(err) {
-                    statusP.textContent = `❌ Error: ${err.message}`;
-                    statusP.classList.add('text-rose-400');
-                }
-            });
+          document.getElementById('btnScrape')?.addEventListener('click', async () => {
+            const id = document.getElementById('f_scrapeId').value.trim();
+            const statusP = document.getElementById('scrapeStatus');
+            if(!id) return;
+            
+            statusP.textContent = "Obteniendo datos...";
+            statusP.classList.remove('hidden', 'text-rose-400');
+            statusP.classList.add('text-mejv-blue');
+            
+            try {
+              const res = await fetch('/admin/api/scrape-match', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id })
+              });
+              const data = await res.json();
+              
+              if(!res.ok) throw new Error(data.error);
+              
+              document.getElementById('f_event').value = `${data.team1.name} - ${data.team2.name}`;
+              document.getElementById('f_score').value = data.score;
+              document.getElementById('f_status').value = 'pendiente';
+              
+              if(data.datetime && data.datetime.iso) {
+                document.getElementById('f_eventDate').value = formatInputDate(data.datetime.iso);
+              }
+              if (data.datetime && data.datetime.colombia) {
+                const timePart = data.datetime.colombia.split(' ')[1];
+                if (timePart) document.getElementById('f_time').value = timePart;
+              }
+              
+              document.getElementById('f_team1_name').value = data.team1.name;
+              document.getElementById('f_team1_logo').value = data.team1.logo || '';
+              document.getElementById('f_team2_name').value = data.team2.name;
+              document.getElementById('f_team2_logo').value = data.team2.logo || '';
+              document.getElementById('f_flashscoreId').value = data.id;
+              
+              statusP.textContent = "✅ Datos cargados correctamente";
+              statusP.classList.add('text-emerald-400');
+            } catch(err) {
+              statusP.textContent = `❌ Error: ${err.message}`;
+              statusP.classList.add('text-rose-400');
+            }
+          });
         }
         
         // Toggle corners URL
@@ -1146,32 +1191,31 @@
           }
         });
         
-        submitBtn.innerHTML = `<i class="fas fa-save"></i> ${action === 'crear' ? 'Registrar Pronóstico' : 'Guardar Cambios'}`;
+        submitBtn.innerHTML = `<i class="fas fa-save"></i> ${action === 'crear' ? 'Registrar' : 'Guardar'}`;
 
       // TABLA GOLES FORM
       } else if (section === 'tablagoles') {
         title.innerHTML = `<i class="fas fa-bullseye text-mejv-lime"></i> ${action === 'crear' ? 'Nueva Entrada Goles' : 'Editar Entrada Goles'}`;
         
-        // --- NUEVA LÓGICA DE SCRAPING ---
         const scrapeSection = action === 'crear' ? `
-          <div class="bg-mejv-black p-4 rounded-xl border border-mejv-lime/30 mb-4">
-            <label class="block text-xs font-semibold text-mejv-lime uppercase tracking-wider mb-2">Automatizar por Flashscore ID</label>
+          <div class="bg-mejv-black p-3 rounded-xl border border-mejv-lime/30 mb-3">
+            <label class="block text-[10px] font-semibold text-mejv-lime uppercase tracking-wider mb-1.5">Automatizar por Flashscore ID</label>
             <div class="flex gap-2">
-              <input id="f_scrapeId" type="text" class="w-full bg-mejv-dark border border-gray-800 rounded-xl px-3 py-2 text-xs text-white" placeholder="Ej: QyHcyjU6" />
-              <button type="button" id="btnScrape" class="bg-mejv-lime hover:bg-mejv-lime-dark text-mejv-black text-xs font-bold px-3 py-2 rounded-xl transition">Obtener</button>
+              <input id="f_scrapeId" type="text" class="w-full bg-mejv-dark border border-gray-800 rounded-xl px-3 py-1.5 text-xs text-white" placeholder="Ej: QyHcyjU6" />
+              <button type="button" id="btnScrape" class="bg-mejv-lime hover:bg-mejv-lime-dark text-mejv-black text-xs font-bold px-3 py-1.5 rounded-xl transition whitespace-nowrap">Obtener</button>
             </div>
-            <p id="scrapeStatus" class="text-[10px] text-gray-500 mt-2 hidden"></p>
+            <p id="scrapeStatus" class="text-[8px] text-gray-500 mt-1.5 hidden"></p>
           </div>
         ` : '';
 
         fields.innerHTML = scrapeSection + `
           <div>
-            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Liga / Competición</label>
-            <input id="f_league" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" placeholder="ej: Premier League" value="${data ? escapaHTML(data.league) : ''}" required />
+            <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Liga</label>
+            <input id="f_league" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" placeholder="ej: Premier League" value="${data ? escapaHTML(data.league) : ''}" required />
           </div>
           <div>
-            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Encuentro / Partido</label>
-            <input id="f_event" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" placeholder="ej: Chelsea vs Tottenham" value="${data ? escapaHTML(data.event) : ''}" required />
+            <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Encuentro</label>
+            <input id="f_event" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" placeholder="ej: Chelsea vs Tottenham" value="${data ? escapaHTML(data.event) : ''}" required />
             <input type="hidden" id="f_team1_name" value="${data && data.team1 ? escapaHTML(data.team1.name) : ''}" />
             <input type="hidden" id="f_team1_logo" value="${data && data.team1 ? escapaHTML(data.team1.logo) : ''}" />
             <input type="hidden" id="f_team2_name" value="${data && data.team2 ? escapaHTML(data.team2.name) : ''}" />
@@ -1180,17 +1224,17 @@
           </div>
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Fecha Evento</label>
-              <input id="f_eventDate" type="date" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-mejv-blue transition" value="${data ? formatInputDate(data.eventDate) : new Date().toISOString().split('T')[0]}" required />
+              <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Fecha</label>
+              <input id="f_eventDate" type="date" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mejv-blue transition" value="${data ? formatInputDate(data.eventDate) : new Date().toISOString().split('T')[0]}" required />
             </div>
             <div>
-              <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Hora Evento</label>
-              <input id="f_time" type="time" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-mejv-blue transition" value="${data ? data.time || '' : ''}" required />
+              <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Hora</label>
+              <input id="f_time" type="time" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mejv-blue transition" value="${data ? data.time || '' : ''}" required />
             </div>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Recomendación Goles</label>
-            <select id="f_prediction" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-mejv-blue transition" required>
+            <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Recomendación Goles</label>
+            <select id="f_prediction" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mejv-blue transition" required>
               <option value="">Seleccione una opción</option>
               <option value="over 2.5" ${data && data.prediction === 'over 2.5' ? 'selected' : ''}>Over 2.5 Goles</option>
               <option value="under 2.5" ${data && data.prediction === 'under 2.5' ? 'selected' : ''}>Under 2.5 Goles</option>
@@ -1199,25 +1243,25 @@
             </select>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Marcador</label>
-            <input id="f_score" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" placeholder="ej: 0:0" value="${data ? escapaHTML(data.score || '0:0') : '0:0'}" required />
+            <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Marcador</label>
+            <input id="f_score" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" placeholder="ej: 0:0" value="${data ? escapaHTML(data.score || '0:0') : '0:0'}" required />
           </div>
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Casa de Apuestas</label>
-              <input id="f_bookmaker" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" placeholder="ej: Pinnacle" value="${data ? escapaHTML(data.bookmaker) : ''}" required />
+              <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Casa</label>
+              <input id="f_bookmaker" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" placeholder="ej: Pinnacle" value="${data ? escapaHTML(data.bookmaker) : ''}" required />
             </div>
             <div>
-              <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Cuota Ofrecida</label>
-              <input id="f_odds" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition font-mono" placeholder="ej: 1.91" value="${data ? data.odds || '' : ''}" required />
+              <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Cuota</label>
+              <input id="f_odds" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition font-mono" placeholder="ej: 1.91" value="${data ? data.odds || '' : ''}" required />
             </div>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Estado</label>
-            <select id="f_status" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-mejv-blue transition">
+            <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Estado</label>
+            <select id="f_status" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mejv-blue transition">
               <option value="pendiente" ${data && data.status === 'pendiente' ? 'selected' : ''}>Pendiente</option>
-              <option value="verificado" ${data && data.status === 'verificado' ? 'selected' : ''}>Ganado (Verificado)</option>
-              <option value="fallido" ${data && data.status === 'fallido' ? 'selected' : ''}>Perdido (Fallido)</option>
+              <option value="verificado" ${data && data.status === 'verificado' ? 'selected' : ''}>Ganado</option>
+              <option value="fallido" ${data && data.status === 'fallido' ? 'selected' : ''}>Perdido</option>
               <option value="return" ${data && data.status === 'return' ? 'selected' : ''}>Reembolso</option>
               <option value="live" ${data && data.status === 'live' ? 'selected' : ''}>En Vivo</option>
               <option value="finished" ${data && data.status === 'finished' ? 'selected' : ''}>Finalizado</option>
@@ -1226,59 +1270,55 @@
           </div>
         `;
         
-        // --- LÓGICA DE SCRAPING ---
+        // Scraping
         if (action === 'crear') {
-            document.getElementById('btnScrape').addEventListener('click', async () => {
-                const id = document.getElementById('f_scrapeId').value.trim();
-                const statusP = document.getElementById('scrapeStatus');
-                if(!id) return;
-                
-                statusP.textContent = "Obteniendo datos...";
-                statusP.classList.remove('hidden', 'text-rose-400');
-                statusP.classList.add('text-mejv-lime');
-                
-                try {
-                    const res = await fetch('/admin/api/scrape-match', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ id })
-                    });
-                    const data = await res.json();
-                    
-                    if(!res.ok) throw new Error(data.error);
-                    
-                    // Llenar campos
-                    document.getElementById('f_event').value = `${data.team1.name} vs ${data.team2.name}`;
-                    document.getElementById('f_score').value = data.score;
-                    document.getElementById('f_status').value = data.status;
-                    
-                    if(data.datetime && data.datetime.iso) {
-                        document.getElementById('f_eventDate').value = formatInputDate(data.datetime.iso);
-                    }
-                    
-                    // Asegurar que la hora se cargue correctamente
-                    if (data.datetime && data.datetime.colombia) {
-                       const timePart = data.datetime.colombia.split(' ')[1];
-                       if (timePart) document.getElementById('f_time').value = timePart;
-                    }
-                    
-                    // Campos ocultos
-                    document.getElementById('f_team1_name').value = data.team1.name;
-                    document.getElementById('f_team1_logo').value = data.team1.logo || '';
-                    document.getElementById('f_team2_name').value = data.team2.name;
-                    document.getElementById('f_team2_logo').value = data.team2.logo || '';
-                    document.getElementById('f_flashscoreId').value = data.id;
-                    
-                    statusP.textContent = "✅ Datos cargados correctamente";
-                    statusP.classList.add('text-emerald-400');
-                } catch(err) {
-                    statusP.textContent = `❌ Error: ${err.message}`;
-                    statusP.classList.add('text-rose-400');
-                }
-            });
+          document.getElementById('btnScrape')?.addEventListener('click', async () => {
+            const id = document.getElementById('f_scrapeId').value.trim();
+            const statusP = document.getElementById('scrapeStatus');
+            if(!id) return;
+            
+            statusP.textContent = "Obteniendo datos...";
+            statusP.classList.remove('hidden', 'text-rose-400');
+            statusP.classList.add('text-mejv-lime');
+            
+            try {
+              const res = await fetch('/admin/api/scrape-match', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id })
+              });
+              const data = await res.json();
+              
+              if(!res.ok) throw new Error(data.error);
+              
+              document.getElementById('f_event').value = `${data.team1.name} vs ${data.team2.name}`;
+              document.getElementById('f_score').value = data.score;
+              document.getElementById('f_status').value = 'pendiente';
+              
+              if(data.datetime && data.datetime.iso) {
+                document.getElementById('f_eventDate').value = formatInputDate(data.datetime.iso);
+              }
+              if (data.datetime && data.datetime.colombia) {
+                const timePart = data.datetime.colombia.split(' ')[1];
+                if (timePart) document.getElementById('f_time').value = timePart;
+              }
+              
+              document.getElementById('f_team1_name').value = data.team1.name;
+              document.getElementById('f_team1_logo').value = data.team1.logo || '';
+              document.getElementById('f_team2_name').value = data.team2.name;
+              document.getElementById('f_team2_logo').value = data.team2.logo || '';
+              document.getElementById('f_flashscoreId').value = data.id;
+              
+              statusP.textContent = "✅ Datos cargados correctamente";
+              statusP.classList.add('text-emerald-400');
+            } catch(err) {
+              statusP.textContent = `❌ Error: ${err.message}`;
+              statusP.classList.add('text-rose-400');
+            }
+          });
         }
         
-        submitBtn.innerHTML = `<i class="fas fa-save"></i> ${action === 'crear' ? 'Registrar Entrada' : 'Guardar Cambios'}`;
+        submitBtn.innerHTML = `<i class="fas fa-save"></i> ${action === 'crear' ? 'Registrar' : 'Guardar'}`;
       }
 
       // Visual feedback to animate modal open
@@ -1293,7 +1333,7 @@
       form.onsubmit = async (e) => {
         e.preventDefault();
         submitBtn.disabled = true;
-        submitBtn.innerHTML = `<i class="fas fa-circle-notch animate-spin mr-1.5"></i> Procesando...`;
+        submitBtn.innerHTML = `<i class="fas fa-circle-notch animate-spin mr-1"></i> Procesando...`;
         await guardarModal();
       };
     }
@@ -1320,7 +1360,7 @@
 
           if (action === 'crear') {
             await api.crearNoticia(formData);
-            showToast('Noticia creada y publicada con éxito!');
+            showToast('Noticia creada con éxito!');
           } else {
             await api.editarNoticia(id, formData);
             showToast('Noticia actualizada con éxito!');
@@ -1336,7 +1376,7 @@
 
           const data = {
             event: document.getElementById('f_event').value.trim(),
-            eventDate: new Date(document.getElementById('f_eventDate').value + 'T00:00:00Z'), // evitar desfase local
+            eventDate: new Date(document.getElementById('f_eventDate').value + 'T00:00:00Z'),
             time: document.getElementById('f_time').value,
             market: document.getElementById('f_market').value.trim(),
             line: document.getElementById('f_line').value.trim(),
@@ -1425,10 +1465,9 @@
       } catch (err) {
         showToast('Error al guardar: ' + err.message, 'error');
       } finally {
-        // Reset submit button state
         const submitBtn = document.getElementById('modalSubmit');
         submitBtn.disabled = false;
-        submitBtn.innerHTML = `<i class="fas fa-save"></i> Guardar Cambios`;
+        submitBtn.innerHTML = `<i class="fas fa-save"></i> Guardar`;
       }
     }
 
@@ -1463,7 +1502,7 @@
         localState.noticias = data;
         filtrarYMostrarNoticias();
       } catch (err) {
-        container.innerHTML = `<div class="text-rose-500 font-semibold text-center text-xs py-10 bg-mejv-card-dark border border-gray-800 rounded-2xl"><i class="fas fa-exclamation-triangle mr-1"></i>Error: ${err.message}</div>`;
+        container.innerHTML = `<div class="text-rose-500 font-semibold text-center text-xs py-8 bg-mejv-card-dark border border-gray-800 rounded-2xl"><i class="fas fa-exclamation-triangle mr-1"></i>Error: ${err.message}</div>`;
       }
     }
 
@@ -1475,7 +1514,7 @@
         localState.surebets = data;
         filtrarYMostrarSurebets();
       } catch (err) {
-        container.innerHTML = `<div class="text-rose-500 font-semibold text-center text-xs py-10 bg-mejv-card-dark border border-gray-800 rounded-2xl"><i class="fas fa-exclamation-triangle mr-1"></i>Error: ${err.message}</div>`;
+        container.innerHTML = `<div class="text-rose-500 font-semibold text-center text-xs py-8 bg-mejv-card-dark border border-gray-800 rounded-2xl"><i class="fas fa-exclamation-triangle mr-1"></i>Error: ${err.message}</div>`;
       }
     }
 
@@ -1487,7 +1526,7 @@
         localState.pronosticos = data;
         filtrarYMostrarPronosticos();
       } catch (err) {
-        container.innerHTML = `<div class="text-rose-500 font-semibold text-center text-xs py-10 bg-mejv-card-dark border border-gray-800 rounded-2xl"><i class="fas fa-exclamation-triangle mr-1"></i>Error: ${err.message}</div>`;
+        container.innerHTML = `<div class="text-rose-500 font-semibold text-center text-xs py-8 bg-mejv-card-dark border border-gray-800 rounded-2xl"><i class="fas fa-exclamation-triangle mr-1"></i>Error: ${err.message}</div>`;
       }
     }
 
@@ -1499,7 +1538,7 @@
         localState.tablagoles = data;
         filtrarYMostrarTablaGoles();
       } catch (err) {
-        container.innerHTML = `<div class="text-rose-500 font-semibold text-center text-xs py-10 bg-mejv-card-dark border border-gray-800 rounded-2xl"><i class="fas fa-exclamation-triangle mr-1"></i>Error: ${err.message}</div>`;
+        container.innerHTML = `<div class="text-rose-500 font-semibold text-center text-xs py-8 bg-mejv-card-dark border border-gray-800 rounded-2xl"><i class="fas fa-exclamation-triangle mr-1"></i>Error: ${err.message}</div>`;
       }
     }
 
@@ -1572,7 +1611,9 @@
         // Ocultar todos los contenidos
         document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
         // Mostrar actual
-        document.getElementById('section-' + tab).classList.remove('hidden');
+        if (tab) {
+          document.getElementById('section-' + tab).classList.remove('hidden');
+        }
         
         // Cargar los datos correspondientes al cambiar de tab
         if (tab === 'noticias') cargarNoticias();
@@ -1582,43 +1623,69 @@
       });
     });
 
-    // Registrar disparadores para botones "Crear" externos
+    // ============================================================
+    // 7. ACCIONES GLOBALES (Validar y Scraper)
+    // ============================================================
     document.getElementById('btnValidarTodos').addEventListener('click', async () => {
-        const pendientes = localState.pronosticos.filter(p => p.status === 'pendiente');
-        if(pendientes.length === 0) return showToast('No hay pendientes para validar');
-        
-        if(!confirm(`¿Validar ${pendientes.length} encuentros?`)) return;
-        
-        showToast(`Iniciando validación de ${pendientes.length} encuentros...`, 'success');
-        
-        for (const p of pendientes) {
-            try {
-                await api.refreshMatch('prediction', p._id);
-            } catch(e) { console.error(e); }
-        }
-        showToast('Validación masiva finalizada');
-        cargarPronosticos();
+      const pendientes = localState.pronosticos.filter(p => p.status === 'pendiente');
+      if(pendientes.length === 0) return showToast('No hay pendientes para validar');
+      
+      if(!confirm(`¿Validar ${pendientes.length} encuentros pendientes?`)) return;
+      
+      showToast(`Iniciando validación de ${pendientes.length} encuentros...`, 'success');
+      
+      let count = 0;
+      for (const p of pendientes) {
+        try {
+          await api.refreshMatch('prediction', p._id);
+          count++;
+        } catch(e) { console.error(e); }
+      }
+      showToast(`Validación completada: ${count}/${pendientes.length} actualizados`);
+      cargarPronosticos();
+      if (document.getElementById('section-tablagoles').classList.contains('hidden') === false) {
+        cargarTablaGoles();
+      }
+    });
+
+    // Scraper toggle desde navegación
+    let scraperEnabled = false;
+    const btnScraper = document.getElementById('toggleScraperBtn');
+    
+    api.getScraperConfig().then(data => {
+      scraperEnabled = data.enabled;
+      actualizarBottonScraper();
     });
     
+    function actualizarBottonScraper() {
+      if (scraperEnabled) {
+        btnScraper.classList.remove('text-gray-400', 'bg-mejv-lime/5');
+        btnScraper.classList.add('text-mejv-lime', 'bg-mejv-lime/20', 'border-mejv-lime/50');
+        btnScraper.innerHTML = `<i class="fas fa-robot text-sm"></i> Scraper ON`;
+      } else {
+        btnScraper.classList.remove('text-mejv-lime', 'bg-mejv-lime/20', 'border-mejv-lime/50');
+        btnScraper.classList.add('text-gray-400', 'bg-mejv-lime/5');
+        btnScraper.innerHTML = `<i class="fas fa-robot text-sm"></i> Scraper OFF`;
+      }
+    }
+    
+    btnScraper.addEventListener('click', async () => {
+      try {
+        const newState = !scraperEnabled;
+        await api.toggleScraper(newState);
+        scraperEnabled = newState;
+        actualizarBottonScraper();
+        showToast(newState ? 'Scraper automático activado' : 'Scraper automático desactivado');
+      } catch (e) {
+        showToast('Error al actualizar configuración', 'error');
+      }
+    });
+
+    // Registrar disparadores para botones "Crear" externos
     document.getElementById('btnCrearNoticia').addEventListener('click', () => abrirModal('noticias', 'crear'));
     document.getElementById('btnCrearSurebet').addEventListener('click', () => abrirModal('surebets', 'crear'));
     document.getElementById('btnCrearPronostico').addEventListener('click', () => abrirModal('pronosticos', 'crear'));
     document.getElementById('btnCrearTablaGoles').addEventListener('click', () => abrirModal('tablagoles', 'crear'));
-
-    // Configuración scraper
-    const toggleScraper = document.getElementById('toggleScraper');
-    api.getScraperConfig().then(data => {
-        toggleScraper.checked = data.enabled;
-    });
-    toggleScraper.addEventListener('change', async () => {
-        try {
-            await api.toggleScraper(toggleScraper.checked);
-            showToast(toggleScraper.checked ? 'Scraper automático activado' : 'Scraper automático desactivado');
-        } catch (e) {
-            showToast('Error al actualizar configuración', 'error');
-            toggleScraper.checked = !toggleScraper.checked;
-        }
-    });
 
     // Iniciar con la primera pestaña activa
     document.querySelector('.tab-btn').click();

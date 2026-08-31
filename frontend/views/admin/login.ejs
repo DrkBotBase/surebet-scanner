@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Admin - MEJV Sports</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
           --bg-color: #edebe4;
@@ -26,24 +27,718 @@
             background: var(--bg-color);
             box-shadow: 7px 7px 15px var(--dark-shadow), -7px -7px 15px var(--light-shadow);
         }
+        .neumorphic-input {
+            background: var(--bg-color);
+            box-shadow: inset 4px 4px 8px var(--dark-shadow), inset -4px -4px 8px var(--light-shadow);
+            border: none;
+            outline: none;
+            transition: all 0.2s ease;
+            font-size: 16px;
+        }
+        .neumorphic-input:focus {
+            box-shadow: inset 6px 6px 12px var(--dark-shadow), inset -6px -6px 12px var(--light-shadow);
+        }
         .neumorphic-button {
             background: var(--bg-color);
             box-shadow: 5px 5px 10px var(--dark-shadow), -5px -5px 10px var(--light-shadow);
             transition: all 0.2s ease;
             cursor: pointer;
+            color: var(--primary-color);
+            border: none;
+            font-weight: 700;
+        }
+        .neumorphic-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 7px 7px 14px var(--dark-shadow), -7px -7px 14px var(--light-shadow);
         }
         .neumorphic-button:active {
             box-shadow: inset 3px 3px 6px var(--dark-shadow), inset -3px -3px 6px var(--light-shadow);
             transform: scale(0.98);
         }
+        .neumorphic-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            font-size: 16px;
+            transition: color 0.2s;
+        }
+        .toggle-password:hover {
+            color: var(--primary-color);
+        }
+        .password-wrapper {
+            position: relative;
+        }
+        .checkbox-custom {
+            accent-color: var(--primary-color);
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        .checkbox-label {
+            font-size: 14px;
+            color: #555;
+            cursor: pointer;
+            user-select: none;
+        }
+        .checkbox-label:hover {
+            color: var(--text-color);
+        }
+        .error-message {
+            color: var(--primary-color);
+            font-size: 13px;
+            text-align: center;
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 8px;
+            background: rgba(226, 28, 27, 0.08);
+            display: none;
+        }
+        .error-message.show {
+            display: block;
+        }
+        /* Sugerencias de autocompletado personalizadas */
+        .autocomplete-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--bg-color);
+            border-radius: 12px;
+            box-shadow: 6px 6px 14px var(--dark-shadow), -6px -6px 14px var(--light-shadow);
+            margin-top: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            padding: 4px 0;
+        }
+        .autocomplete-suggestions.active {
+            display: block;
+        }
+        .autocomplete-item {
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: var(--text-color);
+        }
+        .autocomplete-item:hover {
+            background: rgba(226, 28, 27, 0.08);
+        }
+        .autocomplete-item:active {
+            background: rgba(226, 28, 27, 0.15);
+        }
+        .autocomplete-item .avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .autocomplete-item .info {
+            flex: 1;
+        }
+        .autocomplete-item .info .name {
+            font-weight: 600;
+        }
+        .autocomplete-item .info .hint {
+            font-size: 11px;
+            color: #888;
+        }
+        .autocomplete-item .key-hint {
+            font-size: 10px;
+            color: #aaa;
+            background: rgba(0,0,0,0.05);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        /* Scroll personalizado */
+        .autocomplete-suggestions::-webkit-scrollbar {
+            width: 4px;
+        }
+        .autocomplete-suggestions::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .autocomplete-suggestions::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 4px;
+        }
+        .autocomplete-suggestions::-webkit-scrollbar-thumb:hover {
+            background: #aaa;
+        }
+        /* Animación de carga */
+        .spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(226, 28, 27, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .input-wrapper {
+            position: relative;
+        }
     </style>
 </head>
 <body class="p-4">
-    <form action="/admin/login" method="POST" class="neumorphic-flat p-8 rounded-xl w-full max-w-sm">
-        <h2 class="text-2xl font-bold mb-6 text-center" style="color: var(--primary-color);">Login Administración</h2>
-        <input type="text" name="username" placeholder="Usuario" class="w-full p-3 mb-4 neumorphic-input rounded-lg" required>
-        <input type="password" name="password" placeholder="Contraseña" class="w-full p-3 mb-6 neumorphic-input rounded-lg" required>
-        <button type="submit" class="neumorphic-button w-full p-3 rounded-lg font-bold">Entrar</button>
+    <form action="/admin/login" method="POST" class="neumorphic-flat p-8 rounded-xl w-full max-w-sm" id="loginForm" novalidate>
+        <div class="text-center mb-6">
+            <div class="text-4xl mb-2">⚽</div>
+            <h2 class="text-2xl font-bold" style="color: var(--primary-color);">MEJV Sports</h2>
+            <p class="text-sm text-gray-500 mt-1">Panel de Administración</p>
+        </div>
+        
+        <div class="mb-4">
+            <label for="username" class="block text-sm font-medium text-gray-600 mb-1">Usuario</label>
+            <div class="input-wrapper">
+                <input type="text" 
+                       name="username" 
+                       id="username" 
+                       placeholder="Ingresa tu usuario" 
+                       class="neumorphic-input w-full p-3 rounded-lg" 
+                       required 
+                       autocomplete="username"
+                       aria-autocomplete="list"
+                       aria-expanded="false">
+                <div id="autocompleteSuggestions" class="autocomplete-suggestions" role="listbox"></div>
+            </div>
+        </div>
+        
+        <div class="mb-4">
+            <label for="password" class="block text-sm font-medium text-gray-600 mb-1">Contraseña</label>
+            <div class="password-wrapper">
+                <input type="password" 
+                       name="password" 
+                       id="password" 
+                       placeholder="Ingresa tu contraseña" 
+                       class="neumorphic-input w-full p-3 rounded-lg" 
+                       required 
+                       autocomplete="current-password">
+                <button type="button" 
+                        class="toggle-password" 
+                        id="togglePassword" 
+                        aria-label="Mostrar u ocultar contraseña">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="flex items-center justify-between mb-6">
+            <label class="flex items-center gap-2 checkbox-label">
+                <input type="checkbox" 
+                       name="remember" 
+                       id="remember" 
+                       class="checkbox-custom">
+                <span>Recordarme</span>
+            </label>
+            <a href="#" class="text-sm text-gray-500 hover:text-gray-700 transition-colors" style="color: var(--primary-color);">
+                ¿Olvidaste tu contraseña?
+            </a>
+        </div>
+        
+        <div id="errorMessage" class="error-message">
+            <i class="fas fa-exclamation-circle mr-2"></i>
+            <span id="errorText">Credenciales incorrectas</span>
+        </div>
+        
+        <button type="submit" class="neumorphic-button w-full p-3 rounded-lg text-lg" id="loginButton">
+            <i class="fas fa-sign-in-alt mr-2"></i>
+            Iniciar Sesión
+        </button>
     </form>
+
+    <script>
+        (function() {
+            // ============================================================
+            // 1. MOSTRAR/OCULTAR CONTRASEÑA
+            // ============================================================
+            const toggleBtn = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('password');
+            const icon = toggleBtn.querySelector('i');
+
+            toggleBtn.addEventListener('click', function() {
+                const isPassword = passwordInput.type === 'password';
+                passwordInput.type = isPassword ? 'text' : 'password';
+                icon.className = isPassword ? 'fas fa-eye-slash' : 'fas fa-eye';
+            });
+
+            // ============================================================
+            // 2. SISTEMA DE AUTENTICACIÓN SIMULADO (para demostración)
+            // ============================================================
+            // En un entorno real, esto sería una base de datos
+            // Para demostración, guardamos usuarios en localStorage
+            function getUsers() {
+                const users = localStorage.getItem('mejv_users');
+                if (users) {
+                    try {
+                        return JSON.parse(users);
+                    } catch(e) {
+                        return [];
+                    }
+                }
+                // Usuario demo por defecto
+                const defaultUsers = [
+                    { username: 'admin', password: 'admin123' }
+                ];
+                localStorage.setItem('mejv_users', JSON.stringify(defaultUsers));
+                return defaultUsers;
+            }
+
+            function saveUsers(users) {
+                localStorage.setItem('mejv_users', JSON.stringify(users));
+            }
+
+            // ============================================================
+            // 3. AUTOCOMPLETADO CON SUGERENCIAS
+            // ============================================================
+            const usernameInput = document.getElementById('username');
+            const suggestionsContainer = document.getElementById('autocompleteSuggestions');
+            let selectedIndex = -1;
+            let currentSuggestions = [];
+
+            function getUsernameSuggestions(input) {
+                const users = getUsers();
+                const query = input.toLowerCase().trim();
+                if (!query) {
+                    // Mostrar todos los usuarios guardados si hay pocos (max 5)
+                    return users.slice(0, 5);
+                }
+                // Filtrar por coincidencia
+                return users.filter(user => 
+                    user.username.toLowerCase().includes(query)
+                ).slice(0, 5);
+            }
+
+            function renderSuggestions(suggestions) {
+                suggestionsContainer.innerHTML = '';
+                if (suggestions.length === 0) {
+                    suggestionsContainer.classList.remove('active');
+                    usernameInput.setAttribute('aria-expanded', 'false');
+                    return;
+                }
+
+                suggestions.forEach((user, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'autocomplete-item';
+                    item.setAttribute('role', 'option');
+                    item.setAttribute('data-index', index);
+                    
+                    // Avatar con inicial
+                    const avatar = document.createElement('div');
+                    avatar.className = 'avatar';
+                    avatar.textContent = user.username.charAt(0).toUpperCase();
+                    
+                    const info = document.createElement('div');
+                    info.className = 'info';
+                    
+                    const name = document.createElement('div');
+                    name.className = 'name';
+                    name.textContent = user.username;
+                    
+                    const hint = document.createElement('div');
+                    hint.className = 'hint';
+                    // Simular que la contraseña está guardada (por seguridad no mostramos)
+                    hint.textContent = 'Presiona Enter para iniciar sesión';
+                    
+                    info.appendChild(name);
+                    info.appendChild(hint);
+                    
+                    const keyHint = document.createElement('span');
+                    keyHint.className = 'key-hint';
+                    keyHint.textContent = '↵';
+                    
+                    item.appendChild(avatar);
+                    item.appendChild(info);
+                    item.appendChild(keyHint);
+                    
+                    // Click para seleccionar
+                    item.addEventListener('click', function() {
+                        selectUser(user.username);
+                    });
+                    
+                    // Hover para mantener el índice seleccionado
+                    item.addEventListener('mouseenter', function() {
+                        const idx = parseInt(this.dataset.index);
+                        setSelectedIndex(idx);
+                    });
+                    
+                    suggestionsContainer.appendChild(item);
+                });
+
+                suggestionsContainer.classList.add('active');
+                usernameInput.setAttribute('aria-expanded', 'true');
+                selectedIndex = -1; // Reset selección
+            }
+
+            function setSelectedIndex(index) {
+                const items = suggestionsContainer.querySelectorAll('.autocomplete-item');
+                items.forEach((item, idx) => {
+                    if (idx === index) {
+                        item.style.background = 'rgba(226, 28, 27, 0.08)';
+                    } else {
+                        item.style.background = 'transparent';
+                    }
+                });
+                selectedIndex = index;
+            }
+
+            function selectUser(username) {
+                usernameInput.value = username;
+                suggestionsContainer.classList.remove('active');
+                usernameInput.setAttribute('aria-expanded', 'false');
+                
+                // Buscar la contraseña guardada para este usuario
+                const users = getUsers();
+                const user = users.find(u => u.username === username);
+                if (user && user.password) {
+                    // Rellenar la contraseña automáticamente
+                    passwordInput.value = user.password;
+                }
+                
+                // Enfocar el campo de contraseña
+                passwordInput.focus();
+                
+                // Disparar evento de input para detectar cambios
+                usernameInput.dispatchEvent(new Event('input', { bubbles: true }));
+                
+                // Si la contraseña ya está llena, mostrar indicación visual
+                if (passwordInput.value) {
+                    // Pequeña animación de feedback
+                    passwordInput.style.transition = 'box-shadow 0.3s';
+                    passwordInput.style.boxShadow = 'inset 4px 4px 8px var(--dark-shadow), inset -4px -4px 8px var(--light-shadow), 0 0 0 2px rgba(226, 28, 27, 0.2)';
+                    setTimeout(() => {
+                        passwordInput.style.boxShadow = 'inset 4px 4px 8px var(--dark-shadow), inset -4px -4px 8px var(--light-shadow)';
+                    }, 800);
+                }
+            }
+
+            // Evento de entrada en el campo de usuario
+            usernameInput.addEventListener('input', function() {
+                const suggestions = getUsernameSuggestions(this.value);
+                currentSuggestions = suggestions;
+                renderSuggestions(suggestions);
+                // Resetear índice de selección
+                selectedIndex = -1;
+            });
+
+            // Evento de teclado para navegación
+            usernameInput.addEventListener('keydown', function(e) {
+                const items = suggestionsContainer.querySelectorAll('.autocomplete-item');
+                const totalItems = items.length;
+                
+                if (totalItems === 0) {
+                    // Si no hay sugerencias, permitir Enter normal
+                    if (e.key === 'Enter') {
+                        // Enviar formulario si hay texto
+                        if (this.value.trim()) {
+                            // No hacer nada, el formulario se enviará
+                        }
+                    }
+                    return;
+                }
+
+                switch(e.key) {
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        const nextIndex = selectedIndex < totalItems - 1 ? selectedIndex + 1 : 0;
+                        setSelectedIndex(nextIndex);
+                        break;
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        const prevIndex = selectedIndex > 0 ? selectedIndex - 1 : totalItems - 1;
+                        setSelectedIndex(prevIndex);
+                        break;
+                    case 'Enter':
+                        e.preventDefault();
+                        if (selectedIndex >= 0 && selectedIndex < totalItems) {
+                            // Seleccionar el ítem resaltado
+                            const selectedItem = items[selectedIndex];
+                            const username = selectedItem.querySelector('.name').textContent;
+                            selectUser(username);
+                            
+                            // INICIO DE SESIÓN AUTOMÁTICO después de seleccionar usuario
+                            // Verificar si la contraseña está llena
+                            if (passwordInput.value.trim()) {
+                                // Pequeño retraso para que se vea la selección
+                                setTimeout(() => {
+                                    // Enviar el formulario automáticamente
+                                    const form = document.getElementById('loginForm');
+                                    const submitEvent = new Event('submit', { cancelable: true });
+                                    form.dispatchEvent(submitEvent);
+                                }, 300);
+                            }
+                        } else if (this.value.trim()) {
+                            // Si no hay selección y hay texto, enviar formulario
+                            setTimeout(() => {
+                                const form = document.getElementById('loginForm');
+                                const submitEvent = new Event('submit', { cancelable: true });
+                                form.dispatchEvent(submitEvent);
+                            }, 100);
+                        }
+                        break;
+                    case 'Escape':
+                        suggestionsContainer.classList.remove('active');
+                        usernameInput.setAttribute('aria-expanded', 'false');
+                        break;
+                    case 'Tab':
+                        // Cerrar sugerencias al tabular
+                        setTimeout(() => {
+                            suggestionsContainer.classList.remove('active');
+                            usernameInput.setAttribute('aria-expanded', 'false');
+                        }, 100);
+                        break;
+                }
+            });
+
+            // Cerrar sugerencias al perder el foco
+            usernameInput.addEventListener('blur', function(e) {
+                // Delay para permitir clics en las sugerencias
+                setTimeout(() => {
+                    if (!suggestionsContainer.matches(':hover')) {
+                        suggestionsContainer.classList.remove('active');
+                        usernameInput.setAttribute('aria-expanded', 'false');
+                    }
+                }, 150);
+            });
+
+            // Cerrar sugerencias al hacer clic fuera
+            document.addEventListener('click', function(e) {
+                if (!usernameInput.contains(e.target) && !suggestionsContainer.contains(e.target)) {
+                    suggestionsContainer.classList.remove('active');
+                    usernameInput.setAttribute('aria-expanded', 'false');
+                }
+            });
+
+            // ============================================================
+            // 4. GUARDAR CREDENCIALES EN EL NAVEGADOR
+            // ============================================================
+            const rememberCheckbox = document.getElementById('remember');
+
+            function loadSavedCredentials() {
+                const savedUsername = localStorage.getItem('mejv_username');
+                const savedPassword = localStorage.getItem('mejv_password');
+                const remember = localStorage.getItem('mejv_remember') === 'true';
+
+                if (remember && savedUsername) {
+                    usernameInput.value = savedUsername;
+                    if (savedPassword) {
+                        passwordInput.value = savedPassword;
+                    }
+                    rememberCheckbox.checked = true;
+                    
+                    // Mostrar sugerencias con el usuario cargado
+                    setTimeout(() => {
+                        const suggestions = getUsernameSuggestions(savedUsername);
+                        if (suggestions.length > 0) {
+                            renderSuggestions(suggestions);
+                        }
+                    }, 100);
+                }
+            }
+
+            function saveCredentials() {
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value.trim();
+                const remember = rememberCheckbox.checked;
+
+                if (remember && username) {
+                    localStorage.setItem('mejv_username', username);
+                    localStorage.setItem('mejv_password', password);
+                    localStorage.setItem('mejv_remember', 'true');
+                } else {
+                    localStorage.removeItem('mejv_username');
+                    localStorage.removeItem('mejv_password');
+                    localStorage.setItem('mejv_remember', 'false');
+                }
+            }
+
+            function clearCredentials() {
+                if (!rememberCheckbox.checked) {
+                    localStorage.removeItem('mejv_username');
+                    localStorage.removeItem('mejv_password');
+                    localStorage.setItem('mejv_remember', 'false');
+                }
+            }
+
+            // Cargar credenciales al inicio
+            loadSavedCredentials();
+
+            // Manejar cambios en el checkbox "Recordarme"
+            rememberCheckbox.addEventListener('change', function() {
+                if (!this.checked) {
+                    clearCredentials();
+                }
+            });
+
+            // ============================================================
+            // 5. DETECCIÓN DE AUTOFILL DEL NAVEGADOR
+            // ============================================================
+            // Detectar cuando el navegador autocompleta automáticamente
+            usernameInput.addEventListener('animationstart', function(e) {
+                if (e.animationName === 'onAutoFillStart') {
+                    // El navegador está autocompletando
+                    setTimeout(() => {
+                        const value = this.value;
+                        if (value && !passwordInput.value) {
+                            // Buscar la contraseña guardada
+                            const users = getUsers();
+                            const user = users.find(u => u.username === value);
+                            if (user && user.password) {
+                                passwordInput.value = user.password;
+                            }
+                        }
+                    }, 100);
+                }
+            });
+
+            // Estilo para detectar autofill
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes onAutoFillStart { from { opacity: 1; } to { opacity: 1; } }
+                @keyframes onAutoFillCancel { from { opacity: 1; } to { opacity: 1; } }
+                input:-webkit-autofill { animation-name: onAutoFillStart; }
+                input:not(:-webkit-autofill) { animation-name: onAutoFillCancel; }
+            `;
+            document.head.appendChild(style);
+
+            // ============================================================
+            // 6. MANEJO DEL ENVÍO DEL FORMULARIO
+            // ============================================================
+            const form = document.getElementById('loginForm');
+            const errorMessage = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+            const loginButton = document.getElementById('loginButton');
+
+            // Si hay error en la URL, mostrar mensaje
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('error') === '1') {
+                errorMessage.classList.add('show');
+                errorText.textContent = 'Usuario o contraseña incorrectos';
+            }
+
+            // Guardar referencia al estado original del botón
+            const originalButtonHtml = loginButton.innerHTML;
+
+            form.addEventListener('submit', function(e) {
+                // Validar campos
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value.trim();
+
+                if (!username || !password) {
+                    e.preventDefault();
+                    errorMessage.classList.add('show');
+                    errorText.textContent = 'Por favor, completa todos los campos';
+                    // Agitar el formulario para feedback visual
+                    this.style.animation = 'shake 0.5s ease';
+                    setTimeout(() => {
+                        this.style.animation = '';
+                    }, 500);
+                    return;
+                }
+
+                // Guardar credenciales si está marcado
+                if (rememberCheckbox.checked) {
+                    saveCredentials();
+                }
+
+                // Mostrar estado de carga
+                loginButton.disabled = true;
+                loginButton.innerHTML = '<span class="spinner"></span> Iniciando sesión...';
+
+                // El formulario se enviará normalmente
+                // Si hay un error, el servidor redirigirá con ?error=1
+            });
+
+            // ============================================================
+            // 7. FUNCIONALIDAD: INICIO AUTOMÁTICO AL TENER AMBOS CAMPOS
+            // ============================================================
+            // Detectar cuando ambos campos están llenos y presionar Enter
+            // Esto ya está manejado en el keydown del username
+
+            // También detectar cuando se llena el campo de contraseña
+            // y hay un usuario seleccionado
+            passwordInput.addEventListener('input', function() {
+                if (this.value.trim() && usernameInput.value.trim()) {
+                    // Ambos campos están llenos, cambiar color del botón como feedback
+                    loginButton.style.color = '#1a1c21';
+                    loginButton.style.transition = 'color 0.3s';
+                    setTimeout(() => {
+                        loginButton.style.color = 'var(--primary-color)';
+                    }, 500);
+                }
+            });
+
+            // ============================================================
+            // 8. SHAKE ANIMATION PARA ERROR
+            // ============================================================
+            const shakeStyle = document.createElement('style');
+            shakeStyle.textContent = `
+                @keyframes shake {
+                    0%, 100% { transform: translateX(0); }
+                    10%, 30%, 50%, 70%, 90% { transform: translateX(-8px); }
+                    20%, 40%, 60%, 80% { transform: translateX(8px); }
+                }
+            `;
+            document.head.appendChild(shakeStyle);
+
+            // ============================================================
+            // 9. LIMPIAR ERRORES AL ESCRIBIR
+            // ============================================================
+            usernameInput.addEventListener('input', function() {
+                errorMessage.classList.remove('show');
+            });
+            passwordInput.addEventListener('input', function() {
+                errorMessage.classList.remove('show');
+            });
+
+            // ============================================================
+            // 10. MENSAJE DE LOGOUT EXITOSO
+            // ============================================================
+            if (urlParams.get('logout') === '1') {
+                const successDiv = document.createElement('div');
+                successDiv.className = 'text-center text-sm text-green-600 mb-4 p-2 rounded-lg bg-green-50';
+                successDiv.innerHTML = '<i class="fas fa-check-circle mr-2"></i> Sesión cerrada correctamente';
+                form.insertBefore(successDiv, form.firstChild);
+            }
+
+            // ============================================================
+            // 11. INICIO DE SESIÓN CON ENTER EN EL CAMPO DE CONTRASEÑA
+            // ============================================================
+            passwordInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (usernameInput.value.trim() && this.value.trim()) {
+                        // Ambos campos llenos, enviar formulario
+                        const submitEvent = new Event('submit', { cancelable: true });
+                        form.dispatchEvent(submitEvent);
+                    }
+                }
+            });
+        })();
+    </script>
+
 </body>
 </html>

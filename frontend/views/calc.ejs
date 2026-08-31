@@ -62,12 +62,12 @@
         <div class="bg-mejv-card-dark border border-mejv-card-dark rounded-2xl p-4 space-y-4">
             <form action="/analyze" method="POST" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">URL de Flashscore Mobi (H2H)</label>
-                    <input type="url" name="url" value="<%= lastUrl %>" placeholder="https://www.flashscore.mobi/match/rgl8UA3k/?t=h2h" required class="w-full bg-mejv-dark border border-slate-700 rounded-lg px-3 py-2 text-white font-mono text-sm focus:border-mejv-lime outline-none">
+                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">URL de Flashscore Mobi (H2H) Entra</label>
+                    <input type="url" name="url" value="<%= lastUrl %>" placeholder="https://www.flashscore.mobi/match/rgl80UA3k/?t=h2h" required class="w-full bg-mejv-dark border border-slate-700 rounded-lg px-3 py-2 text-white font-mono text-sm focus:border-mejv-lime outline-none">
                 </div>
 
                 <div class="space-y-1 pt-1">
-                    <label class="block text-[11px] font-semibold text-mejv-lime uppercase">Cuotas Adicionales EV+ (Opcional)</label>
+                    <label class="block text-[11px] font-semibold text-mejv-lime uppercase">Cuotas Adicionales (Opcional)</label>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <span class="text-[10px] text-slate-400 block mb-0.5">Cuota Over 2.5</span>
@@ -185,8 +185,8 @@
                 
                     <div class="flex items-center justify-between bg-mejv-dark p-2.5 rounded-xl border border-slate-800 gap-3">
                         <div class="flex flex-col">
-                            <span class="text-[10px] text-slate-400 font-semibold uppercase">Monto Total a Apoyar:</span>
-                            <span class="text-[10px] text-emerald-400">Retorno Neto Est: $<span id="dutching-retorno-neto">0</span></span>
+                            <span class="text-[10px] text-slate-400 font-semibold uppercase">Monto a usar:</span>
+                            <span class="text-[10px] text-emerald-400">Ganancia Neta: $<span id="dutching-retorno-neto">0</span></span>
                         </div>
                         <div class="flex items-center gap-1 bg-mejv-black border border-slate-700 rounded-lg px-2 py-1">
                             <span class="text-xs text-slate-400 font-bold">$</span>
@@ -200,7 +200,7 @@
                     </div>
                 
                     <div class="space-y-1.5 pt-1">
-                        <p class="text-[10px] text-slate-400 uppercase font-semibold">Distribución de Apuesta Dinámica:</p>
+                        <p class="text-[10px] text-slate-400 uppercase font-semibold">Distribución de Apuesta Según Monto:</p>
                         <div class="grid grid-cols-3 gap-2">
                             <% data.dutchingTop3.items.forEach((item, idx) => { %>
                                 <div class="bg-mejv-dark border border-slate-700 p-2 rounded-xl text-center flex flex-col justify-between">
@@ -210,7 +210,7 @@
                                     </div>
                                     
                                     <div class="mt-2 pt-1.5 border-t border-slate-800/80">
-                                        <span class="text-[10px] text-slate-400 block"><%= item.stakePct %>% del Stake</span>
+                                        <span class="text-[10px] text-slate-400 block"><%= item.stakePct %>%</span>
                                         <p class="text-xs font-bold text-mejv-lime mt-0.5 item-amount" data-pct="<%= item.stakePct %>">$0</p>
                                     </div>
                                 </div>

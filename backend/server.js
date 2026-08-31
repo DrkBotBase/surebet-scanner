@@ -61,8 +61,8 @@ async function autoValidarPendientes() {
 
         // Obtener pendientes de ambos modelos
         const [pendientesPronosticos, pendientesGoles] = await Promise.all([
-            Prediction.find({ status: { $in: ['pendiente', 'pending', 'not_started'] } }),
-            GoalTable.find({ status: { $in: ['pendiente', 'pending', 'not_started'] } })
+            Prediction.find({ status: { $in: ['pendiente', 'pending', 'not_started', 'live'] } }),
+            GoalTable.find({ status: { $in: ['pendiente', 'pending', 'not_started', 'live'] } })
         ]);
         
         const todosPendientes = [
@@ -73,12 +73,10 @@ async function autoValidarPendientes() {
         for (const item of todosPendientes) {
             try {
                 const { doc, type } = item;
-                
+
                 if (type === 'prediction') {
-                    // Usar servicio de validación automática para pronósticos
-                    await validatePredictionStatus(doc._id);
+                  await validatePredictionStatus(doc._id);
                 } else {
-                    // Mantener lógica para tablas de goles
                     const updatedData = await getMatchInfo(doc.flashscoreId);
                     
                     doc.score = updatedData.score;
@@ -91,11 +89,11 @@ async function autoValidarPendientes() {
                 
                 await new Promise(resolve => setTimeout(resolve, 5000));
             } catch (e) {
-                console.error(`Error validando ${item.type} ${item.doc._id}:`, e);
+                console.error(`❌ Error validando ${item.type} ${item.doc._id}:`, e);
             }
         }
     } catch (error) {
-        console.error('Error en validación automática:', error);
+        console.error('❌ Error fatal en validación automática:', error);
     }
 }
 
