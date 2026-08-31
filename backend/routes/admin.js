@@ -130,7 +130,7 @@ router.post('/api/predictions', auth, async (req, res) => {
     try {
         const { event, team1, team2, flashscoreId, time, eventDate, prediction, odds, bookmaker, status, score } = req.body;
         
-        const colombiaDate = moment.utc(eventDate).startOf('day').toDate();
+        //const colombiaDate = moment.utc(eventDate).startOf('day').toDate();
         
         const newPred = new Prediction({ 
             event, 
@@ -138,7 +138,7 @@ router.post('/api/predictions', auth, async (req, res) => {
             team2,
             flashscoreId,
             time, 
-            eventDate: colombiaDate, 
+            eventDate, 
             prediction, 
             odds, 
             bookmaker, 
@@ -156,7 +156,7 @@ router.post('/api/predictions/edit/:id', auth, async (req, res) => {
     try {
         const { event, team1, team2, flashscoreId, time, eventDate, prediction, odds, bookmaker, status, score } = req.body;
         const updated = await Prediction.findByIdAndUpdate(req.params.id, {
-            event, team1, team2, flashscoreId, time, eventDate: moment.utc(eventDate).startOf('day').toDate(), prediction, odds, bookmaker, status, score
+            event, team1, team2, flashscoreId, time, eventDate, prediction, odds, bookmaker, status, score
         }, { returnDocument: 'after' });
         res.json(updated);
     } catch (error) {
@@ -216,12 +216,12 @@ router.post('/api/surebets', auth, async (req, res) => {
     try {
         const { event, time, eventDate, market, line, percentage, bookmaker1, odds1, bookmaker2, odds2 } = req.body;
         
-        const colombiaDate = moment.utc(eventDate).startOf('day').toDate();
+        //const colombiaDate = moment.utc(eventDate).startOf('day').toDate();
         
         const newSure = new Surebet({ 
             event, 
             time, 
-            eventDate: colombiaDate, 
+            eventDate, 
             market, 
             line, 
             percentage, 
@@ -241,12 +241,12 @@ router.post('/api/surebets/edit/:id', auth, async (req, res) => {
     try {
         const { event, time, eventDate, market, line, percentage, bookmaker1, odds1, bookmaker2, odds2 } = req.body;
         
-        const colombiaDate = moment.utc(eventDate).startOf('day').toDate();
+        //const colombiaDate = moment.utc(eventDate).startOf('day').toDate();
         
         const updated = await Surebet.findByIdAndUpdate(req.params.id, {
             event, 
             time, 
-            eventDate: colombiaDate, 
+            eventDate, 
             market, 
             line, 
             percentage, 
@@ -283,7 +283,7 @@ router.post('/api/goal-tables', auth, async (req, res) => {
     try {
         const { league, event, team1, team2, flashscoreId, time, eventDate, prediction, odds, bookmaker, status, score } = req.body;
         
-        const colombiaDate = moment.utc(eventDate).startOf('day').toDate();
+        //const colombiaDate = moment.utc(eventDate).startOf('day').toDate();
         
         const newGoal = new GoalTable({ 
             league, 
@@ -292,7 +292,7 @@ router.post('/api/goal-tables', auth, async (req, res) => {
             team2,
             flashscoreId,
             time, 
-            eventDate: colombiaDate, 
+            eventDate, 
             prediction, 
             odds, 
             bookmaker, 
@@ -310,7 +310,7 @@ router.post('/api/goal-tables/edit/:id', auth, async (req, res) => {
     try {
         const { league, event, team1, team2, flashscoreId, time, eventDate, prediction, odds, bookmaker, status, score } = req.body;
         const updated = await GoalTable.findByIdAndUpdate(req.params.id, {
-            league, event, team1, team2, flashscoreId, time, eventDate: moment.utc(eventDate).startOf('day').toDate(), prediction, odds, bookmaker, status, score
+            league, event, team1, team2, flashscoreId, time, eventDate, prediction, odds, bookmaker, status, score
         }, { returnDocument: 'after' });
         res.json(updated);
     } catch (error) {

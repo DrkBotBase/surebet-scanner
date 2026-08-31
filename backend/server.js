@@ -59,8 +59,6 @@ async function autoValidarPendientes() {
         const config = await SystemConfig.findOne({ key: 'autoScraper' });
         if (!config || !config.value) return;
 
-        console.log('🔄 Ejecutando validación automática...');
-        
         // Obtener pendientes de ambos modelos
         const [pendientesPronosticos, pendientesGoles] = await Promise.all([
             Prediction.find({ status: { $in: ['pendiente', 'pending'] } }),
@@ -91,19 +89,16 @@ async function autoValidarPendientes() {
                     await doc.save();
                 }
                 
-                // Pausa para evitar rate-limiting
                 await new Promise(resolve => setTimeout(resolve, 5000));
             } catch (e) {
                 console.error(`Error validando ${item.type} ${item.doc._id}:`, e);
             }
         }
-        console.log('✅ Validación automática finalizada.');
     } catch (error) {
         console.error('Error en validación automática:', error);
     }
 }
 
-// Ejecutar cada 10 minutos (10 * 60 * 1000)
 setInterval(autoValidarPendientes, 10 * 60 * 1000);
 
 const News = require('./models/News');
