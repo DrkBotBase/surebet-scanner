@@ -67,7 +67,9 @@ function calcularEstado(prediccion, L, V) {
         'btts_si': L > 0 && V > 0,
         'btts_no': !(L > 0 && V > 0),
         'o25': (L + V) > 2.5,
-        'u25': (L + V) < 2.5
+        'over 2.5': (L + V) > 2.5,
+        'u25': (L + V) < 2.5,
+        'under 2.5' : (L + V) < 2.5
     };
     
     if (mercados.hasOwnProperty(p)) {

@@ -61,8 +61,8 @@ async function autoValidarPendientes() {
 
         // Obtener pendientes de ambos modelos
         const [pendientesPronosticos, pendientesGoles] = await Promise.all([
-            Prediction.find({ status: { $in: ['pendiente', 'pending'] } }),
-            GoalTable.find({ status: { $in: ['pendiente', 'pending'] } })
+            Prediction.find({ status: { $in: ['pendiente', 'pending', 'not_started'] } }),
+            GoalTable.find({ status: { $in: ['pendiente', 'pending', 'not_started'] } })
         ]);
         
         const todosPendientes = [
@@ -158,6 +158,27 @@ app.get('/', async (req, res) => {
             }
         };
 
+        const formatPredictionLabel = (pred, team1, team2) => {
+            const labels = {
+                '1': team1 || 'Local',
+                'x': 'Empate',
+                '2': team2 || 'Visitante',
+                '1x': (team1 || 'Local') + ' o Empate',
+                'x2': 'Empate o ' + (team2 || 'Visitante'),
+                'btts_si': 'Ambos Marcan (Sí)',
+                'btts_no': 'Ambos Marcan (No)',
+                'o25': 'Más de 2.5 Goles',
+                'u25': 'Menos de 2.5 Goles',
+                'over 2.5': 'Más de 2.5 Goles',
+                'under 2.5': 'Menos de 2.5 Goles',
+                'over 0.5': 'Más de 0.5 Goles',
+                'under 0.5': 'Menos de 0.5 Goles',
+                'dnb1': team1 + ': Apuesta sin empate',
+                'dnb2': team2+ ': Apuesta sin empate'
+            };
+            return labels[pred.toLowerCase()] || pred;
+        };
+
         const processedPredictions = predictions
             .map(p => {
                 const pObj = p.toObject ? p.toObject() : { ...p };
@@ -175,7 +196,8 @@ app.get('/', async (req, res) => {
                     ...pObj,
                     eventDateColombia: fullDate.toDate(),
                     timeColombia: pObj.time,
-                    matchStatus: matchStatus
+                    matchStatus: matchStatus,
+                    predictionLabel: formatPredictionLabel(pObj.prediction, pObj.team1?.name, pObj.team2?.name)
                 };
             })
             .sort((a, b) => {
@@ -199,7 +221,8 @@ app.get('/', async (req, res) => {
                     ...gObj,
                     eventDateColombia: fullDate.toDate(),
                     timeColombia: gObj.time,
-                    matchStatus: getMatchStatus(gObj.eventDate, gObj.time)
+                    matchStatus: getMatchStatus(gObj.eventDate, gObj.time),
+                    predictionLabel: formatPredictionLabel(gObj.prediction, gObj.team1?.name, gObj.team2?.name)
                 };
             })
             .sort((a, b) => {
