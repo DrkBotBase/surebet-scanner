@@ -128,7 +128,7 @@ router.get('/api/predictions', auth, async (req, res) => {
 
 router.post('/api/predictions', auth, async (req, res) => {
     try {
-        const { event, team1, team2, flashscoreId, time, eventDate, prediction, odds, bookmaker, status, score } = req.body;
+        const { event, team1, team2, flashscoreId, time, eventDate, prediction, cornersUrl, odds, bookmaker, status, score } = req.body;
         
         //const colombiaDate = moment.utc(eventDate).startOf('day').toDate();
         
@@ -139,7 +139,8 @@ router.post('/api/predictions', auth, async (req, res) => {
             flashscoreId,
             time, 
             eventDate, 
-            prediction, 
+            prediction,
+            cornersUrl,
             odds, 
             bookmaker, 
             status, 
@@ -154,9 +155,9 @@ router.post('/api/predictions', auth, async (req, res) => {
 
 router.post('/api/predictions/edit/:id', auth, async (req, res) => {
     try {
-        const { event, team1, team2, flashscoreId, time, eventDate, prediction, odds, bookmaker, status, score } = req.body;
+        const { event, team1, team2, flashscoreId, time, eventDate, prediction, cornersUrl, odds, bookmaker, status, score } = req.body;
         const updated = await Prediction.findByIdAndUpdate(req.params.id, {
-            event, team1, team2, flashscoreId, time, eventDate, prediction, odds, bookmaker, status, score
+            event, team1, team2, flashscoreId, time, eventDate, prediction, cornersUrl, odds, bookmaker, status, score
         }, { returnDocument: 'after' });
         res.json(updated);
     } catch (error) {

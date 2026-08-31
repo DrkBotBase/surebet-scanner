@@ -1045,7 +1045,15 @@
               <option value="u25" ${data && data.prediction === 'u25' ? 'selected' : ''}>Menos 2.5 Goles</option>
               <option value="dnb1" ${data && data.prediction === 'dnb1' ? 'selected' : ''}>Apuesta no empate Local</option>
               <option value="dnb2" ${data && data.prediction === 'dnb2' ? 'selected' : ''}>Apuesta no empate Visitante</option>
+              <option value="corners_o75" ${data && data.prediction === 'corners_o75' ? 'selected' : ''}>Corners Over 7.5</option>
+              <option value="corners_u75" ${data && data.prediction === 'corners_u75' ? 'selected' : ''}>Corners Under 7.5</option>
+              <option value="corners_o105" ${data && data.prediction === 'corners_o105' ? 'selected' : ''}>Corners Over 10.5</option>
+              <option value="corners_u105" ${data && data.prediction === 'corners_u105' ? 'selected' : ''}>Corners Under 10.5</option>
             </select>
+          </div>
+          <div id="corners-url-container" class="${data && data.prediction && data.prediction.startsWith('corners_') ? '' : 'hidden'}">
+            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">URL Estadísticas (Tiros Esquina)</label>
+            <input id="f_cornersUrl" type="text" class="w-full bg-mejv-black border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-mejv-blue transition" value="${data ? escapaHTML(data.cornersUrl || '') : ''}" placeholder="https://flashscore.com/..." />
           </div>
           <div>
             <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Marcador</label>
@@ -1127,6 +1135,16 @@
                 }
             });
         }
+        
+        // Toggle corners URL
+        document.getElementById('f_prediction').addEventListener('change', (e) => {
+          const container = document.getElementById('corners-url-container');
+          if (e.target.value.startsWith('corners_')) {
+            container.classList.remove('hidden');
+          } else {
+            container.classList.add('hidden');
+          }
+        });
         
         submitBtn.innerHTML = `<i class="fas fa-save"></i> ${action === 'crear' ? 'Registrar Pronóstico' : 'Guardar Cambios'}`;
 
@@ -1354,6 +1372,7 @@
             eventDate: new Date(document.getElementById('f_eventDate').value + 'T00:00:00Z'),
             time: document.getElementById('f_time').value,
             prediction: document.getElementById('f_prediction').value.trim(),
+            cornersUrl: document.getElementById('f_cornersUrl').value.trim(),
             score: document.getElementById('f_score').value.trim(),
             bookmaker: document.getElementById('f_bookmaker').value.trim(),
             odds: document.getElementById('f_odds').value.trim(),
@@ -1386,6 +1405,7 @@
             eventDate: new Date(document.getElementById('f_eventDate').value + 'T00:00:00Z'),
             time: document.getElementById('f_time').value,
             prediction: document.getElementById('f_prediction').value.trim(),
+            cornersUrl: document.getElementById('f_cornersUrl').value.trim(),
             score: document.getElementById('f_score').value.trim(),
             bookmaker: document.getElementById('f_bookmaker').value.trim(),
             odds: document.getElementById('f_odds').value.trim(),

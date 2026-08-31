@@ -14,6 +14,7 @@ const predictionSchema = new mongoose.Schema({
     time: { type: String, required: true },
     eventDate: { type: Date, required: true },
     prediction: { type: String, required: true },
+    cornersUrl: { type: String },
     odds: { type: String, required: true },
     bookmaker: { type: String, required: true },
     score: { type: String, default: '0:0' },

@@ -1,6 +1,8 @@
 const Prediction = require('../models/Prediction');
 const { getMatchInfo } = require('./test');
 const moment = require('moment-timezone');
+const axios = require('axios');
+const cheerio = require('cheerio');
 
 async function validatePredictionStatus(predictionId) {
     try {
@@ -20,8 +22,16 @@ async function validatePredictionStatus(predictionId) {
         let newStatus = prediction.status;
         
         if (updatedData.status === 'finished') {
-            const [golesLocal, golesVisitante] = updatedData.score.split('-').map(Number);
-            const estado = calcularEstado(prediction.prediction, golesLocal, golesVisitante);
+            let estado = 'desconocido';
+            
+            if (prediction.cornersUrl && prediction.prediction.startsWith('corners_')) {
+                // Lógica especial para corners: scraper necesita visitar URL
+                const totalCorners = await scrapearCorners(prediction.cornersUrl);
+                estado = evaluarCorners(prediction.prediction, totalCorners);
+            } else {
+                const [golesLocal, golesVisitante] = updatedData.score.split('-').map(Number);
+                estado = calcularEstado(prediction.prediction, golesLocal, golesVisitante);
+            }
             
             const statusMap = {
                 'ganado': 'verificado',
@@ -53,7 +63,30 @@ async function validatePredictionStatus(predictionId) {
     }
 }
 
-function calcularEstado(prediccion, L, V) {
+async function scrapearCorners(url) {
+    try {
+        const response = await axios.get(url, {
+            headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' }
+        });
+        const $ = cheerio.load(response.data);
+        
+        let totalCorners = 0;
+        $('span').each((i, el) => {
+            if ($(el).text().trim() === 'Corner kicks') {
+                const home = parseInt($(el).parent().prev().find('span').text()) || 0;
+                const away = parseInt($(el).parent().next().find('span').text()) || 0;
+                totalCorners = home + away;
+                return false;
+            }
+        });
+        return totalCorners;
+    } catch (e) {
+        console.error('Error scrapearCorners:', e);
+        return 0;
+    }
+}
+
+function calcularEstado(prediccion, L, V, corners = 0) {
     const p = prediccion.toLowerCase();
     
     if (p === 'dnb1' || p === 'dnb2') {
@@ -72,13 +105,26 @@ function calcularEstado(prediccion, L, V) {
         'o25': (L + V) > 2.5,
         'over 2.5': (L + V) > 2.5,
         'u25': (L + V) < 2.5,
-        'under 2.5' : (L + V) < 2.5
+        'under 2.5' : (L + V) < 2.5,
+        'corners_o75': corners > 7.5,
+        'corners_u75': corners < 7.5,
+        'corners_o105': corners > 10.5,
+        'corners_u105': corners < 10.5
     };
     
     if (mercados.hasOwnProperty(p)) {
         return mercados[p] ? 'ganado' : 'fallido';
     }
     
+    return 'desconocido';
+}
+
+function evaluarCorners(prediccion, corners) {
+    const p = prediccion.toLowerCase();
+    if (p === 'corners_o75') return corners > 7.5 ? 'ganado' : 'fallido';
+    if (p === 'corners_u75') return corners < 7.5 ? 'ganado' : 'fallido';
+    if (p === 'corners_o105') return corners > 10.5 ? 'ganado' : 'fallido';
+    if (p === 'corners_u105') return corners < 10.5 ? 'ganado' : 'fallido';
     return 'desconocido';
 }
 
