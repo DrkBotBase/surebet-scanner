@@ -1,0 +1,25 @@
+url: 'https://www.flashscore.com/match/football/brighton-2XrRecc3/chelsea-4fGZN2oK/summary/stats/overall/?mid=849SZXGE'
+selector: '#detail > div.tabContent__match-summary > div.tabContent__match-statistics > div.sectionsWrapper > div:nth-child(1) > div:nth-child(7)' o buscar el span que tenga la palabra 'Corner kicks' y seleccionar el span anterior y siguiente, creo que va mas seguro
+para tiros de esquina solo verificar hasta que status sea 'finished'
+
+<div class="wcl-row_2oCpS" data-testid="wcl-statistics">
+  <div class="wcl-category_Ydwqh">
+    <div class="wcl-value_XJG99 wcl-homeValue_3Q-7P" data-testid="wcl-statistics-value">
+      <span class="wcl-bold_NZXv6 wcl-scores-simple-text-01_-OvnR wcl-scores_Na715" data-testid="wcl-scores-simple-text-01">4</span>
+    </div>
+    <div class="wcl-category_6sT1J" data-testid="wcl-statistics-category">
+      <span class="wcl-bold_NZXv6 wcl-scores-simple-text-01_-OvnR wcl-scores_Na715" data-testid="wcl-scores-simple-text-01">Corner kicks</span>
+    </div>
+    <div class="wcl-value_XJG99 wcl-awayValue_Y-QR1" data-testid="wcl-statistics-value">
+      <span class="wcl-bold_NZXv6 wcl-scores-simple-text-01_-OvnR wcl-scores_Na715" data-testid="wcl-scores-simple-text-01">7</span>
+    </div>
+  </div>
+  <div class="wcl-charts_UfKzp">
+    <div class="wcl-chart_-31bu wcl-home_yQ91A">
+      <div class="wcl-worseSideOrEqualBackground_Zhv0n" data-testid="wcl-statistics-chart-home" style="width: 36%;"></div>
+    </div>
+    <div class="wcl-chart_-31bu">
+      <div class="wcl-betterSideBackground_q18q-" data-testid="wcl-statistics-chart-away" style="width: 64%;"></div>
+    </div>
+  </div>
+</div>

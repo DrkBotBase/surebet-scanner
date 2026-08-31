@@ -9,13 +9,14 @@ async function validatePredictionStatus(predictionId) {
             return { success: false, message: 'Pronóstico no encontrado o sin ID de Flashscore' };
         }
 
-        if (!['pendiente', 'pending', 'live'].includes(prediction.status)) {
-            return { success: false, message: 'El pronóstico no está en estado pendiente o live' };
+        if (!['pendiente', 'pending', 'live', 'not_started'].includes(prediction.status)) {
+            return { success: false, message: 'El pronóstico no está en estado pendiente, live o not_started' };
         }
 
         const updatedData = await getMatchInfo(prediction.flashscoreId);
         prediction.score = updatedData.score;
         
+        // Determinar el nuevo estado
         let newStatus = prediction.status;
         
         if (updatedData.status === 'finished') {
@@ -25,14 +26,16 @@ async function validatePredictionStatus(predictionId) {
             const statusMap = {
                 'ganado': 'verificado',
                 'fallido': 'fallido',
-                'reembolso': 'return',
-                'desconocido': 'desconocido'
+                'reembolso': 'return'
             };
             
-            newStatus = statusMap[estado] || 'desconocido';
-            
+            newStatus = statusMap[estado] || 'finished';
         } else if (updatedData.status === 'live') {
             newStatus = 'live';
+        } else if (updatedData.status === 'not_started') {
+            newStatus = 'not_started';
+        } else {
+            newStatus = 'pendiente';
         }
 
         prediction.status = newStatus;
