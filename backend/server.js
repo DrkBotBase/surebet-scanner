@@ -167,6 +167,8 @@ app.get('/', async (req, res) => {
                 'btts_no': 'Ambos Marcan (No)',
                 'o25': 'Más de 2.5 Goles',
                 'u25': 'Menos de 2.5 Goles',
+                'o35': 'Más de 3.5 Goles',
+                'u35': 'Menos de 3.5 Goles',
                 'over 2.5': 'Más de 2.5 Goles',
                 'under 2.5': 'Menos de 2.5 Goles',
                 'over 0.5': 'Más de 0.5 Goles',
