@@ -18,6 +18,7 @@ const predictionSchema = new mongoose.Schema({
     odds: { type: String, required: true },
     bookmaker: { type: String, required: true },
     score: { type: String, default: '0:0' },
+    firstHalfScore: { type: String, default: null },
     status: { type: String, enum: ['pendiente', 'verificado', 'fallido', 'return', 'live', 'finished', 'not_started'], default: 'pendiente' },
     createdAt: { type: Date, default: Date.now }
 });

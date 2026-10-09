@@ -144,7 +144,7 @@ router.get('/api/predictions', auth, async (req, res) => {
 
 router.post('/api/predictions', auth, async (req, res) => {
     try {
-        const { event, team1, team2, flashscoreId, time, eventDate, prediction, cornersUrl, odds, bookmaker, status, score } = req.body;
+        const { event, team1, team2, flashscoreId, time, eventDate, prediction, cornersUrl, odds, bookmaker, status, score, firstHalfScore } = req.body;
         
         //const colombiaDate = moment.utc(eventDate).startOf('day').toDate();
         
@@ -160,7 +160,8 @@ router.post('/api/predictions', auth, async (req, res) => {
             odds, 
             bookmaker, 
             status, 
-            score: score || '0:0' 
+            score: score || '0:0',
+            firstHalfScore: firstHalfScore || null
         });
         await newPred.save();
         res.status(201).json(newPred);
@@ -171,9 +172,9 @@ router.post('/api/predictions', auth, async (req, res) => {
 
 router.post('/api/predictions/edit/:id', auth, async (req, res) => {
     try {
-        const { event, team1, team2, flashscoreId, time, eventDate, prediction, cornersUrl, odds, bookmaker, status, score } = req.body;
+        const { event, team1, team2, flashscoreId, time, eventDate, prediction, cornersUrl, odds, bookmaker, status, score, firstHalfScore } = req.body;
         const updated = await Prediction.findByIdAndUpdate(req.params.id, {
-            event, team1, team2, flashscoreId, time, eventDate: normalizeEventDate(eventDate), prediction, cornersUrl, odds, bookmaker, status, score
+            event, team1, team2, flashscoreId, time, eventDate: normalizeEventDate(eventDate), prediction, cornersUrl, odds, bookmaker, status, score, firstHalfScore
         }, { returnDocument: 'after' });
         res.json(updated);
     } catch (error) {
@@ -392,6 +393,9 @@ router.post('/api/refresh-match/:type/:id', auth, async (req, res) => {
         const updatedData = await getMatchInfo(item.flashscoreId);
 
         item.score = updatedData.score;
+        if (updatedData.firstHalfScore) {
+            item.firstHalfScore = updatedData.firstHalfScore;
+        }
         item.status = updatedData.status;
         
         if (updatedData.datetime && updatedData.datetime.iso) {

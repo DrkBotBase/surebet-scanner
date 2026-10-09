@@ -1069,6 +1069,7 @@
             <input type="hidden" id="f_team2_name" value="${data && data.team2 ? escapaHTML(data.team2.name) : ''}" />
             <input type="hidden" id="f_team2_logo" value="${data && data.team2 ? escapaHTML(data.team2.logo) : ''}" />
             <input type="hidden" id="f_flashscoreId" value="${data ? escapaHTML(data.flashscoreId || '') : ''}" />
+            <input type="hidden" id="f_firstHalfScore" value="${data ? escapaHTML(data.firstHalfScore || '') : ''}" />
           </div>
           <div class="grid grid-cols-2 gap-3">
             <div>
@@ -1095,6 +1096,9 @@
               <option value="u25" ${data && data.prediction === 'u25' ? 'selected' : ''}>Menos 2.5 Goles</option>
               <option value="o35" ${data && data.prediction === 'o35' ? 'selected' : ''}>Más 3.5 Goles</option>
               <option value="u35" ${data && data.prediction === 'u35' ? 'selected' : ''}>Menos 3.5 Goles</option>
+              <option value="home_o15" ${data && ['home_o15', 'local_o15'].includes(data.prediction) ? 'selected' : ''}>Más de 1.5 Goles Local</option>
+              <option value="away_o15" ${data && ['away_o15', 'visitante_o15'].includes(data.prediction) ? 'selected' : ''}>Más de 1.5 Goles Visitante</option>
+              <option value="firsthalf_o05" ${data && ['firsthalf_o05', 'primer_tiempo_o05'].includes(data.prediction) ? 'selected' : ''}>Más de 0.5 Goles Primer Tiempo</option>
               <option value="dnb1" ${data && data.prediction === 'dnb1' ? 'selected' : ''}>No empate Local</option>
               <option value="dnb2" ${data && data.prediction === 'dnb2' ? 'selected' : ''}>No empate Visitante</option>
               <option value="corners_o75" ${data && data.prediction === 'corners_o75' ? 'selected' : ''}>Corners Over 7.5</option>
@@ -1158,6 +1162,7 @@
               
               document.getElementById('f_event').value = `${data.team1.name} - ${data.team2.name}`;
               document.getElementById('f_score').value = data.score;
+              document.getElementById('f_firstHalfScore').value = data.firstHalfScore || '';
               document.getElementById('f_status').value = 'pendiente';
               
               if(data.datetime && data.datetime.iso) {
@@ -1416,6 +1421,7 @@
             prediction: document.getElementById('f_prediction').value.trim(),
             cornersUrl: document.getElementById('f_cornersUrl').value.trim(),
             score: document.getElementById('f_score').value.trim(),
+            firstHalfScore: document.getElementById('f_firstHalfScore').value.trim() || null,
             bookmaker: document.getElementById('f_bookmaker').value.trim(),
             odds: document.getElementById('f_odds').value.trim(),
             status: document.getElementById('f_status').value

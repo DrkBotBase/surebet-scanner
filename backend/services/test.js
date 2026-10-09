@@ -30,6 +30,7 @@ class FlashscoreScraper {
       const matchStatus = this.getMatchStatus($);
       
       let score = this.getScore($, matchStatus);
+      const firstHalfScore = this.getFirstHalfScore($);
 
       const matchDateTime = this.getMatchDateTime($, matchStatus);
 
@@ -46,6 +47,7 @@ class FlashscoreScraper {
           logo: team2Logo 
         },
         score: score,
+        firstHalfScore,
         status: matchStatus,
         time: matchStatus === 'live' ? this.getMatchTime($) : matchDateTime.time || '',
         eventDate: matchDateTime.eventDate,
@@ -84,6 +86,23 @@ class FlashscoreScraper {
     }
     
     return score;
+  }
+
+  getFirstHalfScore($) {
+    let firstHalfScore = null;
+
+    $('#detail-tab-content h4').each((i, el) => {
+      const text = $(el).text().trim();
+      if (/(1st|first|1er)\s*half|half\s*time|descanso/i.test(text)) {
+        const scoreMatch = text.match(/(\d+)\s*[-:]\s*(\d+)/);
+        if (scoreMatch) {
+          firstHalfScore = `${scoreMatch[1]}-${scoreMatch[2]}`;
+          return false;
+        }
+      }
+    });
+
+    return firstHalfScore;
   }
 
   getMatchDateTime($, status) {

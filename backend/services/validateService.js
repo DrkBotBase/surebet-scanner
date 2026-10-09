@@ -17,6 +17,9 @@ async function validatePredictionStatus(predictionId) {
 
         const updatedData = await getMatchInfo(prediction.flashscoreId);
         prediction.score = updatedData.score;
+        if (updatedData.firstHalfScore) {
+            prediction.firstHalfScore = updatedData.firstHalfScore;
+        }
         
         // Determinar el nuevo estado
         let newStatus = prediction.status;
@@ -30,7 +33,8 @@ async function validatePredictionStatus(predictionId) {
                 estado = evaluarCorners(prediction.prediction, totalCorners);
             } else {
                 const [golesLocal, golesVisitante] = updatedData.score.split('-').map(Number);
-                estado = calcularEstado(prediction.prediction, golesLocal, golesVisitante);
+                const firstHalfScore = updatedData.firstHalfScore || prediction.firstHalfScore;
+                estado = calcularEstado(prediction.prediction, golesLocal, golesVisitante, 0, firstHalfScore);
             }
             
             const statusMap = {
@@ -39,7 +43,7 @@ async function validatePredictionStatus(predictionId) {
                 'reembolso': 'return'
             };
             
-            newStatus = statusMap[estado] || 'finished';
+            newStatus = statusMap[estado] || (estado === 'desconocido' ? 'pendiente' : 'finished');
         } else if (updatedData.status === 'live') {
             newStatus = 'live';
         } else if (updatedData.status === 'not_started') {
@@ -86,8 +90,16 @@ async function scrapearCorners(url) {
     }
 }
 
-function calcularEstado(prediccion, L, V, corners = 0) {
+function calcularEstado(prediccion, L, V, corners = 0, firstHalfScore = null) {
     const p = prediccion.toLowerCase();
+
+    const [htL, htV] = firstHalfScore
+        ? firstHalfScore.split('-').map(Number)
+        : [null, null];
+
+    if (['firsthalf_o05', 'primer_tiempo_o05'].includes(p) && (htL === null || htV === null || Number.isNaN(htL) || Number.isNaN(htV))) {
+        return 'desconocido';
+    }
     
     if (p === 'dnb1' || p === 'dnb2') {
         if (L === V) return 'reembolso';
@@ -108,6 +120,12 @@ function calcularEstado(prediccion, L, V, corners = 0) {
         'u25': (L + V) < 2.5,
         'u35': (L + V) < 3.5,
         'under 2.5' : (L + V) < 2.5,
+        'home_o15': L > 1.5,
+        'away_o15': V > 1.5,
+        'firsthalf_o05': htL !== null && htV !== null && (htL + htV) > 0.5,
+        'local_o15': L > 1.5,
+        'visitante_o15': V > 1.5,
+        'primer_tiempo_o05': htL !== null && htV !== null && (htL + htV) > 0.5,
         'corners_o75': corners > 7.5,
         'corners_u75': corners < 7.5,
         'corners_o105': corners > 10.5,
@@ -130,4 +148,4 @@ function evaluarCorners(prediccion, corners) {
     return 'desconocido';
 }
 
-module.exports = { validatePredictionStatus };
+module.exports = { validatePredictionStatus, calcularEstado, evaluarCorners };
