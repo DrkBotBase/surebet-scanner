@@ -16,6 +16,22 @@ const auth = (req, res, next) => {
     res.redirect('/admin/login');
 };
 
+// Los campos HTML de tipo date representan un día local, no un instante UTC.
+// Guardarlo como medianoche UTC hace que al convertirlo a America/Bogota
+// termine siendo el día anterior. Normalizamos siempre el día en Colombia.
+function normalizeEventDate(value) {
+    if (!value) return value;
+
+    const dateOnly = typeof value === 'string'
+        ? value.slice(0, 10)
+        : moment(value).format('YYYY-MM-DD');
+
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dateOnly)) return value;
+
+    const date = moment.tz(dateOnly, 'YYYY-MM-DD', 'America/Bogota').startOf('day');
+    return date.isValid() ? date.toDate() : value;
+}
+
 router.get('/login', (req, res) => {
     res.render('admin/login');
 });
@@ -138,7 +154,7 @@ router.post('/api/predictions', auth, async (req, res) => {
             team2,
             flashscoreId,
             time, 
-            eventDate, 
+            eventDate: normalizeEventDate(eventDate),
             prediction,
             cornersUrl,
             odds, 
@@ -157,7 +173,7 @@ router.post('/api/predictions/edit/:id', auth, async (req, res) => {
     try {
         const { event, team1, team2, flashscoreId, time, eventDate, prediction, cornersUrl, odds, bookmaker, status, score } = req.body;
         const updated = await Prediction.findByIdAndUpdate(req.params.id, {
-            event, team1, team2, flashscoreId, time, eventDate, prediction, cornersUrl, odds, bookmaker, status, score
+            event, team1, team2, flashscoreId, time, eventDate: normalizeEventDate(eventDate), prediction, cornersUrl, odds, bookmaker, status, score
         }, { returnDocument: 'after' });
         res.json(updated);
     } catch (error) {
